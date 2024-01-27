@@ -38,7 +38,9 @@ Route::middleware(['auth','role:dev'])->group(function () {
     //show count
     Route::get('/dev/dashboard', [DevController::class,'userCount'])->name('dev.dashboard');
     //see user
-    Route::get('/dev/manage/users', [DevController::class, 'user'])->name('dev.show');
+    Route::get('/dev/manage/', [DevController::class, 'user'])->name('dev.show');
+    //destory user
+    Route::delete('/dev/destory/{user}', [DevController::class, 'destory'])->name('user.destory');
 });
 
 //auditor routes

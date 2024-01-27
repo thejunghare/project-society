@@ -30,8 +30,19 @@ class DevController extends Controller
         return view('dev.dashboard', compact('user_count', 'auditor_count', 'accountant_count', 'member_count'));
     }
 
-    public function user(){
+    public function user()
+    {
         $users = User::all();
         return view('dev.show', compact('users'));
+    }
+
+    public function destory($id)
+    {
+        $user = User::find($id);
+        $user->delete();
+        return redirect('/dev/manage')->with([
+            'success' => 'User Removed!'
+        ]);
+
     }
 }
