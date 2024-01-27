@@ -1,0 +1,10 @@
+{
+  "projectName": "society",
+  "meta": {
+    "type": "backend"
+  },
+  "backend": {
+    "platform": "php-laravel"
+  },
+  "hash": "25a188ab"
+}
