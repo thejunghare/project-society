@@ -35,10 +35,11 @@ Route::middleware('auth')->group(function () {
 //dev routes
 Route::middleware(['auth','role:dev'])->group(function () {
     Route::get('/dev/dashboard',[DevController::class,'dashboard'])->name('dev.dashboard');
+    //show count
+    Route::get('/dev/dashboard', [DevController::class,'userCount'])->name('dev.dashboard');
+    //see user
+    Route::get('/dev/manage/users', [DevController::class, 'user'])->name('dev.show');
 });
-
-Route::get('/dev/dashboard', [DevController::class,'userCount'])->name('dev.dashboard');
-
 
 //auditor routes
 Route::middleware(['auth','role:auditor'])->group(function () {
