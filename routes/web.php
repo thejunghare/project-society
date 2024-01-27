@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\SuadminController;
+use App\Http\Controllers\DevController;
+use App\Http\Controllers\AuditorController;
+use App\Http\Controllers\AccountantController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,15 +32,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//admin routes
-Route::middleware(['auth','role:admin'])->group(function () {
-    Route::get('/admin/dashboard',[AdminController::class,'dashboard'])->name('admin.dashboard');
+//dev routes
+Route::middleware(['auth','role:dev'])->group(function () {
+    Route::get('/dev/dashboard',[DevController::class,'dashboard'])->name('dev.dashboard');
 });
 
+Route::get('/dev/dashboard', [DevController::class,'userCount'])->name('dev.dashboard');
 
-//suadmin routes
-Route::middleware(['auth','role:suadmin'])->group(function () {
-    Route::get('/suadmin/dashboard',[SuadminController::class,'dashboard'])->name('suadmin.dashboard');
+
+//auditor routes
+Route::middleware(['auth','role:auditor'])->group(function () {
+    Route::get('/auditor/dashboard',[AuditorController::class,'dashboard'])->name('auditor.dashboard');
+});
+
+//accountant routes
+Route::middleware(['auth','role:accountant'])->group(function () {
+    Route::get('/accountant/dashboard',[AccountantController::class,'dashboard'])->name('accountant.dashboard');
 });
 
 require __DIR__.'/auth.php';
