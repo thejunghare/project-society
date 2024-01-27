@@ -50,6 +50,8 @@ Route::middleware(['auth', 'role:dev'])->group(function () {
 //auditor routes
 Route::middleware(['auth', 'role:auditor'])->group(function () {
     Route::get('/auditor/dashboard', [AuditorController::class, 'dashboard'])->name('auditor.dashboard');
+    //all socities
+    Route::get('/auditor/view/socities', [AuditorController::class,'show'])->name('auditor.show');
 });
 
 //accountant routes
