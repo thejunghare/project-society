@@ -36,12 +36,35 @@ class DevController extends Controller
         return view('dev.show', compact('users'));
     }
 
+    public function edit($id)
+    {
+        $user = User::find($id);
+        return view('dev.edit', compact('user'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        // $request->validate([
+        //     'role' => 'required',
+        //  ]);
+
+        $user->role = $request->get('role');
+        $user->save();
+
+        return redirect('/dev/manage')->with([
+            'success' => 'User role updated!',
+            'error' => `Can't update rolePlease try again.`
+        ]);
+    }
+
     public function destory($id)
     {
         $user = User::find($id);
         $user->delete();
         return redirect('/dev/manage')->with([
-            'success' => 'User Removed!'
+            'success' => 'User destroyed!'
         ]);
 
     }
