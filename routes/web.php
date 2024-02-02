@@ -1,11 +1,9 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DevController;
-use App\Http\Controllers\AuditorController;
-use App\Http\Controllers\AccountantController;
-
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DeveloperController;
+use App\Http\Controllers\AccountantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,29 +31,12 @@ Route::middleware('auth')->group(function () {
 });
 
 //dev routes
-Route::middleware(['auth', 'role:dev'])->group(function () {
-    Route::get('/dev/dashboard', [DevController::class, 'dashboard'])->name('dev.dashboard');
-    //show count
-    Route::get('/dev/dashboard', [DevController::class, 'userCount'])->name('dev.dashboard');
-    //see user
-    Route::get('/dev/manage/', [DevController::class, 'user'])->name('dev.show');
-    //edit user
-    Route::get('/dev/{user}/edit', [DevController::class,'edit'])->name('dev.edit');
-    //update user
-    Route::patch('/dev/update/{user}', [DevController::class,'update'])->name('dev.update');
-    //destory user
-    Route::delete('/dev/destory/{user}', [DevController::class, 'destory'])->name('dev.destory');
-});
-
-//auditor routes
-Route::middleware(['auth', 'role:auditor'])->group(function () {
-    Route::get('/auditor/dashboard', [AuditorController::class, 'dashboard'])->name('auditor.dashboard');
-    //all socities
-    Route::get('/auditor/view/socities', [AuditorController::class,'show'])->name('auditor.show');
+Route::middleware(['auth', 'role_id:1'])->group(function () {
+    Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
 });
 
 //accountant routes
-Route::middleware(['auth', 'role:accountant'])->group(function () {
+Route::middleware(['auth', 'role_id:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
 });
 

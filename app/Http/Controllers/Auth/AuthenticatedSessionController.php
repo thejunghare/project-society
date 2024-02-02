@@ -30,15 +30,20 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $url = "";
-        if($request->user()->role === "dev"){
-            $url = "dev/dashboard";
-        }elseif($request->user()->role === "auditor"){
-            $url = "auditor/dashboard";
-        }elseif($request->user()->role === "accountant"){
-            $url = "accountant/dashboard";
-        } else{
-            $url = "dashboard";
+        $role_id = $request->user()->role_id;
+
+        switch ($role_id) {
+            case 1:
+                $url = "/developer/dashboard";
+                break;
+            case 2:
+                $url = "/accountant/dashboard";
+                break;
+            default:
+                $url = "dashboard";
+                break;
         }
+
 
         return redirect()->intended($url);
     }

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
-class AccountantController extends Controller
+class DeveloperController extends Controller
 {
     //
     public function dashboard()
     {
-        return view('accountant.dashboard');
+        return view('developer.dashboard');
     }
+
+
 }
