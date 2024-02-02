@@ -15,7 +15,7 @@
         </svg>
         <span class="sr-only">Info</span>
         <div>
-            <span class="font-medium">Welcome!</span> {{ Auth::user()->name }}
+            <span class="font-medium">Welcome!</span> {{ Auth::user()->role_id }}
         </div>
     </div>
 </x-app-layout>

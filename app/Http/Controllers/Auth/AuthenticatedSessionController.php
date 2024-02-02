@@ -29,8 +29,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $url = "";
         $role_id = $request->user()->role_id;
+        $url = "";
 
         switch ($role_id) {
             case 1:

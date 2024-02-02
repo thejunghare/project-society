@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\ManageUser\ManageUserIndex;
 use App\Http\Controllers\DeveloperController;
 use App\Http\Controllers\AccountantController;
 
@@ -30,14 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//dev routes
+//developer routes
 Route::middleware(['auth', 'role_id:1'])->group(function () {
-    Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
+Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
 });
 
 //accountant routes
-Route::middleware(['auth', 'role_id:2'])->group(function () {
+ Route::middleware(['auth', 'role_id:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
 });
+
+Route::get('/manage', ManageUserIndex::class);
 
 require __DIR__ . '/auth.php';
