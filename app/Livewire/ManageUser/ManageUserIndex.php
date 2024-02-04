@@ -66,7 +66,7 @@ class ManageUserIndex extends Component
         ])
             ->title('Manage Users - Society')
             ->with([
-                'button' => 'New user'
+                'button' => 'Create new user'
             ]);
     }
 }
