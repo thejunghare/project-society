@@ -44,7 +44,7 @@ class ManageUserIndex extends Component
         ]);
 
         session()->flash('success', 'User added.');
-        // $this->reset();
+        return $this->redirect('/manage');
     }
 
     public function delete($userId)
