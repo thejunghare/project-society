@@ -15,8 +15,19 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Nunito', ...defaultTheme.fontFamily.sans],
-            },
+                'body': [
+                  'Inter',
+                  'ui-sans-serif',
+                  'system-ui',
+                  // other fallback fonts
+                ],
+                'sans': [
+                  'Inter',
+                  'ui-sans-serif',
+                  'system-ui',
+                  // other fallback fonts
+                ]
+              }
         },
     },
 
