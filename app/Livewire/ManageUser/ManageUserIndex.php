@@ -20,6 +20,7 @@ class ManageUserIndex extends Component
     public $phone;
     public $password;
     public $search;
+    public $showModal = false;
     use WithPagination;
 
     public function mount()
@@ -44,8 +45,14 @@ class ManageUserIndex extends Component
         ]);
 
         session()->flash('success', 'User added.');
+        // $this->showModal = true;
         return $this->redirect('/manage');
     }
+
+    /*   public function openModal()
+      {
+          $this->showModal = true;
+      } */
 
     public function delete($userId)
     {
