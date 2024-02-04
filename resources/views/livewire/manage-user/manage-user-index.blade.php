@@ -100,27 +100,86 @@
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $user->name }}
+
+                            {{-- class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" --}}
+                            @if ($editUserId === $user->id)
+                                <input wire:model="editUserName" type="text" wire:model="name" id="name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-32 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Type user name">
+
+                                @error('editUserName')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                        role="alert">
+                                        <span class="font-medium"> {{ $message }}
+                                    </div>
+                                @enderror
+                            @else
+                                {{ $user->name }}
+                            @endif
                         </th>
                         <td class="px-6 py-4">
-                            {{ $user->role_id }}
+                            {{-- {{ $user->role_id }} --}}
+                            @if ($editUserId === $user->id)
+                                <input wire:model="editUserRole" type="number" wire:model="name" id="name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-32 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Type user name">
+
+                                @error('editUserRole')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                        role="alert">
+                                        <span class="font-medium"> {{ $message }}
+                                    </div>
+                                @enderror
+                            @else
+                                {{ $user->role_id }}
+                            @endif
                         </td>
                         <td class="px-6 py-4">
-                            {{ $user->email }}
+                            {{-- {{ $user->email }} --}}
+                            @if ($editUserId === $user->id)
+                                <input wire:model="editUserEmail" type="email" wire:model="name" id="name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-32 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Type user name">
+
+                                @error('editUserEmail')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                        role="alert">
+                                        <span class="font-medium"> {{ $message }}
+                                    </div>
+                                @enderror
+                            @else
+                                {{ $user->email }}
+                            @endif
                         </td>
                         <td class="px-6 py-4">
-                            {{ $user->phone }}
+                            {{-- {{ $user->phone }} --}}
+                            @if ($editUserId === $user->id)
+                                <input wire:model="editUserPhone" type="number" wire:model="name" id="name"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-32 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Type user name">
+
+                                @error('editUserPhone')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                        role="alert">
+                                        <span class="font-medium"> {{ $message }}
+                                    </div>
+                                @enderror
+                            @else
+                                {{ $user->phone }}
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-center flex justify-evenly items-center">
-                            <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            {{-- edit --}}
+                            <button wire:click.prevent="edit({{ $user->id }})"
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="square" stroke-linejoin="round"
                                         stroke-width="2"
                                         d="M7 19H5a1 1 0 0 1-1-1v-1a3 3 0 0 1 3-3h1m4-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm7.4 1.6a2 2 0 0 1 0 2.7l-6 6-3.4.7.7-3.4 6-6a2 2 0 0 1 2.7 0Z" />
                                 </svg>
-                            </a>
-
+                            </button>
+                            {{-- delete --}}
                             <button wire:confirm="Are you sure you want to delete this user?"
                                 wire:click.prevent="delete({{ $user->id }})"
                                 class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
@@ -137,5 +196,34 @@
             </tbody>
         </table>
     </div>
-    {{ $users->links() }}
+
+    <div class="m-4">
+        {{ $users->links() }}
+    </div>
+
+    {{-- update and cancel buttons --}}
+    @foreach ($users as $user)
+        @if ($editUserId === $user->id)
+            <div class="mt-2  inline-flex rounded-md shadow-sm" role="group">
+                <button wire:click="update" type="button"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                    <svg class="w-4  h-4 me-2 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m14.3 4.8 2.9 2.9M7 7H4a1 1 0 0 0-1 1v10c0 .6.4 1 1 1h11c.6 0 1-.4 1-1v-4.5m2.4-10a2 2 0 0 1 0 3l-6.8 6.8L8 14l.7-3.6 6.9-6.8a2 2 0 0 1 2.8 0Z" />
+                    </svg>
+                    Update
+                </button>
+                <button wire:click="cancelEdit" type="button"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                    <svg class="w-4 h-4 me-2 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    Cancel
+                </button>
+            </div>
+        @endif
+    @endforeach
 </div>
