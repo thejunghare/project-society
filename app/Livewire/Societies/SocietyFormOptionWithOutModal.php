@@ -4,6 +4,7 @@ namespace App\Livewire\Societies;
 
 use Livewire\Component;
 use App\Models\Societies;
+use Illuminate\Support\Facades\Auth;
 
 class SocietyFormOptionWithOutModal extends Component
 {
@@ -15,7 +16,9 @@ class SocietyFormOptionWithOutModal extends Component
 
     public function mount()
     {
-        $this->societyName = Societies::pluck('name', 'id');
+        // $this->societyName = Societies::pluck('name', 'id')->where('accountant_id', Auth::user()->id);
+        $this->societyName = Societies::where('accountant_id', 1)->pluck('name', 'id');
+
     }
     public function render()
     {
