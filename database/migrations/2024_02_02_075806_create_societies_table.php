@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('societies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('phone')->unique();
             $table->text('address')->unique();
 
             $table->integer('member_count');

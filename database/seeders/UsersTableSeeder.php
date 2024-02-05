@@ -18,9 +18,9 @@ class UsersTableSeeder extends Seeder
             // user 1
             [
                 'role_id' => 1,
-                'name' => 'paddy',
-                'email' => 'paddy@gmail.com',
-                'phone' => '900481065',
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9004298600',
                 'password' => Hash::make('password'),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -29,19 +29,39 @@ class UsersTableSeeder extends Seeder
             // user 2
             [
                 'role_id' => 2,
-                'name' => 'prathamesh',
-                'email' => 'prathamesh@gmail.com',
-                'phone' => '90048104',
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9920882371',
                 'password' => Hash::make('password'),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-             // user 2
+             // user 3
              [
                 'role_id' => 3,
-                'name' => 'prasad',
-                'email' => 'prasad@gmail.com',
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '900486900',
+                'password' => Hash::make('password'),
+                'created_at' => now(),
+                'updated_at' => now(),
+             ],
+              // user 4
+              [
+                'role_id' => 3,
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
                 'phone' => '900410654',
+                'password' => Hash::make('password'),
+                'created_at' => now(),
+                'updated_at' => now(),
+             ],
+              // user 5
+              [
+                'role_id' => 3,
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9004106548',
                 'password' => Hash::make('password'),
                 'created_at' => now(),
                 'updated_at' => now(),

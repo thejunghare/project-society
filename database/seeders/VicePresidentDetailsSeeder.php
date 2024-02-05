@@ -15,11 +15,28 @@ class VicePresidentDetailsSeeder extends Seeder
     {
         //
         DB::table('vice_president_details')->insert([
-            // president one
+            //  one
             [
-                'name' => 'vice president one',
-                'email' => 'vicepresident1@gmail.com',
-                'phone' => '789456123',
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9004289600',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+             //  two
+             [
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9920882371',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            //  three
+            [
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9004286900',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

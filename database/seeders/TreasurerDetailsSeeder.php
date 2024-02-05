@@ -15,11 +15,28 @@ class TreasurerDetailsSeeder extends Seeder
     {
         //
         DB::table('treasurer_details')->insert([
-            // president one
+            //  one
             [
-                'name' => 'treasurer one',
-                'email' => 'treasurer1@gmail.com',
-                'phone' => '789456123',
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9004289600',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            //  two
+            [
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9920882371',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+              //  three
+              [
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9004286900',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

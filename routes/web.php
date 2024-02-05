@@ -2,11 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-use App\Livewire\ManageUser\ManageUserShow;
 use App\Livewire\ManageUser\ManageUserIndex;
 use App\Http\Controllers\DeveloperController;
-use App\Livewire\ManageUser\ManageUserCreate;
 use App\Http\Controllers\AccountantController;
+use App\Livewire\Societies\ManageSocietiesIndex;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,12 +37,15 @@ Route::middleware(['auth', 'role_id:1'])->group(function () {
     Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
 });
 
+Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
+Route::get('/developer/manage', ManageUserIndex::class)->name('users');
+
 //accountant routes
 Route::middleware(['auth', 'role_id:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
 });
 
-Route::get('/manage', ManageUserIndex::class)->name('manage');
-Route::get('/manage/{user}', ManageUserShow::class);
+Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
+Route::get('/accountant/societies', ManageSocietiesIndex::class)->name('societies');
 
 require __DIR__ . '/auth.php';

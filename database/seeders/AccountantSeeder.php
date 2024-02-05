@@ -16,11 +16,20 @@ class AccountantSeeder extends Seeder
         //
 
         DB::table('accountants')->insert([
-            // president one
+            //  one
             [
-                'name' => 'accountant one',
-                'email' => 'accountant1@gmail.com',
-                'phone' => '789456123',
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9004289600',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            //  two
+            [
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '99208882371',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
