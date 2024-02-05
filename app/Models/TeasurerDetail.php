@@ -6,16 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Member extends Model
+class TeasurerDetail extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'society_id'
-    ];
-
-    public function society() :BelongsTo {
-        return $this->belongsTo(Societies::class);
+    public function society(): BelongsTo
+    {
+        return $this->belongsTo(Societies::class, "");
     }
 }

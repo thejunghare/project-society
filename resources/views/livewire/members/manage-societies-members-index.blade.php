@@ -1,6 +1,15 @@
 <div class="mt-12">
     {{-- Do your work, then step back. --}}
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an society</label>
+    <select id="countries"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option selected disabled>Choose a country</option>
+        {{-- @foreach ($societyOptions as $key => $value)
+            <option value="{{ $key }}">{{ $value }}</option>
+        @endforeach --}}
+    </select>
+
+    <div class="mt-4 relative overflow-x-auto">
         <div
             class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
             <div>
@@ -130,8 +139,8 @@
                         <button type="button"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                             data-modal-hide="editUserModal">
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 14 14">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                     stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                             </svg>
@@ -215,5 +224,4 @@
             </div>
         </div>
     </div>
-
 </div>
