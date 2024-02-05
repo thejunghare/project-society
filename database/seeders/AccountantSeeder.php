@@ -18,18 +18,24 @@ class AccountantSeeder extends Seeder
         DB::table('accountants')->insert([
             //  one
             [
-                'name' => fake()->name(),
+                /* 'name' => fake()->name(),
                 'email' => fake()->unique()->safeEmail(),
                 'phone' => '9004289600',
+                'created_at' => now(),
+                'updated_at' => now(), */
+                'user_id' => '2',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
 
             //  two
             [
-                'name' => fake()->name(),
+                /* 'name' => fake()->name(),
                 'email' => fake()->unique()->safeEmail(),
                 'phone' => '99208882371',
+                'created_at' => now(),
+                'updated_at' => now(), */
+                'user_id' => '3',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

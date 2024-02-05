@@ -36,7 +36,18 @@ class UsersTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-             // user 3
+
+              // user 3
+              [
+                'role_id' => 2,
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone' => '9920882372',
+                'password' => Hash::make('password'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+             // user 4
              [
                 'role_id' => 3,
                 'name' => fake()->name(),
@@ -46,7 +57,7 @@ class UsersTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
              ],
-              // user 4
+              // user 5
               [
                 'role_id' => 3,
                 'name' => fake()->name(),
@@ -56,7 +67,7 @@ class UsersTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
              ],
-              // user 5
+              // user 6
               [
                 'role_id' => 3,
                 'name' => fake()->name(),
