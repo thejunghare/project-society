@@ -6,6 +6,7 @@ use App\Livewire\ManageUser\ManageUserIndex;
 use App\Http\Controllers\DeveloperController;
 use App\Http\Controllers\AccountantController;
 use App\Livewire\Societies\ManageSocietiesIndex;
+use App\Livewire\Members\ManageSocietiesMembersIndex;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,5 +48,6 @@ Route::middleware(['auth', 'role_id:2'])->group(function () {
 
 Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
 Route::get('/accountant/societies', ManageSocietiesIndex::class)->name('societies');
+Route::get('/accountant/societies/members', ManageSocietiesMembersIndex::class)->name('members');
 
 require __DIR__ . '/auth.php';
