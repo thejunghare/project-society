@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Accountant extends Model
 {
     use HasFactory;
+    protected $fillable = ['user_id'];
+
 
     public function society() :BelongsTo {
         return $this->belongsTo(Societies::class);

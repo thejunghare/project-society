@@ -50,4 +50,8 @@ class User extends Authenticatable
         return $this->hasOne(Member::class, 'user_id');
     }
 
+    public function accountants()
+    {
+        return $this->hasMany(Accountant::class);
+    }
 }

@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
             // user 1
             [
                 'role_id' => 1,
-                'name' => fake()->name(),
+                'name' => 'Prasad Junghare',
                 'email' => fake()->unique()->safeEmail(),
                 'phone' => '9004298600',
                 'password' => Hash::make('password'),
@@ -29,7 +29,7 @@ class UsersTableSeeder extends Seeder
             // user 2
             [
                 'role_id' => 2,
-                'name' => fake()->name(),
+                'name' => 'Prathamesh Salunkhe',
                 'email' => fake()->unique()->safeEmail(),
                 'phone' => '9920882371',
                 'password' => Hash::make('password'),
@@ -40,7 +40,7 @@ class UsersTableSeeder extends Seeder
               // user 3
               [
                 'role_id' => 2,
-                'name' => fake()->name(),
+                'name' => 'Pawan Panchal',
                 'email' => fake()->unique()->safeEmail(),
                 'phone' => '9920882372',
                 'password' => Hash::make('password'),

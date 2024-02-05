@@ -34,17 +34,17 @@ Route::middleware('auth')->group(function () {
 });
 
 //developer routes
-Route::middleware(['auth', 'role_id:1'])->group(function () {
+/* Route::middleware(['auth', 'role_id:1'])->group(function () {
     Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
-});
+}); */
 
 Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
 Route::get('/developer/manage', ManageUserIndex::class)->name('users');
 
 //accountant routes
-Route::middleware(['auth', 'role_id:2'])->group(function () {
+/* Route::middleware(['auth', 'role_id:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
-});
+}); */
 
 Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
 Route::get('/accountant/societies', ManageSocietiesIndex::class)->name('societies');
