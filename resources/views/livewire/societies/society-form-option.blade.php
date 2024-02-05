@@ -38,13 +38,6 @@
                                     <option value="{{ $id }}">{{ $name }}</option>
                                 @endforeach
                             </select>
-
-
-                            @error('selectedSociety')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
                         </div>
                     </div>
                     <button type="submit"
