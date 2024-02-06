@@ -43,6 +43,6 @@ class ManageSocietiesMembersIndex extends Component
 
         return view('livewire.members.manage-societies-members-index', [
             'members' => $members,
-        ]);
+        ])->title('Manage society members - societies');
     }
 }
