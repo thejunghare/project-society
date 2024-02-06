@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Faq\FaqIndex;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\ManageUser\ManageUserIndex;
@@ -49,5 +50,8 @@ Route::get('/developer/manage', ManageUserIndex::class)->name('users');
 Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
 Route::get('/accountant/societies', ManageSocietiesIndex::class)->name('societies');
 Route::get('/accountant/societies/members', ManageSocietiesMembersIndex::class)->name('members');
+
+// routes for faq
+Route::get('/faq', FaqIndex::class);
 
 require __DIR__ . '/auth.php';
