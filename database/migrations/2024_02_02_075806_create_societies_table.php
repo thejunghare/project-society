@@ -37,7 +37,7 @@ return new class extends Migration {
             $table->foreign('vice_president_id')->references('id')->on('vice_president_details');
             $table->foreign('secretary_id')->references('id')->on('secretary_details');
             $table->foreign('treasurer_id')->references('id')->on('treasurer_details');
-            $table->foreign('accountant_id')->references('id')->on('accountants');
+            $table->foreign('accountant_id')->references('user_id')->on('accountants');
 
             $table->timestamps();
         });

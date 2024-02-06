@@ -12,12 +12,10 @@ return new class extends Migration {
     {
         Schema::create('accountants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            /*
+            $table->unsignedBigInteger('user_id');/*
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone')->unique();
-            */
+            $table->string('phone')->unique(); */
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
