@@ -12,13 +12,13 @@ class ManageSocietiesMembersIndex extends Component
 {
     use WithPagination;
 
-    public $societyName;
+    public $societies;
     public $selectedSociety;
     public $search;
 
     public function mount()
     {
-        $this->societyName = Societies::where('accountant_id', 1)->pluck('name', 'id');
+        $this->societies = Societies::where('accountant_id', 1)->pluck('name', 'id');
 
     }
 
