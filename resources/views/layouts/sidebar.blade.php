@@ -8,7 +8,6 @@
                 $roles = [
                     1 => 'developer',
                     2 => 'accountant',
-                    3 => 'dashboard',
                 ];
 
                 $role_id = Auth::user()->role_id;
@@ -18,10 +17,13 @@
                 <li>
                     <a href="/{{ $roles[$role_id] }}/dashboard"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6a7.5 7.5 0 1 0 8 8h-8V6Z"/>
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 3H13v8h8v-.5A7.5 7.5 0 0 0 13.5 3Z"/>
-                          </svg>
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6a7.5 7.5 0 1 0 8 8h-8V6Z" />
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.5 3H13v8h8v-.5A7.5 7.5 0 0 0 13.5 3Z" />
+                        </svg>
                         <span class="ms-3">Dashboard</span>
                     </a>
                 </li>
@@ -31,10 +33,27 @@
                 <li>
                     <a href="/dashboard"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6a7.5 7.5 0 1 0 8 8h-8V6Z"/>
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 3H13v8h8v-.5A7.5 7.5 0 0 0 13.5 3Z"/>
-                          </svg>
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6a7.5 7.5 0 1 0 8 8h-8V6Z" />
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.5 3H13v8h8v-.5A7.5 7.5 0 0 0 13.5 3Z" />
+                        </svg>
+                        <span class="ms-3">Dashboard</span>
+                    </a>
+                </li>
+            @endif
+
+            @if (Auth::user()->role_id == 3)
+                <li>
+                    <a href="/pay"
+                        class="pointer-events-none flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 8h6m-6 4h6m-6 4h6M6 3v18l2-2 2 2 2-2 2 2 2-2 2 2V3l-2 2-2-2-2 2-2-2-2 2-2-2Z" />
+                        </svg>
                         <span class="ms-3">Pay Bills</span>
                     </a>
                 </li>
@@ -90,8 +109,8 @@
 
             {{-- Report issues  --}}
             <li>
-                <a href="/dashboard"
-                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <a href=""
+                    class="pointer-events-none flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -102,8 +121,8 @@
             </li>
 
             <li>
-                <a href="#"
-                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <a href=""
+                    class="pointer-events-none flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
