@@ -1,7 +1,7 @@
 <div class="mt-12">
     {{-- Do your work, then step back. --}}
     @if ($societies->isEmpty())
-       <x-alert-no-registered-societies/>
+        <x-alert-no-registered-societies />
     @else
         <label for="societies" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a
             society</label>
@@ -239,9 +239,11 @@
                 <span class="font-medium">No registered members found!</span>
             </div>
         @endif
-        {{ $members->links() }}
+        <div class="my-5">
+            {{ $members->links() }}
+        </div>
     @else
-        @if (!$societies)
+        @if ($societies)
             <div class="my-4 p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300"
                 role="alert">
                 <span class="font-medium"> Please choose a society to see members!</span>

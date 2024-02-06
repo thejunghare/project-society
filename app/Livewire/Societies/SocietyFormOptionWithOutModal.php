@@ -10,6 +10,7 @@ class SocietyFormOptionWithOutModal extends Component
 {
     public $societyId;
     public $societyName;
+    public $societies;
 
     public $selectedSociety;
 
@@ -17,7 +18,8 @@ class SocietyFormOptionWithOutModal extends Component
     public function mount()
     {
         // $this->societyName = Societies::pluck('name', 'id')->where('accountant_id', Auth::user()->id);
-        $this->societyName = Societies::where('accountant_id', 1)->pluck('name', 'id');
+        $this->societies = Societies::pluck('name', 'id')->where('accountant_id', Auth::user()->id);
+        // $this->societyName = Societies::where('accountant_id', 1)->pluck('name', 'id');
 
     }
     public function render()

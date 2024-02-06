@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\Societies;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ManageSocietiesMembersIndex extends Component
 {
@@ -18,7 +19,7 @@ class ManageSocietiesMembersIndex extends Component
 
     public function mount()
     {
-        $this->societies = Societies::where('accountant_id', 1)->pluck('name', 'id');
+        $this->societies = Societies::where('accountant_id', Auth::user()->id)->pluck('name', 'id');
 
     }
 
