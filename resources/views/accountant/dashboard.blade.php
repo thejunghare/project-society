@@ -22,7 +22,7 @@
     {{-- facts --}}
 
 
-    
+
 
     @livewire('accountant.accountant-index')
 </x-app-layout>

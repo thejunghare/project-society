@@ -3,10 +3,12 @@
 namespace App\Livewire\ManageUser;
 
 use Exception;
+use App\Models\Role;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Hash;
 
 class ManageUserIndex extends Component
@@ -15,6 +17,11 @@ class ManageUserIndex extends Component
     // public $users;
 
     #[Rule('required|string')]
+    #[Title('Manage Users - Society')]
+
+    // create user
+
+    public $role_id;
     public $name;
     public $email;
     public $phone;
@@ -33,11 +40,13 @@ class ManageUserIndex extends Component
 
     public function mount()
     {
+
     }
 
     public function save()
     {
         $this->validate([
+            'role_id' => ['required', 'numeric', 'min:1', 'max:3'],
             'name' => ['required', 'string', 'min:4', 'max:50'],
             'email' => ['required', 'email', 'unique:users'],
             'phone' => ['required'],
@@ -45,7 +54,7 @@ class ManageUserIndex extends Component
         ]);
 
         User::create([
-            'role_id' => 3,
+            'role_id' => $this->role_id,
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
@@ -53,8 +62,8 @@ class ManageUserIndex extends Component
         ]);
 
         session()->flash('success', 'User added.');
-        // $this->showModal = true;
-        return $this->redirect('/manage');
+        return $this->redirect(route('users'));
+
     }
 
     /*   public function openModal()
@@ -93,7 +102,6 @@ class ManageUserIndex extends Component
         return view('livewire.manage-user.manage-user-index', [
             'users' => User::latest()->where('name', 'like', "%{$this->search}%")->paginate(5),
         ])
-            ->title('Manage Users - Society')
             ->with([
                 'button' => 'Create new user'
             ]);

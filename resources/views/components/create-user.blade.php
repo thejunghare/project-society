@@ -38,6 +38,25 @@
                             </div>
                         @enderror
                     </div>
+                    {{-- role id --}}
+                    <div class="col-span-2">
+                        <label for="role_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role
+                            ID</label>
+                        <select id="roles" wire:model="role_id"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option selected>Choose a role</option>
+                            <option value="1">admin</option>
+                            <option value="2">accountant</option>
+                            <option value="3">user</option>
+                        </select>
+
+                        @error('role_id')
+                            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                role="alert">
+                                <span class="font-medium"> {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
                     {{-- email --}}
                     <div class="col-span-2">
                         <label for="email"
