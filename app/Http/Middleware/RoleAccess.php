@@ -18,8 +18,7 @@ class RoleAccess
         if (auth()->user()->role_id == $roleId) {
             return $next($request);
         }
-
-        return response()->json(["message" => "You do not have permission to access this page"], Response::HTTP_FORBIDDEN);
-        // return response()->view('errors.check-permission');
+        
+        return response()->view('errors.check-permission');
     }
 }
