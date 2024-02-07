@@ -2,9 +2,9 @@
 
 use App\Livewire\Faq\FaqIndex;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\ManageUser\ManageUserIndex;
-use App\Http\Controllers\DeveloperController;
 use App\Http\Controllers\AccountantController;
 use App\Livewire\Societies\ManageSocietiesIndex;
 use App\Livewire\Members\ManageSocietiesMembersIndex;
@@ -20,6 +20,14 @@ use App\Livewire\Members\ManageSocietiesMembersIndex;
 |
 */
 
+
+/*
+|--------------------------------------------------------------------------
+| Default Routes
+|--------------------------------------------------------------------------
+*/
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -28,30 +36,54 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//developer routes
-/* Route::middleware(['auth', 'role_id:1'])->group(function () {
-    Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
-}); */
 
-Route::get('/developer/dashboard', [DeveloperController::class, 'dashboard'])->name('developer.dashboard');
-Route::get('/developer/manage', ManageUserIndex::class)->name('users');
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
 
-//accountant routes
-/* Route::middleware(['auth', 'role_id:2'])->group(function () {
+
+Route::middleware(['auth', 'check-role:1'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/manage/users', ManageUserIndex::class)->name('users');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Accountant Routes
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware(['auth', 'check-role:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
-}); */
+    Route::get('/accountant/manage/societies', ManageSocietiesIndex::class)->name('societies');
+    Route::get('/accountant/manage/societies/members', ManageSocietiesMembersIndex::class)->name('members');
+});
 
-Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
-Route::get('/accountant/societies', ManageSocietiesIndex::class)->name('societies');
-Route::get('/accountant/societies/members', ManageSocietiesMembersIndex::class)->name('members');
 
-// routes for faq
+/*
+|--------------------------------------------------------------------------
+| Normal User Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'check-role:3'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    });
+});
+
+
 Route::get('/faq', FaqIndex::class);
 
 require __DIR__ . '/auth.php';

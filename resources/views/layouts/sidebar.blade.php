@@ -6,7 +6,7 @@
 
             @php
                 $roles = [
-                    1 => 'developer',
+                    1 => 'admin',
                     2 => 'accountant',
                 ];
 

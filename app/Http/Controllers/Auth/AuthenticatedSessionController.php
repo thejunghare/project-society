@@ -30,11 +30,11 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $role_id = $request->user()->role_id;
-        $url = "";
+        $url = "dashboard";
 
         switch ($role_id) {
             case 1:
-                $url = "/developer/dashboard";
+                $url = "/admin/dashboard";
                 break;
             case 2:
                 $url = "/accountant/dashboard";
@@ -43,7 +43,6 @@ class AuthenticatedSessionController extends Controller
                 $url = "dashboard";
                 break;
         }
-
 
         return redirect()->intended($url);
     }

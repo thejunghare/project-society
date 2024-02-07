@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class DeveloperController extends Controller
+class AdminController extends Controller
 {
     //
     public function __construct(){
@@ -14,7 +14,7 @@ class DeveloperController extends Controller
     }
     public function dashboard()
     {
-        return view('developer.dashboard');
+        return view('admin.dashboard');
     }
 
 

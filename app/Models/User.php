@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Attribute;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -45,6 +47,19 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @param string $value
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function roleId(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => ["admin", "accountant", "user"][$value],
+        );
+    }
+
     public function member(): HasOne
     {
         return $this->hasOne(Member::class, 'user_id');
@@ -54,4 +69,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Accountant::class);
     }
+
+
 }
