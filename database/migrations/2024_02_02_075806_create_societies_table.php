@@ -19,6 +19,10 @@ return new class extends Migration {
             $table->text('bank_ifsc_code');
             $table->text('bank_account_number')->unique();
             $table->integer('member_count');
+            $table->text('president_name')->nullable();
+            $table->text('vice_president_name')->nullable();
+            $table->text('treasurer_name')->nullable();
+            $table->text('secretary_name')->nullable();
 
             $table->unsignedBigInteger('accountant_id');
 
