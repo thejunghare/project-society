@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ManageSocietiesIndex extends Component
 {
-
     #[Title('Manage societies - mySocietyERP')]
 
     public $societyOptions;
@@ -40,18 +39,15 @@ class ManageSocietiesIndex extends Component
     #[Validate('required')]
     public $accountant_id = '';
 
-
-
-
     public $president_name = '';
     public $vice_president_name = '';
     public $treasurer_name = '';
     public $secretary_name = '';
 
     public function mount()
-{
-    $this->accountant_id = Auth::user()->id;
-}
+    {
+        $this->accountant_id = Auth::user()->id;
+    }
 
     public function save()
     {
@@ -68,16 +64,13 @@ class ManageSocietiesIndex extends Component
             'accountant_id',
         ]));
 
-
         return $this->redirect('/accountant/manage/societies');
     }
 
     public function render()
     {
-
         return view('livewire.societies.manage-societies-index', [
             'societies' => Societies::latest()->where('accountant_id', Auth::user()->id)->paginate(5),
-            'accountant_id' => Auth::user()->id,
         ])
             ->with([
                 'button' => 'Create new user',
