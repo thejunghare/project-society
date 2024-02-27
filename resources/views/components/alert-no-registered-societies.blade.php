@@ -7,8 +7,13 @@
             d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
     </svg>
     <div class="ms-3 text-sm font-medium">
-        No registered socities found, <a href="#" class="font-semibold underline hover:no-underline">Register New
+        No registered socities found, <a href="#" data-modal-target="add-society-manually-modal"
+            data-modal-toggle="add-society-manually-modal" class="font-semibold underline hover:no-underline">Register
+            New
             socities</a>. Give it a click to
         register society.
     </div>
 </div>
+
+{{-- add scoiety modal manually --}}
+<x-add-society-manually-modal-body />

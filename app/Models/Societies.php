@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Societies extends Model
 {
     use HasFactory;
+    protected $fillable = ['name', 'phone', 'address','member_count', 'bank_name', 'bank_account_number', 'bank_ifsc_code', 'accountant_id'];
 
     public function member(): HasMany
     {

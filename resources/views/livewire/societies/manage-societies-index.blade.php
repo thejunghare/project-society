@@ -1,5 +1,8 @@
 <div class="mt-12">
     {{-- Do your work, then step back. --}}
+
+    <x-success-toaster />
+
     @if ($societies->isEmpty())
         <x-alert-no-registered-societies />
     @else
@@ -7,6 +10,7 @@
             <div
                 class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
                 <div>
+
                     <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction"
                         class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                         type="button">
@@ -24,17 +28,20 @@
                         <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
                             aria-labelledby="dropdownActionButton">
                             <li>
-                                <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reward</a>
+                                <a href="#" data-modal-target="add-society-manually-modal"
+                                    data-modal-toggle="add-society-manually-modal"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Add
+                                    society manually</a>
+                            </li>
+                            <li>
+                                <a href="#" data-modal-target="add-scoiety-auto-modal"
+                                    data-modal-toggle="add-scoiety-auto-modal"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Add
+                                    society auto</a>
                             </li>
                             <li>
                                 <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Promote</a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Activate
-                                    account</a>
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
                             </li>
                         </ul>
                         <div class="py-1">
@@ -44,6 +51,15 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- add scoiety modal manually --}}
+                <x-add-society-manually-modal-body />
+
+                {{-- csv, execl upload auto --}}
+                <x-add-society-auto-modal-body />
+
+
+                {{-- search --}}
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
