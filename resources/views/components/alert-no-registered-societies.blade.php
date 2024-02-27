@@ -11,9 +11,13 @@
             data-modal-toggle="add-society-manually-modal" class="font-semibold underline hover:no-underline">Register
             New
             socities</a>. Give it a click to
-        register society.
+        register society. OR <a href="#" data-modal-target="add-scoiety-auto-modal"
+            data-modal-toggle="add-scoiety-auto-modal" class="font-semibold underline hover:no-underline">Upload CSV,
+            Excel</a>
     </div>
 </div>
 
 {{-- add scoiety modal manually --}}
 <x-add-society-manually-modal-body />
+{{-- add scoiety modal auto --}}
+<x-add-society-auto-modal-body />
