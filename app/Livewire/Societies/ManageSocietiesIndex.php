@@ -4,14 +4,12 @@ namespace App\Livewire\Societies;
 
 use Livewire\Component;
 use App\Models\Societies;
-use App\Models\Accountant;
 use Illuminate\Http\Request;
-use Ixudra\Curl\Facades\Curl;
 
+use Ixudra\Curl\Facades\Curl;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
@@ -117,40 +115,32 @@ class ManageSocietiesIndex extends Component
         $rData = json_decode($response);
 
         if (isset($rData->data->instrumentResponse->redirectInfo->url)) {
+            // Dispatch an event with the payment data
+            $this->dispatch('paymentInitiated', ['paymentData' => $rData]);
 
-            return redirect()->to($rData->data->instrumentResponse->redirectInfo->url);
+            $redirectUrl = $rData->data->instrumentResponse->redirectInfo->url;
+            return redirect()->to($redirectUrl);
         } else {
             return redirect()->route('societies')->with('error', 'Payment initialization failed.');
         }
     }
 
-    public function checkPaymentStatus(Request $request)
+    protected $listeners = ['paymentInitiated' => 'checkPaymentStatus'];
+
+    public function checkPaymentStatus($paymentStatus)
     {
-        $input = $request->all();
-
-        $saltKey = '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399';
-        $saltIndex = 1;
-
-        $finalXHeader = hash('sha256', '/pg/v1/status/' . $input['merchantId'] . '/' . $input['transactionId'] . $saltKey) . '###' . $saltIndex;
-
-        $response = Curl::to('https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/' . $input['merchantId'] . '/' . $input['transactionId'])
-            ->withHeader('Content-Type:application/json')
-            ->withHeader('accept:application/json')
-            ->withHeader('X-VERIFY:' . $finalXHeader)
-            ->withHeader('X-MERCHANT-ID:' . $input['transactionId'])
-            ->get();
-
-        $paymentStatus = json_decode($response);
-
-        if ($paymentStatus->data->success == true) {
+        // Check if the payment was successful
+        if ($paymentStatus['success'] == true && $paymentStatus['code'] == 'PAYMENT_SUCCESS') {
+            // If the payment was successful, save the data
             $this->save();
+            return redirect()->route('societies')->with('success', 'Payment successful and data saved.');
         } else {
-            return redirect()->route('societies')->with('error', 'Payment failed. Please try again.');
+            // If the payment was not successful, redirect with an error message
+            return redirect()->route('societies')->with('error', 'Payment failed or unsuccessful.');
         }
-
-        // Optionally, you can redirect the user to a success or failure page
-        // return redirect()->to($paymentStatus->data->redirectInfo->url);
     }
+
+
 
     public function save()
     {
