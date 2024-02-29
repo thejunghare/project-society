@@ -87,9 +87,9 @@ class ManageSocietiesIndex extends Component
             "merchantTransactionId" => "MT7850590068188104",
             "merchantUserId" => "MUID123",
             "amount" => $this->member_count * 120,
-            "redirectUrl" => redirect('/accountant/manage/societies'),
+            "redirectUrl" => route('societies'),
             "redirectMode" => "REDIRECT",
-            "callbackUrl" => "https://webhook.site/callback-url",
+            "callbackUrl" => 'https://webhook.site/callback-url',
             "mobileNumber" => "9999999999",
             "paymentInstrument" => [
                 "type" => "PAY_PAGE"
@@ -120,7 +120,7 @@ class ManageSocietiesIndex extends Component
 
             return redirect()->to($rData->data->instrumentResponse->redirectInfo->url);
         } else {
-            return redirect()->back()->with('error', 'Payment initialization failed.');
+            return redirect()->route('societies')->with('error', 'Payment initialization failed.');
         }
     }
 
@@ -142,15 +142,14 @@ class ManageSocietiesIndex extends Component
 
         $paymentStatus = json_decode($response);
 
-        if ($paymentStatus->data->status === 'SUCCESS') {
-
+        if ($paymentStatus->data->success == true) {
             $this->save();
         } else {
-            return redirect()->back()->with('error', 'Payment failed. Please try again.');
+            return redirect()->route('societies')->with('error', 'Payment failed. Please try again.');
         }
 
         // Optionally, you can redirect the user to a success or failure page
-        return redirect()->to($paymentStatus->data->redirectInfo->url);
+        // return redirect()->to($paymentStatus->data->redirectInfo->url);
     }
 
     public function save()
