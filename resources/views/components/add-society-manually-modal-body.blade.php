@@ -20,7 +20,7 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form class="p-4 md:p-5" wire:submit.prevent="save">
+            <form class="p-4 md:p-5" wire:submit.prevent="acceptPayment">
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     {{-- name --}}
                     <div class="col-span-2">

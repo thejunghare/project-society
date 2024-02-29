@@ -6,10 +6,12 @@ use Livewire\Component;
 use App\Models\Societies;
 use App\Models\Accountant;
 use Illuminate\Http\Request;
+use Ixudra\Curl\Facades\Curl;
+
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
-
 use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
@@ -50,7 +52,7 @@ class ManageSocietiesIndex extends Component
     public $treasurer_name = '';
     public $secretary_name = '';
 
-    public $excelFile;
+    public $upload;
 
     public function mount()
     {
@@ -59,30 +61,103 @@ class ManageSocietiesIndex extends Component
 
     public function import()
     {
-        $fileName = time() . '.' . $this->excelFile->extension();
-
-        $filePath = $this->excelFile->storeAs('uploads', $fileName);
-
-        $societies = (new FastExcel)->import(storage_path($filePath), function ($line) {
-            return Society::create([
-                'name' => $line['name'],
-                'phone' => $line['phone'],
-                'address' => $line['address'],
-                'bank_name' => $line['bank_name'],
-                'bank_ifsc_code' => $line['bank_ifsc_code'],
-                'bank_account_number' => $line['bank_account_number'],
-                'member_count' => $line['member_count'],
-                'accountant_id' => $line['accountant_id'],
-            ]);
-        });
-
-        return redirect('/accountant/manage/societies');
+        $this->upload->store('excel', 'files');
     }
 
 
+    /* $societies = (new FastExcel)->import(storage_path('app/files/'.'excel.xlsx'), function ($line) {
+               return Society::create([
+                   'name' => $line['name'],
+                   'phone' => $line['phone'],
+                   'address' => $line['address'],
+                   'bank_name' => $line['bank_name'],
+                   'bank_ifsc_code' => $line['bank_ifsc_code'],
+                   'bank_account_number' => $line['bank_account_number'],
+                   'member_count' => $line['member_count'],
+                   'accountant_id' => $line['accountant_id'],
+               ]);
+           }); */
+
+    // ...
+
+    public function acceptPayment()
+    {
+        $data = [
+            "merchantId" => "PGTESTPAYUAT",
+            "merchantTransactionId" => "MT7850590068188104",
+            "merchantUserId" => "MUID123",
+            "amount" => $this->member_count * 120,
+            "redirectUrl" => redirect('/accountant/manage/societies'),
+            "redirectMode" => "REDIRECT",
+            "callbackUrl" => "https://webhook.site/callback-url",
+            "mobileNumber" => "9999999999",
+            "paymentInstrument" => [
+                "type" => "PAY_PAGE"
+            ]
+        ];
+
+        $encode = base64_encode(json_encode($data));
+
+        $saltKey = '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399';
+        $saltIndex = 1;
+
+        $string = $encode . '/pg/v1/pay' . $saltKey;
+        $sha256 = hash('sha256', $string);
+
+        $finalXHeader = $sha256 . '###' . $saltIndex;
+
+        $url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
+
+        $response = Curl::to($url)
+            ->withHeader('Content-Type:application/json')
+            ->withHeader('X-VERIFY:' . $finalXHeader)
+            ->withData(json_encode(['request' => $encode]))
+            ->post();
+
+        $rData = json_decode($response);
+
+        if (isset($rData->data->instrumentResponse->redirectInfo->url)) {
+
+            return redirect()->to($rData->data->instrumentResponse->redirectInfo->url);
+        } else {
+            return redirect()->back()->with('error', 'Payment initialization failed.');
+        }
+    }
+
+    public function checkPaymentStatus(Request $request)
+    {
+        $input = $request->all();
+
+        $saltKey = '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399';
+        $saltIndex = 1;
+
+        $finalXHeader = hash('sha256', '/pg/v1/status/' . $input['merchantId'] . '/' . $input['transactionId'] . $saltKey) . '###' . $saltIndex;
+
+        $response = Curl::to('https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/' . $input['merchantId'] . '/' . $input['transactionId'])
+            ->withHeader('Content-Type:application/json')
+            ->withHeader('accept:application/json')
+            ->withHeader('X-VERIFY:' . $finalXHeader)
+            ->withHeader('X-MERCHANT-ID:' . $input['transactionId'])
+            ->get();
+
+        $paymentStatus = json_decode($response);
+
+        if ($paymentStatus->data->status === 'SUCCESS') {
+
+            $this->save();
+        } else {
+            return redirect()->back()->with('error', 'Payment failed. Please try again.');
+        }
+
+        // Optionally, you can redirect the user to a success or failure page
+        return redirect()->to($paymentStatus->data->redirectInfo->url);
+    }
+
     public function save()
     {
+
         $this->validate();
+
 
         Societies::create($this->only([
             'name',
@@ -95,10 +170,12 @@ class ManageSocietiesIndex extends Component
             'accountant_id',
         ]));
 
-        return $this->redirect('/accountant/manage/societies');
+
+        return redirect('/accountant/manage/societies')->with([
+            'button' => 'Create new user',
+            'success' => 'Society saved'
+        ]);
     }
-
-
 
     public function render()
     {
