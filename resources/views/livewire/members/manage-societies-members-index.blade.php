@@ -87,7 +87,16 @@
                             Phone
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Email
+                            Invoice Month
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Invoice Number
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Amount
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Status
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Action
@@ -120,15 +129,43 @@
                                 {{ $member->phone }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ $member->email }}
+                                {{ \Carbon\Carbon::parse($member->billing_month)->format('F Y') }}
                             </td>
                             <td class="px-6 py-4">
+                                {{ $member->id }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ $member->amount }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{-- {{ $member->status }} --}}
+
+                                @if ($member->status == 1)
+                                    <span
+                                        class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+                                        <span class="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
+                                        PAID
+                                    </span>
+                                @elseif($member->status == 0)
+                                    <span
+                                        class="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
+                                        <span class="w-2 h-2 me-1 bg-red-500 rounded-full"></span>
+                                        UNPAID
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td class="px-6 py-4">
                                 <!-- Modal toggle -->
-                                <a href="#" type="button" data-modal-target="editUserModal"
-                                    data-modal-show="editUserModal"
-                                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Send
-                                    Notification
-                                </a>
+                                <button type="button"
+                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    <svg class="w-3.5 h-3.5 me-2" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
+                                        <path
+                                            d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
+                                    </svg>
+                                    Download Invoice
+                                </button>
                             </td>
                         </tr>
                     @endforeach
@@ -244,7 +281,7 @@
         </div>
     @else
         @if ($societies)
-            <div class="my-4 p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300"
+            <div class="my-2 p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300"
                 role="alert">
                 <span class="font-medium"> Please choose a society to see members!</span>
             </div>
