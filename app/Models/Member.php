@@ -27,7 +27,7 @@ class Member extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function bills()
+    public function bill()
     {
         return $this->hasMany(Bill::class);
     }

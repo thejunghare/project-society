@@ -18,7 +18,7 @@ class ManageSocietiesMembersIndex extends Component
     public $selectedSociety;
     public $search;
     public $months;
-    public $currentYear, $customer, $invoice, $item;
+    public $currentYear, $customer, $invoice, $item, $bill;
 
     public function mount()
     {
@@ -40,16 +40,17 @@ class ManageSocietiesMembersIndex extends Component
         $this->currentYear = date('Y');
     }
 
-    public function generatePdf( $invoice)
+    public function generatePdf($invoiceId, $memberId)
     {
-        $invoice = Member::with(['user', 'society', 'bills.payments'])->find($invoice);
+        $invoice = Member::with(['user', 'society', 'bill']) // Eager load the bill relationship
+            ->where('id', $memberId)
+            ->first();
 
-        $userName = $invoice->user->name;
-        $societyName = $invoice->society->name;
-        $bills = $invoice->bills; //
+        $billDetails = $invoice->bill->where('id', $invoiceId)->first();
 
         return Pdf::view('pdfs.invoice', ['invoice' => $invoice])
-            ->save(storage_path('app/files/invoice.pdf'));
+            ->save(storage_path('app/files/maintenance_bill.pdf'));
+
     }
 
     public function render()
