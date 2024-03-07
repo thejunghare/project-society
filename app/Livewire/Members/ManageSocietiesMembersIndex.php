@@ -6,12 +6,9 @@ use App\Models\Member;
 use Livewire\Component;
 use App\Models\Societies;
 use Livewire\WithPagination;
-use LaravelDaily\Invoices\Invoice;
 use Spatie\LaravelPdf\Facades\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use LaravelDaily\Invoices\Classes\Buyer;
-use LaravelDaily\Invoices\Classes\InvoiceItem;
 
 class ManageSocietiesMembersIndex extends Component
 {
@@ -43,38 +40,42 @@ class ManageSocietiesMembersIndex extends Component
         $this->currentYear = date('Y');
     }
 
-    public function generatePdf(Invoice $invoice)
+    public function generatePdf( $invoice)
     {
-        $members = $this->selectedSociety
-            ? Member::where('society_id', $this->selectedSociety)
-                ->join('bills', 'members.id', '=', 'bills.member_id')
-                ->join('users', 'members.user_id', '=', 'users.id')
-                ->where(function ($query) {
-                    $query->where('users.name', 'like', "%{$this->search}%")
-                        ->orWhere('users.phone', 'like', "%{$this->search}%")
-                        ->orWhere('users.email', 'like', "%{$this->search}%");
-                })
-                ->select('users.name', 'users.phone', 'users.email', 'bills.id', 'bills.billing_month', 'bills.amount', 'bills.status')
-                ->latest('members.created_at')
-                ->paginate(5)
-            : collect();
+        $invoice = Member::with(['user', 'society', 'bills.payments'])->find($invoice);
 
-        return Pdf::view('pdfs.invoice', ['members' => $members])
+        $userName = $invoice->user->name;
+        $societyName = $invoice->society->name;
+        $bills = $invoice->bills; //
+
+        return Pdf::view('pdfs.invoice', ['invoice' => $invoice])
             ->save(storage_path('app/files/invoice.pdf'));
     }
 
     public function render()
     {
         $members = $this->selectedSociety
-            ? Member::where('society_id', $this->selectedSociety)
-                ->join('bills', 'members.id', '=', 'bills.member_id')
+            ? Member::join('bills', 'members.id', '=', 'bills.member_id')
                 ->join('users', 'members.user_id', '=', 'users.id')
+                ->where('members.society_id', $this->selectedSociety)
                 ->where(function ($query) {
                     $query->where('users.name', 'like', "%{$this->search}%")
                         ->orWhere('users.phone', 'like', "%{$this->search}%")
                         ->orWhere('users.email', 'like', "%{$this->search}%");
                 })
-                ->select('users.name', 'users.phone', 'users.email', 'bills.id', 'bills.billing_month', 'bills.amount', 'bills.status')
+                ->select(
+                    'members.id as member_id',
+                    'members.society_id',
+                    'members.user_id',
+                    'users.name',
+                    'users.phone',
+                    'users.email',
+                    'bills.id as bill_id',
+                    'bills.billing_month',
+                    'bills.amount',
+                    'bills.status',
+                    'members.created_at'
+                )
                 ->latest('members.created_at')
                 ->paginate(5)
             : collect();

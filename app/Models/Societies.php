@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Societies extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'phone', 'address','member_count', 'bank_name', 'bank_account_number', 'bank_ifsc_code', 'accountant_id'];
+    protected $fillable = ['name', 'phone', 'address', 'member_count', 'bank_name', 'bank_account_number', 'bank_ifsc_code', 'accountant_id'];
 
     public function member(): HasMany
     {
@@ -37,8 +37,13 @@ class Societies extends Model
         return $this->hasOne(TeasurerDetail::class);
     }
 
-    public function accountant(): HasOne
+    /*   public function accountant(): HasOne
+      {
+          return $this->hasOne(Accountant::class);
+      } */
+
+    public function accountant()
     {
-        return $this->hasOne(Accountant::class);
+        return $this->belongsTo(Accountant::class);
     }
 }
