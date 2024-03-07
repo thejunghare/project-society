@@ -14,7 +14,8 @@
         "laravel/vapor-core": "^2.36",
         "laraveldaily/laravel-invoices": "^3.3",
         "livewire/livewire": "^3.4",
-        "rap2hpoutre/fast-excel": "^5.3"
+        "rap2hpoutre/fast-excel": "^5.3",
+        "spatie/laravel-pdf": "^1.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.10",
