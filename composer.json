@@ -13,8 +13,7 @@
         "laravel/tinker": "^2.8",
         "laravel/vapor-core": "^2.36",
         "livewire/livewire": "^3.4",
-        "rap2hpoutre/fast-excel": "^5.3",
-        "spatie/laravel-pdf": "^1.4"
+        "rap2hpoutre/fast-excel": "^5.3"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.10",

@@ -6,7 +6,6 @@ use App\Models\Member;
 use Livewire\Component;
 use App\Models\Societies;
 use Livewire\WithPagination;
-use Spatie\LaravelPdf\Facades\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,26 +16,13 @@ class ManageSocietiesMembersIndex extends Component
     public $societies;
     public $selectedSociety;
     public $search;
-    public $months;
+
     public $currentYear, $customer, $invoice, $item, $bill;
 
     public function mount()
     {
         $this->societies = Societies::where('accountant_id', Auth::user()->id)->pluck('name', 'id');
-        $this->months = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-        ];
+
         $this->currentYear = date('Y');
     }
 
