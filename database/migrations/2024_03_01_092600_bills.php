@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bill_no')->constrained();
+            $table->foreignId('member_id')->constrained();
             $table->decimal('amount', 10, 2);
             $table->integer('status');
             $table->date('billing_month');
@@ -27,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
         Schema::dropIfExists('bills');
     }
 };
+
