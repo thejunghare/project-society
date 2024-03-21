@@ -8,6 +8,7 @@ use App\Models\Societies;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ManageSocietiesMembersIndex extends Component
 {
@@ -28,15 +29,28 @@ class ManageSocietiesMembersIndex extends Component
 
     public function generatePdf($invoiceId, $memberId)
     {
-        $invoice = Member::with(['user', 'society', 'bill']) // Eager load the bill relationship
+        /* $invoice = Member::with(['user', 'society', 'bill']) // Eager load the bill relationship
             ->where('id', $memberId)
             ->first();
 
         $billDetails = $invoice->bill->where('id', $invoiceId)->first();
 
-        return Pdf::view('pdfs.invoice', ['invoice' => $invoice])
-            ->save(storage_path('app/files/maintenance_bill.pdf'));
+        return Pdf::view('pdf.invoice', ['invoice' => $invoice])
+            ->save(storage_path('app/files/maintenance_bill.pdf')); */
+    }
 
+    public function download()
+    {
+        // dd(123);
+        $data = [
+            "title" => "hello",
+            "description" => "test test test"
+        ];
+
+        $pdf = Pdf::loadView('pdfs.preview', $data);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream(); // Echo download contents directly...
+        }, 'invoice.pdf');
     }
 
     public function render()

@@ -1,4 +1,4 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+{{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
 
 
 
@@ -45,11 +45,12 @@
 
                     </td>
                     <td class="px-6 py-4">
-                        {{-- {{ $billId }} --}}
+
                     </td>
                 </tr>
 
             </tbody>
         </table>
     </div>
-@endif
+@endif --}}
+{{-- {{ $billId }} --}}
