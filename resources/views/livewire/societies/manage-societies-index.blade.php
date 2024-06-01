@@ -7,7 +7,7 @@
     @else
         @if ($update == false)
         <div class="flex justify-between">
-            <div class="flex justify-center @if ($update) hidden @endif">
+            <div class="flex justify-center @if ($update) hidden @endif" style="margin-left: 329px">
                 <!-- Search Bar -->
                 <div class="relative mb-4">
                     <label for="table-search" class="sr-only">Search</label>
@@ -20,7 +20,7 @@
                     </div>
                     <input type="text" id="table-search"
                         class="block w-80 px-10 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Search for societies">
+                        placeholder="Search for societies" style="width: 500px">
                 </div>
             </div>
         
