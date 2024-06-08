@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class BillSeeder extends Seeder
+class MaintenanceBillSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,13 +14,14 @@ class BillSeeder extends Seeder
     public function run(): void
     {
         //
-        DB::table('bills')->insert([
+        DB::table('maintenance_bills')->insert([
             //  one
             [
                 'member_id' => 11,
                 'amount' => 500.00,
                 'status' => 0,
-                'billing_month' => now(),
+                'billing_month' => 1,
+                'billing_year' => 2024,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -30,7 +31,8 @@ class BillSeeder extends Seeder
                 'member_id' => 12,
                 'amount' => 500.00,
                 'status' => 0,
-                'billing_month' => now(),
+                'billing_month' => 1,
+                'billing_year' => 2024,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -40,7 +42,8 @@ class BillSeeder extends Seeder
                 'member_id' => 1,
                 'amount' => 500.00,
                 'status' => 0,
-                'billing_month' => now(),
+                'billing_month' => 1,
+                'billing_year' => 2024,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -50,7 +53,8 @@ class BillSeeder extends Seeder
                 'member_id' => 2,
                 'amount' => 500.00,
                 'status' => 0,
-                'billing_month' => now(),
+                'billing_month' => 1,
+                'billing_year' => 2024,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -60,7 +64,8 @@ class BillSeeder extends Seeder
                 'member_id' => 16,
                 'amount' => 500.00,
                 'status' => 0,
-                'billing_month' => now(),
+                'billing_month' => 1,
+                'billing_year' => 2024,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
