@@ -5,17 +5,18 @@ namespace App\Livewire\Societies;
 use Livewire\Component;
 use App\Models\Societies;
 use Illuminate\Http\Request;
-
 use Ixudra\Curl\Facades\Curl;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Auth;
-use Rap2hpoutre\FastExcel\Facades\FastExcel;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class ManageSocietiesIndex extends Component
 {
     use WithFileUploads;
+
+
 
     #[Title('Manage societies - mySocietyERP')]
 
@@ -51,6 +52,7 @@ class ManageSocietiesIndex extends Component
     public $secretary_name = '';
 
     public $upload;
+    public $s_id;
 
     public function mount()
     {
@@ -59,8 +61,40 @@ class ManageSocietiesIndex extends Component
 
     public function import()
     {
-        $this->upload->store('excel', 'files');
+        // Validate the file upload
+        $this->validate([
+            'upload' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        // Store the uploaded file
+        $filePath = $this->upload->storeAs('files', 'excel.xlsx');
+
+        // Import societies from the uploaded file
+        (new FastExcel)->import(storage_path('app/' . $filePath), function ($line) {
+            return Societies::create([
+                'name' => $line['name'],
+                'phone' => $line['phone'],
+                'address' => $line['address'],
+                'bank_name' => $line['bank_name'],
+                'bank_ifsc_code' => $line['bank_ifsc_code'],
+                'bank_account_number' => $line['bank_account_number'],
+                'member_count' => $line['member_count'],
+                'president_name' => $line['president_name'],
+                'vice_president_name' => $line['vice_president_name'],
+                'secretary_name' => $line['secretary_name'],
+                'treasurer_name' => $line['treasurer_name'],
+                'accountant_id' => Auth::user()->id,
+            ]);
+        });
+
+        return redirect('/accountant/manage/societies')->with([
+            'success' => 'Society saved successfully'
+        ]);
     }
+
+
+
+
 
 
     /* $societies = (new FastExcel)->import(storage_path('app/files/'.'excel.xlsx'), function ($line) {
@@ -140,14 +174,110 @@ class ManageSocietiesIndex extends Component
         }
     }
 
+    // public $update = false;
 
+    public function updateSociety($id)
+    {
+        $society = societies::find($id);
+
+        $this->s_id = $society->id;
+        $this->name = $society->name;
+        $this->phone = $society->phone;
+        $this->address = $society->address;
+        $this->bank_name = $society->bank_name;
+        $this->bank_ifsc_code = $society->bank_ifsc_code;
+        $this->bank_account_number = $society->bank_account_number;
+        $this->member_count = $society->member_count;
+        $this->president_name = $society->president_name;
+        $this->vice_president_name = $society->vice_president_name;
+        $this->secretary_name = $society->secretary_name;
+        $this->treasurer_name = $society->treasurer_name;
+
+
+
+        // $this->update = true;
+    }
+
+    public function upData()
+
+    {
+
+        // Assuming you have a Society model
+        $society = Societies::findOrFail($this->s_id);
+        $society->name = $this->name;
+        $society->phone = $this->phone;
+        $society->address = $this->address;
+        $society->bank_name = $this->bank_name;
+        $society->bank_ifsc_code = $this->bank_ifsc_code;
+        $society->bank_account_number = $this->bank_account_number;
+        $society->member_count = $this->member_count;
+        $society->accountant_id = Auth::user()->id;
+        $society->secretary_name = $this->secretary_name;
+        $society->president_name = $this->president_name;
+        $society->vice_president_name = $this->vice_president_name;
+        $society->treasurer_name = $this->treasurer_name;
+        // Update other properties as needed
+
+        $society->save();
+        $this->resetFilters();
+
+        return redirect('/accountant/manage/societies')->with([
+            'success' => 'Society Details Updated successfully'
+        ]);
+    }
+
+    public function submit()
+    {
+        // Debugging output
+        logger()->info('Submit method called');
+
+        $this->validate([
+            'name' => 'required',
+            'phone' => 'required|digits:10',
+            'address' => 'required',
+            'member_count' => 'required',
+            'bank_name' => 'required',
+            'bank_ifsc_code' => 'required',
+            'bank_account_number' => 'required',
+            'president_name' => 'required',
+            'vice_president_name' => 'required',
+            'secretary_name' => 'required',
+            'treasurer_name' => 'required',
+        ]);
+
+        $society = new Societies();
+        $society->name = $this->name;
+        $society->phone = $this->phone;
+        $society->address = $this->address;
+        $society->member_count = $this->member_count;
+        $society->bank_name = $this->bank_name;
+        $society->bank_ifsc_code = $this->bank_ifsc_code;
+        $society->bank_account_number = $this->bank_account_number;
+        $society->accountant_id = Auth::user()->id;
+        $society->president_name = $this->president_name;
+        $society->vice_president_name = $this->vice_president_name;
+        $society->secretary_name = $this->secretary_name;
+        $society->treasurer_name = $this->treasurer_name;
+        $society->save();
+
+        // Clear input fields after submission
+      $this->resetFilters();
+
+        return redirect('/accountant/manage/societies')->with([
+            'success' => 'Society saved successfully'
+        ]);
+    }
+
+
+    public function resetFilters()
+    {
+        $this->reset(['name', 'phone', 'address', 'member_count', 'bank_name', 'bank_ifsc_code', 'bank_account_number', 'president_name', 'vice_president_name', 'secretary_name', 'treasurer_name']);
+    }
 
     public function save()
     {
-
+// 
         $this->validate();
-
-
         Societies::create($this->only([
             'name',
             'phone',
@@ -166,10 +296,19 @@ class ManageSocietiesIndex extends Component
         ]);
     }
 
+    // public function edit($id)
+    // {
+    //     $data = Societies::find($id);
+    //     return view('livewire.societies.manage-societies-edit', [
+    //         'data' => $data
+    //     ]);
+    // }
+
     public function render()
+
     {
         return view('livewire.societies.manage-societies-index', [
-            'societies' => Societies::latest()->where('accountant_id', Auth::user()->id)->paginate(5),
+            'societies' => Societies::latest()->where('accountant_id', Auth::user()->id)->get(),
         ])
             ->with([
                 'button' => 'Create new user',
