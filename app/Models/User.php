@@ -72,5 +72,5 @@ class User extends Authenticatable
         return $this->hasMany(Accountant::class);
     }
 
-
+    
 }

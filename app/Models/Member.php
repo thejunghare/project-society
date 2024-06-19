@@ -27,13 +27,16 @@ class Member extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function bill(): HasMany
-    {
-        return $this->hasMany(Bill::class);
-    }
 
-    public function maintenacneBill(): HasMany
+
+
+  /*   public function maintenacneBill(): HasMany
     {
         return $this->hasMany(MaintenanceBill::class);
+    } */
+
+    public function maintenanceBill()
+    {
+        return $this->hasOne(MaintenanceBill::class);
     }
 }
