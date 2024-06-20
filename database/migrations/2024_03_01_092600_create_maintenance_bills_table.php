@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->foreignId('member_id')->constrained();
             $table->decimal('amount', 10, 2);
             $table->integer('status');
+            $table->dateTime('due_date');
             $table->integer('billing_month');
             $table->integer('billing_year');
             $table->timestamps();
