@@ -9,7 +9,6 @@ use Livewire\Component;
 
 class AccountantIndex extends Component
 {
-
     public $registeredSocietiesCount;
 
     public $getRegisteredSocietiesId;
