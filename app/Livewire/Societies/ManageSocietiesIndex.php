@@ -197,7 +197,6 @@ class ManageSocietiesIndex extends Component
     }
 
     public function upData()
-
     {
 
         // Assuming you have a Society model
@@ -259,7 +258,7 @@ class ManageSocietiesIndex extends Component
         $society->save();
 
         // Clear input fields after submission
-      $this->resetFilters();
+        $this->resetFilters();
 
         return redirect('/accountant/manage/societies')->with([
             'success' => 'Society saved successfully'
@@ -274,7 +273,7 @@ class ManageSocietiesIndex extends Component
 
     public function save()
     {
-// 
+        //
         $this->validate();
         Societies::create($this->only([
             'name',
@@ -303,7 +302,6 @@ class ManageSocietiesIndex extends Component
     // }
 
     public function render()
-
     {
         return view('livewire.societies.manage-societies-index', [
             'societies' => Societies::latest()->where('accountant_id', Auth::user()->id)->get(),

@@ -225,9 +225,9 @@
 
         {{-- add-societies-manually --}}
         <div id="add-society-manually-modal" tabindex="-1" aria-hidden="true"
-            class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+            class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center  w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
             wire:ignore.self>
-            <div class="relative w-full max-w-2xl max-h-full">
+            <div class="relative w-full max-w-4xl max-h-full">
                 <!-- Modal content -->
                 <form id="AddSocietyForm" class="relative bg-white rounded-lg shadow dark:bg-gray-700"
                     wire:submit.prevent="submit" method="POST" action="/accountant/manage/societies">
@@ -254,8 +254,8 @@
                     <div class="p-6 space-y-6">
                         {{-- <div id="success-alert-container" ></div> --}}
 
-                        <div class="grid grid-cols-6 gap-6">
-                            <div class="col-span-6 sm:col-span-3">
+                        <div class="grid grid-cols-3 gap-6">
+                            <div class="">
                                 <label for="society-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Society Name:
@@ -269,7 +269,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="society-phone"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Phone Number:
@@ -283,7 +283,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="society-address"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Address:
@@ -298,7 +298,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="bank-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Bank Name:
@@ -311,7 +311,7 @@
                                         <span class="error" style="color: red">Enter valid Bank Name!!!</span>
                                     @enderror
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="bank-ifsc-code"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Bank IFSC Code:
@@ -326,7 +326,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="bank-account-number"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Bank Account Number:
@@ -341,7 +341,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="member-count"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Member Count:
@@ -356,7 +356,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="president-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     President Name:
@@ -371,7 +371,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="vice-president-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Vice President Name:
@@ -386,7 +386,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="treasurer-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Treasurer Name:
@@ -401,7 +401,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="secretary-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Secretary Name:
@@ -471,8 +471,7 @@
                 </p>
             </div>
             <div class="px-6 pb-2">
-                <p
-                    class="text-justify text-gray-500 dark:text-gray-400">
+                <p class="text-justify text-gray-500 dark:text-gray-400">
                     Contact Number: {{ $society->phone }}
                 </p>
             </div>
