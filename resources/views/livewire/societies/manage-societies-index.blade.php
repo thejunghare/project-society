@@ -463,7 +463,7 @@
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     @foreach ($societies as $society)
-        <div class="max-w-sm rounded overflow-hidden shadow-lg border border-black-300 society-item">
+        <div class="max-w-sm rounded-lg drop-shadow-sm overflow-hidden  border border-black-300 society-item">
             <div class="px-6 py-4">
                 <div class="font-bold text-xl mb-2 society-name">{{ $society->name }}</div>
                 <p class="text-gray-700 text-base society-address">
