@@ -19,21 +19,21 @@ class Member extends Model
 
     public function society(): BelongsTo
     {
-        return $this->belongsTo(Societies::class);
+        return $this->belongsTo(Societies::class, 'society_id');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
 
 
 
-  /*   public function maintenacneBill(): HasMany
-    {
-        return $this->hasMany(MaintenanceBill::class);
-    } */
+    /*   public function maintenacneBill(): HasMany
+      {
+          return $this->hasMany(MaintenanceBill::class);
+      } */
 
     public function maintenanceBill()
     {

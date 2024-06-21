@@ -301,6 +301,11 @@ class ManageSocietiesIndex extends Component
     //     ]);
     // }
 
+    public function seeMembers($societyId)
+    {
+        return redirect()->route('members', ['society' => $societyId]);
+    }
+
     public function render()
     {
         return view('livewire.societies.manage-societies-index', [

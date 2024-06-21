@@ -180,7 +180,7 @@
                                     </svg>
                                 </button>
 
-                                <button type="button"  wire:click="sendWhatsAppMessage({{ $member->member_id }})"
+                                <button type="button" wire:click="sendWhatsAppMessage({{ $member->member_id }})"
                                     class=" text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 text-sm px-3 py-1.5">
                                     <svg class="w-3.5 h-3.5 me-2" aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -221,8 +221,8 @@
 
 
     <script>
-        document.addEventListener('livewire:load', function () {
-            Livewire.on('whatsappMessageSent', function () {
+        document.addEventListener('livewire:load', function() {
+            Livewire.on('whatsappMessageSent', function() {
                 console.log('WhatsApp message sent successfully!');
             });
         });
