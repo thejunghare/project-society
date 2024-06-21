@@ -30,6 +30,8 @@ class MembersSeeder extends Seeder
                 return [
                     'society_id' => 1,
                     'user_id' => $userId,
+                    'room_number' => 1,
+                    'is_rented' => true,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -39,6 +41,8 @@ class MembersSeeder extends Seeder
                 return [
                     'society_id' => 2,
                     'user_id' => $userId,
+                    'room_number' => 1,
+                    'is_rented' => true,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -48,6 +52,8 @@ class MembersSeeder extends Seeder
                 return [
                     'society_id' => 3,
                     'user_id' => $userId,
+                    'room_number' => 1,
+                    'is_rented' => false,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

@@ -17,9 +17,7 @@ class ManageSocietiesIndex extends Component
     use WithFileUploads;
 
 
-
     #[Title('Manage societies - mySocietyERP')]
-
     public $societyOptions;
 
     #[Validate('required')]

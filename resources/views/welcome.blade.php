@@ -891,13 +891,15 @@
     <footer class="h-12 flex justify-center items-center">
         <p class="font-medium">Designed, Developed by
             <span class="underline text-teal-500">
-                <a class="cursor-not-allowed" href="#">thejunghare</a>
+                <a class="" target=”_blank” href="https://junghare.tech">junghare.tech</a>
             </span>
         </p>
     </footer>
 
     <script src="{{ asset('../node_modules/flowbite/dist/flowbite.js') }}"></script>
     {{-- <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
 </body>
 
 </html>

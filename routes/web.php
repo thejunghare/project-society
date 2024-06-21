@@ -7,7 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Livewire\ManageUser\ManageUserIndex;
 use App\Http\Controllers\AccountantController;
 use App\Livewire\Societies\ManageSocietiesIndex;
-use App\Livewire\Members\ManageSocietiesMembersIndex;
+use App\Livewire\MaintenanceBill\MaintenanceBillIndex;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ Route::middleware(['auth', 'check-role:1'])->group(function () {
 Route::middleware(['auth', 'check-role:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
     Route::get('/accountant/manage/societies', ManageSocietiesIndex::class)->name('societies');
-    Route::get('/accountant/manage/societies/members', ManageSocietiesMembersIndex::class)->name('members');
+    Route::get('/accountant/manage/bills/maintenance-bill', MaintenanceBillIndex::class)->name('maintenance-bill');
 });
 
 

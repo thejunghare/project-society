@@ -14,7 +14,9 @@
         "laravel/tinker": "^2.8",
         "laravel/vapor-core": "^2.36",
         "livewire/livewire": "^3.4",
-        "rap2hpoutre/fast-excel": "^5.3"
+        "lucasdotvin/laravel-soulbscription": "^4.2",
+        "rap2hpoutre/fast-excel": "^5.3",
+        "twilio/sdk": "^8.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.10",
