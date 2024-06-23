@@ -12,9 +12,9 @@ class Societies extends Model
     use HasFactory;
     protected $fillable = ['name', 'phone', 'address', 'member_count', 'bank_name', 'bank_account_number', 'bank_ifsc_code', 'accountant_id'];
 
-    public function member(): HasMany
+    public function members(): HasMany
     {
-        return $this->hasMany(Member::class);
+        return $this->hasMany(Member::class, 'society_id');
     }
 
     public function president(): HasOne

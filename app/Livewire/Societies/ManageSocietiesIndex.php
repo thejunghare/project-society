@@ -4,9 +4,10 @@ namespace App\Livewire\Societies;
 
 use Livewire\Component;
 use App\Models\Societies;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use Ixudra\Curl\Facades\Curl;
-use Livewire\WithFileUploads;
+use Livewire\WithFileUploads; 
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Auth;
@@ -90,7 +91,11 @@ class ManageSocietiesIndex extends Component
         ]);
     }
 
-
+    public function RegisteredMembers($id)
+    {
+        $society = Societies::findOrFail($id);
+        return $society->members()->count();
+    }
 
 
 
@@ -197,7 +202,6 @@ class ManageSocietiesIndex extends Component
     }
 
     public function upData()
-
     {
 
         // Assuming you have a Society model
@@ -221,7 +225,7 @@ class ManageSocietiesIndex extends Component
 
         return redirect('/accountant/manage/societies')->with([
             'success' => 'Society Details Updated successfully'
-        ]);
+        ]); 
     }
 
     public function submit()
@@ -259,7 +263,7 @@ class ManageSocietiesIndex extends Component
         $society->save();
 
         // Clear input fields after submission
-      $this->resetFilters();
+        $this->resetFilters();
 
         return redirect('/accountant/manage/societies')->with([
             'success' => 'Society saved successfully'
@@ -274,7 +278,7 @@ class ManageSocietiesIndex extends Component
 
     public function save()
     {
-// 
+        //
         $this->validate();
         Societies::create($this->only([
             'name',
@@ -302,15 +306,20 @@ class ManageSocietiesIndex extends Component
     //     ]);
     // }
 
-    public function render()
+    public function seeMembers($societyId)
+    {
+        return redirect()->route('members', ['society' => $societyId]);
+    }
 
+    public function render()
     {
         return view('livewire.societies.manage-societies-index', [
             'societies' => Societies::latest()->where('accountant_id', Auth::user()->id)->get(),
         ])
             ->with([
                 'button' => 'Create new user',
-                'success' => 'Society saved'
+                'success' => 'Society saved',
+                
             ]);
     }
 }

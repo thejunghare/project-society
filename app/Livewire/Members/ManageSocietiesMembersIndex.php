@@ -2,87 +2,129 @@
 
 namespace App\Livewire\Members;
 
-use App\Models\Member;
 use Livewire\Component;
 use App\Models\Societies;
-use Livewire\WithPagination;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Member;
+use App\Models\User;
+use Livewire\Attributes\Title;
 
 class ManageSocietiesMembersIndex extends Component
 {
-    use WithPagination;
+  #[Title('Manage members - mySocietyERP')]
+  public $societyId;
+  public $society;
+  public $member_count;
+  public $editingMember = null;
+  public $name, $phone, $room_number, $is_rented;
 
-    public $societies;
-    public $selectedSociety;
-    public $search;
+  public function memberCout()
+  {
+    return $this->society->members()->count();
+  }
 
-    public $currentYear, $customer, $invoice, $item, $bill;
+  
 
-    public function mount()
-    {
-        $this->societies = Societies::where('accountant_id', Auth::user()->id)->pluck('name', 'id');
+  public function mount($society)
+  {
+    $this->societyId = $society;
+    $this->loadSocietyMembers($this->societyId);
+  }
 
-        $this->currentYear = date('Y');
-    }
+  public function loadSocietyMembers($societyId)
+  {
+    $this->society = Societies::with('members')->findOrFail($societyId);
+  }
 
-    public function generatePdf($invoiceId, $memberId)
-    {
-        /* $invoice = Member::with(['user', 'society', 'bill']) // Eager load the bill relationship
-            ->where('id', $memberId)
-            ->first();
+  public function RegisteredMembers($id)
+  {
+      $society = Societies::findOrFail($id);
+      return $society->members()->count();
+  }
 
-        $billDetails = $invoice->bill->where('id', $invoiceId)->first();
+  public function TotalMembers($society_id)
+  {
+      $society = Societies::findOrFail($society_id);
+      return $this->member_count = $society->member_count;
+  }
 
-        return Pdf::view('pdf.invoice', ['invoice' => $invoice])
-            ->save(storage_path('app/files/maintenance_bill.pdf')); */
-    }
+  public function startEdit($memberId)
+  {
+    $member = Member::with('user')->findOrFail($memberId);
+    $this->editingMember = $member->id;
+    $this->name = $member->user->name;
+    $this->phone = $member->user->phone;
+    $this->room_number = $member->room_number;
+    $this->is_rented = $member->is_rented ? '1' : '0'; // Convert boolean to string '0' or '1'
+  }
 
-    public function download()
-    {
-        // dd(123);
-        $data = [
-            "title" => "hello",
-            "description" => "test test test"
-        ];
+  public function updateMember($memberId)
+  {
+    $member = Member::findOrFail($memberId);
+    $member->user->name = $this->name;
+    $member->user->phone = $this->phone;
+    $member->room_number = $this->room_number;
+    $member->is_rented = $this->is_rented == '1'; // Convert string '1' or '0' to boolean
+    $member->user->save();
+    $member->save();
 
-        $pdf = Pdf::loadView('pdfs.preview', $data);
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->stream(); // Echo download contents directly...
-        }, 'invoice.pdf');
-    }
+    $this->editingMember = null;
+  }
 
-    public function render()
-    {
-        $members = $this->selectedSociety
-            ? Member::join('bills', 'members.id', '=', 'bills.member_id')
-                ->join('users', 'members.user_id', '=', 'users.id')
-                ->where('members.society_id', $this->selectedSociety)
-                ->where(function ($query) {
-                    $query->where('users.name', 'like', "%{$this->search}%")
-                        ->orWhere('users.phone', 'like', "%{$this->search}%")
-                        ->orWhere('users.email', 'like', "%{$this->search}%");
-                })
-                ->select(
-                    'members.id as member_id',
-                    'members.society_id',
-                    'members.user_id',
-                    'users.name',
-                    'users.phone',
-                    'users.email',
-                    'bills.id as bill_id',
-                    'bills.billing_month',
-                    'bills.amount',
-                    'bills.status',
-                    'members.created_at'
-                )
-                ->latest('members.created_at')
-                ->paginate(5)
-            : collect();
+  public function cancelEdit()
+  {
+    $this->editingMember = null;
+  }
 
-        return view('livewire.members.manage-societies-members-index', [
-            'members' => $members,
-        ])->title('Manage society members - societies');
-    }
+  public function save()
+  {
+    $member = Member::findOrFail($this->editingMember);
+    $member->room_number = $this->room_number;
+    $member->is_rented = $this->is_rented == '1'; // Convert string '1' or '0' to boolean
+    $member->save();
+
+    $user = User::findOrFail($member->user_id);
+    $user->name = $this->name;
+    $user->phone = $this->phone;
+    $user->save();
+
+    $this->editingMember = null;
+
+    // return redirect('/accountant/manage/societies/' . $this->societyId . '/members')->with([
+    //     'success' => 'Members Details Updated successfully'
+    // ]);
+    return redirect('/accountant/manage/societies/')->with([
+      'success' => 'Members Details Updated successfully'
+  ]);
+  }
+
+  public function deleteMember($memberId)
+  {
+    // Delete related maintenance bills
+    \DB::table('maintenance_bills')->where('member_id', $memberId)->delete();
+
+    // Delete the member
+    Member::findOrFail($memberId)->delete();
+
+    // Refresh the member list
+    // $this->loadSocietyMembers($this->societyId);
+    //   return redirect('/accountant/manage/societies/' . $this->societyId . '/members')->with([
+    //     'success' => 'Members Deleted successfully'
+    // ]);
+    $this->loadSocietyMembers($this->societyId);
+      return redirect('/accountant/manage/societies/')->with([
+        'success' => 'Members Deleted successfully'
+    ]);
+  }
+
+  public function render()
+  {
+    $this->members = $this->society->members()->paginate(5);
+
+    return view('livewire.members.manage-societies-members-index', [
+      'society' => $this->society,
+      'members' => $this->members,
+      'registeredMembers' => $this->RegisteredMembers($this->societyId),
+      'totalMembers' => $this->TotalMembers($this->societyId),
+    ]);
+  }
 }

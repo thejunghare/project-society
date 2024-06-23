@@ -13,5 +13,8 @@
 
         {{-- <livewire:societies.society-form-option /> --}}
         @livewire('societies.society-form-option')
+    @else
+        {{-- User is a member of a society --}}
+        @livewire('societies.display-member-info')
     @endif
 </x-app-layout>

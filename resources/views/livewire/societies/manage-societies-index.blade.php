@@ -164,7 +164,7 @@
                                 <input type="text" name="member-count" id="member-count"
                                     wire:model="member_count"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Member Count" required value="{{ $member_count }}">
+                                    placeholder="Member Count" required value="{{ $member_count }}" readonly>
                             </div>
                             <div class="">
                                 <label for="president-name"
@@ -227,7 +227,7 @@
         <div id="add-society-manually-modal" tabindex="-1" aria-hidden="true"
             class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
             wire:ignore.self>
-            <div class="relative w-full max-w-2xl max-h-full">
+            <div class="relative w-full max-w-4xl max-h-full">
                 <!-- Modal content -->
                 <form id="AddSocietyForm" class="relative bg-white rounded-lg shadow dark:bg-gray-700"
                     wire:submit.prevent="submit" method="POST" action="/accountant/manage/societies">
@@ -254,8 +254,8 @@
                     <div class="p-6 space-y-6">
                         {{-- <div id="success-alert-container" ></div> --}}
 
-                        <div class="grid grid-cols-6 gap-6">
-                            <div class="col-span-6 sm:col-span-3">
+                        <div class="grid grid-cols-3 gap-6">
+                            <div class="">
                                 <label for="society-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Society Name:
@@ -269,7 +269,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="society-phone"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Phone Number:
@@ -283,7 +283,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="society-address"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Address:
@@ -298,7 +298,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="bank-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Bank Name:
@@ -311,7 +311,7 @@
                                         <span class="error" style="color: red">Enter valid Bank Name!!!</span>
                                     @enderror
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="bank-ifsc-code"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Bank IFSC Code:
@@ -326,7 +326,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="bank-account-number"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Bank Account Number:
@@ -341,7 +341,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="member-count"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Member Count:
@@ -356,7 +356,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="president-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     President Name:
@@ -371,7 +371,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="vice-president-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Vice President Name:
@@ -386,7 +386,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="treasurer-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Treasurer Name:
@@ -401,7 +401,7 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
+                            <div class="">
                                 <label for="secretary-name"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                     Secretary Name:
@@ -471,17 +471,23 @@
                 </p>
             </div>
             <div class="px-6 pb-2">
-                <p
-                    class="text-justify text-gray-500 dark:text-gray-400">
-                    Contact Number: {{ $society->phone }}
+                <p class="text-justify text-gray-500 dark:text-gray-400">
+                    Contact number: +91{{ $society->phone }}
                 </p>
+            </div>
+            <div class="px-6 pb-2">
+                <p class="text-justify text-gray-500 dark:text-gray-400">
+                    Total member: {{ $society->member_count }}
+                </p>
+               
             </div>
             <div class="px-6 py-4">
                 <button type="button"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                     data-modal-target="editUserModal" data-modal-show="editUserModal"
                     wire:click="updateSociety({{ $society->id }})">View Details</button>
-                <button type="button"
+                      
+                <button type="button" wire:click="seeMembers({{ $society->id }})"
                     class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">See
                     Members</button>
             </div>
