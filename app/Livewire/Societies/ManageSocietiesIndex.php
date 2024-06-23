@@ -4,9 +4,10 @@ namespace App\Livewire\Societies;
 
 use Livewire\Component;
 use App\Models\Societies;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use Ixudra\Curl\Facades\Curl;
-use Livewire\WithFileUploads;
+use Livewire\WithFileUploads; 
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Auth;
@@ -90,7 +91,11 @@ class ManageSocietiesIndex extends Component
         ]);
     }
 
-
+    public function RegisteredMembers($id)
+    {
+        $society = Societies::findOrFail($id);
+        return $society->members()->count();
+    }
 
 
 
@@ -220,7 +225,7 @@ class ManageSocietiesIndex extends Component
 
         return redirect('/accountant/manage/societies')->with([
             'success' => 'Society Details Updated successfully'
-        ]);
+        ]); 
     }
 
     public function submit()
@@ -313,7 +318,8 @@ class ManageSocietiesIndex extends Component
         ])
             ->with([
                 'button' => 'Create new user',
-                'success' => 'Society saved'
+                'success' => 'Society saved',
+                
             ]);
     }
 }

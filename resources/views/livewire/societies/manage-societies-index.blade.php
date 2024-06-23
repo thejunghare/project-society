@@ -164,7 +164,7 @@
                                 <input type="text" name="member-count" id="member-count"
                                     wire:model="member_count"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Member Count" required value="{{ $member_count }}">
+                                    placeholder="Member Count" required value="{{ $member_count }}" readonly>
                             </div>
                             <div class="">
                                 <label for="president-name"
@@ -479,13 +479,14 @@
                 <p class="text-justify text-gray-500 dark:text-gray-400">
                     Total member: {{ $society->member_count }}
                 </p>
+               
             </div>
             <div class="px-6 py-4">
                 <button type="button"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                     data-modal-target="editUserModal" data-modal-show="editUserModal"
                     wire:click="updateSociety({{ $society->id }})">View Details</button>
-                    
+                      
                 <button type="button" wire:click="seeMembers({{ $society->id }})"
                     class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">See
                     Members</button>
