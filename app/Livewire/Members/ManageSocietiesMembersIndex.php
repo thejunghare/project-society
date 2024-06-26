@@ -7,6 +7,7 @@ use App\Models\Societies;
 use App\Models\Member;
 use App\Models\User;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Redirect;
 
 class ManageSocietiesMembersIndex extends Component
 {
@@ -22,7 +23,7 @@ class ManageSocietiesMembersIndex extends Component
     return $this->society->members()->count();
   }
 
-  
+
 
   public function mount($society)
   {
@@ -37,14 +38,14 @@ class ManageSocietiesMembersIndex extends Component
 
   public function RegisteredMembers($id)
   {
-      $society = Societies::findOrFail($id);
-      return $society->members()->count();
+    $society = Societies::findOrFail($id);
+    return $society->members()->count();
   }
 
   public function TotalMembers($society_id)
   {
-      $society = Societies::findOrFail($society_id);
-      return $this->member_count = $society->member_count;
+    $society = Societies::findOrFail($society_id);
+    return $this->member_count = $society->member_count;
   }
 
   public function startEdit($memberId)
@@ -89,12 +90,12 @@ class ManageSocietiesMembersIndex extends Component
 
     $this->editingMember = null;
 
-    // return redirect('/accountant/manage/societies/' . $this->societyId . '/members')->with([
+    return redirect('/accountant/manage/societies/' . $this->societyId . '/society-details/members')->with([
+      'success' => 'Members Details Updated successfully'
+    ]);
+    //   return redirect('/accountant/manage/societies/')->with([
     //     'success' => 'Members Details Updated successfully'
     // ]);
-    return redirect('/accountant/manage/societies/')->with([
-      'success' => 'Members Details Updated successfully'
-  ]);
   }
 
   public function deleteMember($memberId)
@@ -106,14 +107,19 @@ class ManageSocietiesMembersIndex extends Component
     Member::findOrFail($memberId)->delete();
 
     // Refresh the member list
-    // $this->loadSocietyMembers($this->societyId);
-    //   return redirect('/accountant/manage/societies/' . $this->societyId . '/members')->with([
-    //     'success' => 'Members Deleted successfully'
-    // ]);
     $this->loadSocietyMembers($this->societyId);
-      return redirect('/accountant/manage/societies/')->with([
+      return redirect('/accountant/manage/societies/' . $this->societyId . '/society-details/members')->with([
         'success' => 'Members Deleted successfully'
     ]);
+    // $this->loadSocietyMembers($this->societyId);
+    // return redirect('/accountant/manage/societies/')->with([
+    //   'success' => 'Members Deleted successfully'
+    // ]);
+  }
+
+  public function goBack()
+  {
+    return redirect('/accountant/manage/societies/' . $this->societyId . '/society-details');
   }
 
   public function render()

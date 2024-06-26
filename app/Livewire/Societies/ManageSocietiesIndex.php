@@ -53,6 +53,8 @@ class ManageSocietiesIndex extends Component
     public $upload;
     public $s_id;
 
+    public $number = 0;
+
     public function mount()
     {
         $this->accountant_id = Auth::user()->id;
@@ -306,9 +308,9 @@ class ManageSocietiesIndex extends Component
     //     ]);
     // }
 
-    public function seeMembers($societyId)
+    public function seeSociety($societyId)
     {
-        return redirect()->route('members', ['society' => $societyId]);
+        return redirect()->route('societyDetails', ['society' => $societyId]);
     }
 
     public function render()

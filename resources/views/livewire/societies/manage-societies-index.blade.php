@@ -465,11 +465,25 @@
     @foreach ($societies as $society)
         <div class="max-w-sm rounded-lg drop-shadow-sm overflow-hidden  border border-black-300 society-item">
             <div class="px-6 py-4">
-                <div class="font-bold text-xl mb-2 society-name">{{ $society->name }}</div>
+                <div class="flex items-center justify-between">
+                    <div class="font-bold text-xl mb-2 society-name">{{ $society->name }}</div>
+                    <div>
+                        @if ($number == 1)
+                            <span
+                                class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">45
+                                Days Left</span>
+                        @else
+                            <span
+                                class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Subscription
+                                Over</span>
+                        @endif
+                    </div>
+                </div>
                 <p class="text-gray-700 text-base society-address">
                     Address : {{ $society->address }}
                 </p>
             </div>
+
             <div class="px-6 pb-2">
                 <p class="text-justify text-gray-500 dark:text-gray-400">
                     Contact number: +91{{ $society->phone }}
@@ -479,17 +493,20 @@
                 <p class="text-justify text-gray-500 dark:text-gray-400">
                     Total member: {{ $society->member_count }}
                 </p>
-               
+
             </div>
             <div class="px-6 py-4">
+                @if ($number == 1)
+                    <button type="button"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        wire:click="seeSociety({{ $society->id }})">View Details</button>
+                @else
+                    <button type="button"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        wire:click="seeSociety({{ $society->id }})" disabled>View Details</button>
+                @endif
                 <button type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    data-modal-target="editUserModal" data-modal-show="editUserModal"
-                    wire:click="updateSociety({{ $society->id }})">View Details</button>
-                      
-                <button type="button" wire:click="seeMembers({{ $society->id }})"
-                    class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">See
-                    Members</button>
+                    class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Re-New</button>
             </div>
         </div>
     @endforeach
