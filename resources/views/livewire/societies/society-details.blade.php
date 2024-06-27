@@ -1,134 +1,211 @@
-<div class="mt-12">
-    <div class="flex items-center mb-4">
-        {{-- Action Button --}}
-        <div class="">
-            <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction"
-                wire:click="seeMembers({{ $society->id }})"
-                class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                type="button">
-                <span class="sr-only">See Society Members</span>
-                See Society Members
-            </button>
+<div class="mt-12 p-0">
+    <div class="">
+        <div class="mb-4 border-gray-200 dark:border-gray-700">
+
+
+            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 dark:text-gray-400">
+                <li class="me-2 mt-2">
+                    <button wire:click="seeMembers({{ $society->id }})"
+                        class="inline-block px-4 py-3 text-white bg-blue-600 rounded-lg active  hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
+                        aria-current="page">See Members</button>
+                </li>
+                <li class="me-2 mt-2">
+                    <button wire:click="seeMaintenanceBills({{ $society->id }})"
+                        class="inline-block px-4 py-3 text-white bg-blue-600 rounded-lg active  hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white">See
+                        Maintenance Bill</button>
+                </li>
+
+
+            </ul>
+
         </div>
+        <div class="p-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div
+                    class="flex flex-col items-center justify-center h-24 w-full rounded bg-gray-50 dark:bg-gray-800 border">
+                    <div class="text-center p-3">
+                        <p class="text-1xl font-medium text-gray-900 dark:text-white">Total Payable</p>
+                    </div>
+                    <div class="text-center pb-2">
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">Rs 12456/-</p>
+                    </div>
+                </div>
 
-        <div class=" p-3 pl-10">
-            <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction" wire:click="seeMaintenanceBills({{ $society->id }})"
-                class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                type="button">
-                <span class="sr-only">Maintenance Bill</span>
-                Maintenance Bill
-            </button>
-        </div>
-    </div>
+                <div
+                    class="flex flex-col items-center justify-center h-24 w-full rounded bg-gray-50 dark:bg-gray-800 border">
+                    <div class="text-center p-3">
+                        <p class="text-1xl font-medium text-gray-900 dark:text-white">Total Payable</p>
+                    </div>
+                    <div class="text-center pb-2">
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">Rs 12456/-</p>
+                    </div>
+                </div>
 
-    <div class="mt-2">
-        <h1
-            class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-3xl dark:text-white">
-            Society Details</h1>
-        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 mt-0">
-    </div>
-    <div>
-
-        <form wire:submit.prevent="updateSociety">
-            <div>
-                <div class="grid gap-6 mb-6 md:grid-cols-2">
-                    <div>
-                        <label for="name"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Society Name</label>
-                        <input type="text" id="name" value="{{ $society->name }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone
-                            Number</label>
-                        <input type="text" id="phone" value="{{ $society->phone }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="address"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address</label>
-                        <textarea id="address" rows="2"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly>{{ $society->address }}</textarea>
-                    </div>
-                    <div>
-                        <label for="bank_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank
-                            Name</label>
-                        <input type="text" id="bank_name" value="{{ $society->bank_name }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="bank_ifsc" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank
-                            IFSC Code</label>
-                        <input type="text" id="bank_ifsc" value="{{ $society->bank_ifsc_code }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="bank_account_number"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank Account
-                            Number</label>
-                        <input type="text" id="bank_account_number" value="{{ $society->bank_account_number }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="member_count"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Member Count</label>
-                        <input type="text" id="member_count" value="{{ $society->member_count }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="president_name"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">President Name</label>
-                        <input type="text" id="president_name" value="{{ $society->president_name }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="vice_president_name"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Vice President
-                            Name</label>
-                        <input type="text" id="vice_president_name" value="{{ $society->vice_president_name }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="treasurer_name"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Treasurer Name</label>
-                        <input type="text" id="treasurer_name" value="{{ $society->treasurer_name }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
-                    </div>
-                    <div>
-                        <label for="secretary_name"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Secretary Name</label>
-                        <input type="text" id="secretary_name" value="{{ $society->secretary_name }}"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            readonly />
+                <div
+                    class="flex flex-col items-center justify-center h-auto col-span-1 sm:col-span-2 lg:col-span-2 rounded bg-gray-50 dark:bg-gray-800 border">
+                    <div class="flex flex-wrap items-center justify-around w-full">
+                        <div class="flex flex-col items-center p-4">
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">12</p>
+                            <p class="text-1xl font-medium text-gray-900 dark:text-white">Advance/No Dues</p>
+                        </div>
+                        <div class="flex flex-col items-center p-4">
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">2</p>
+                            <p class="text-1xl font-medium text-gray-900 dark:text-white">Current Bill Date</p>
+                        </div>
+                        <div class="flex flex-col items-center p-4">
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">12</p>
+                            <p class="text-1xl font-medium text-gray-900 dark:text-white">Bill Dues</p>
+                        </div>
+                        <div class="flex flex-col items-center p-4">
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">12</p>
+                            <p class="text-1xl font-medium text-gray-900 dark:text-white">Never Paid</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
 
 
-        </form>
 
-        <div class="mt-3 flex">
-            <a wire:click="goBack"
-                class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 5H1m0 0 4 4M1 5l4-4" />
-                </svg>
-                Previous
-            </a>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                <div class="flex-col items-center justify-center rounded bg-gray-50 h-auto dark:bg-gray-800 border">
+                    <div class="align-center flex flex-col items-center bg-slate-400">
+                        <p class="text-lg font-bold text-gray-900 dark:text-white p-3">Society Details</p>
+                    </div>
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 border-b dark:bg-gray-800 dark:border-gray-700">
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Society
+                                    Name:</span> {{ $society->name }} </p>
+
+                        </div>
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Phone
+                                    Number:</span> {{ $society->phone }} </p>
+                        </div>
+                    </div>
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 border-b dark:bg-gray-800 dark:border-gray-700">
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Address:</span>
+                                {{ $society->address }} </p>
+
+                        </div>
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Bank
+                                    Name:</span> {{ $society->bank_name }} </p>
+                        </div>
+                    </div>
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 border-b dark:bg-gray-800 dark:border-gray-700">
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Bank IFSC
+                                    Code:</span>
+                                {{ $society->bank_ifsc_code }} </p>
+                        </div>
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Bank Account
+                                    Number:</span>
+                                {{ $society->bank_account_number }} </p>
+                        </div>
+                    </div>
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 border-b dark:bg-gray-800 dark:border-gray-700">
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Member
+                                    Count:</span>
+                                {{ $society->member_count }} </p>
+                        </div>
+                    </div>
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 border-b dark:bg-gray-800 dark:border-gray-700">
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">President
+                                    Name:</span>
+                                {{ $society->president_name }} </p>
+                        </div>
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Vice President
+                                    Name:</span>
+                                {{ $society->vice_president_name }} </p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 ">
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Treasurer
+                                    Name:</span>
+                                {{ $society->treasurer_name }} </p>
+                        </div>
+                        <div class="p-3 flex-row">
+                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Secretary
+                                    Name:</span>
+                                {{ $society->secretary_name }} </p>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+                <div
+                    class="flex flex-col items-center justify-center rounded bg-gray-50 h-auto dark:bg-gray-800 border">
+                    <div class="w-full bg-slate-400 py-3">
+                        <p class="text-lg font-bold text-gray-900 dark:text-white text-center">Bank & Cash Summary</p>
+                    </div>
+                    <div class="relative overflow-x-auto bg-gray-50 w-full">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-10">
+                            <thead
+                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 font-medium">Total Balance as of 27 June 2024
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 font-medium">Rs 23456/-</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <th scope="row"
+                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        CashBook</th>
+                                    <td class="px-6 py-4">00.00</td>
+                                </tr>
+                                <tr
+                                    class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <th scope="row"
+                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        Ceavenue</th>
+                                    <td class="px-6 py-4">00.00</td>
+                                </tr>
+                                <tr
+                                    class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <th scope="row"
+                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        Bank of India</th>
+                                    <td class="px-6 py-4">Rs 23456/-</td>
+                                </tr>
+                                <tr
+                                    class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <th scope="row"
+                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        Paytm</th>
+                                    <td class="px-6 py-4">00.00</td>
+                                </tr>
+                                <tr
+                                    class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <th scope="row"
+                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        Razorpay</th>
+                                    <td class="px-6 py-4">00.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+
         </div>
-
     </div>
-</div>

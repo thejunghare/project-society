@@ -7,7 +7,7 @@
         <x-alert-no-registered-societies />
     @else
         <div class="flex items-center justify-between mb-4">
-            <div class="relative">
+            <div class="relative mt-3">
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -23,7 +23,7 @@
 
             {{-- Action Button --}}
             <div class="">
-                <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction"
+                {{-- <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction"
                     class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                     type="button">
                     <span class="sr-only">Action button</span>
@@ -33,7 +33,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="m1 1 4 4 4-4" />
                     </svg>
-                </button>
+                </button> --}}
                 <!-- Dropdown menu -->
                 <div id="dropdownAction"
                     class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 ">
@@ -463,27 +463,23 @@
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     @foreach ($societies as $society)
-        <div class="max-w-sm rounded-lg drop-shadow-sm overflow-hidden  border border-black-300 society-item">
+        <div class="max-w-sm rounded-lg drop-shadow-sm overflow-hidden border border-black-300 society-item">
             <div class="px-6 py-4">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between flex-wrap">
                     <div class="font-bold text-xl mb-2 society-name">{{ $society->name }}</div>
-                    <div>
-                        @if ($number == 1)
-                            <span
-                                class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">45
-                                Days Left</span>
+                    <div class="mt-2 sm:mt-0">
+                        @if ($society->is_subscription_over)
+                            <span class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Subscription Over</span>
                         @else
-                            <span
-                                class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Subscription
-                                Over</span>
+                            <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{ $society->days_left }} Days Left</span>
                         @endif
                     </div>
                 </div>
+                
                 <p class="text-gray-700 text-base society-address">
                     Address : {{ $society->address }}
                 </p>
             </div>
-
             <div class="px-6 pb-2">
                 <p class="text-justify text-gray-500 dark:text-gray-400">
                     Contact number: +91{{ $society->phone }}
@@ -491,26 +487,54 @@
             </div>
             <div class="px-6 pb-2">
                 <p class="text-justify text-gray-500 dark:text-gray-400">
-                    Total member: {{ $society->member_count }}
+                    Members: {{ $society->registered_members }}/{{ $society->total_members }}
                 </p>
-
             </div>
+            <style>
+                .disabled-icon {
+                    display: none;
+                    position: absolute;
+                    right: 5px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: red;
+                }
+                
+                button:disabled:hover .disabled-icon {
+                    display: inline;
+                }
+                
+                button:disabled:hover {
+                    cursor: not-allowed;
+                }
+            </style>
+            
             <div class="px-6 py-4">
-                @if ($number == 1)
-                    <button type="button"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                        wire:click="seeSociety({{ $society->id }})">View Details</button>
-                @else
-                    <button type="button"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                        wire:click="seeSociety({{ $society->id }})" disabled>View Details</button>
-                @endif
                 <button type="button"
-                    class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Re-New</button>
+                        class="relative text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        wire:click="seeSociety({{ $society->id }})"
+                        @if ($society->is_subscription_over)
+                            disabled
+                        @endif
+                >
+                    View Details
+                    <span class="disabled-icon"></span>
+                </button>
+            
+                @if ($society->show_renew_button)
+                    <button type="button"
+                            class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                            wire:click="renewSociety({{ $society->id }})">
+                        Re-New
+                    </button>
+                @endif
             </div>
         </div>
     @endforeach
 </div>
+
+
+
 
 <script>
     // Get the input element

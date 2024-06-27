@@ -112,7 +112,7 @@ class ManageSocietiesMembersIndex extends Component
         'success' => 'Members Deleted successfully'
     ]);
     // $this->loadSocietyMembers($this->societyId);
-    // return redirect('/accountant/manage/societies/')->with([
+    // return redirect('/accountant/manage/societies/')->with([ 
     //   'success' => 'Members Deleted successfully'
     // ]);
   }

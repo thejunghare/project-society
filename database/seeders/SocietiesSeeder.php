@@ -13,8 +13,6 @@ class SocietiesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-
         DB::table('societies')->insert([
             // Society one
             [
@@ -32,6 +30,7 @@ class SocietiesSeeder extends Seeder
                 'accountant_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'renews_at' => now()->addYear(), // Renew date set to one year from now
             ],
 
             // Society two
@@ -50,6 +49,7 @@ class SocietiesSeeder extends Seeder
                 'accountant_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'renews_at' => now()->addYear(), // Renew date set to one year from now
             ],
 
             // Society three
@@ -68,6 +68,7 @@ class SocietiesSeeder extends Seeder
                 'accountant_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'renews_at' => now()->addYear(), // Renew date set to one year from now
             ],
         ]);
     }

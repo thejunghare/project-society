@@ -7,11 +7,12 @@ use App\Models\Societies;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Ixudra\Curl\Facades\Curl;
-use Livewire\WithFileUploads; 
+use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Auth;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Illuminate\Support\Carbon;
 
 class ManageSocietiesIndex extends Component
 {
@@ -53,7 +54,7 @@ class ManageSocietiesIndex extends Component
     public $upload;
     public $s_id;
 
-    public $number = 0;
+    public $number = 1;
 
     public function mount()
     {
@@ -227,7 +228,7 @@ class ManageSocietiesIndex extends Component
 
         return redirect('/accountant/manage/societies')->with([
             'success' => 'Society Details Updated successfully'
-        ]); 
+        ]);
     }
 
     public function submit()
@@ -273,6 +274,32 @@ class ManageSocietiesIndex extends Component
     }
 
 
+
+    public function renewSociety($id)
+    {
+        $society = Societies::findOrFail($id);
+        $society->renews_at = Carbon::now()->addYear();
+        $society->save();
+
+        return redirect('/accountant/manage/societies')->with([
+            'success' => 'Society renewed successfully'
+        ]);
+    }
+
+    // public function index()
+    // {
+    //     $societies = Societies::all()->map(function ($society) {
+    //         $daysLeft = Carbon::now()->diffInDays(Carbon::parse($society->renews_at), false);
+    //         $society->days_left = $daysLeft;
+    //         return $society;
+    //     });
+
+    //     return view('societies.index', compact('societies'));
+    // }
+
+
+
+
     public function resetFilters()
     {
         $this->reset(['name', 'phone', 'address', 'member_count', 'bank_name', 'bank_ifsc_code', 'bank_account_number', 'president_name', 'vice_president_name', 'secretary_name', 'treasurer_name']);
@@ -314,14 +341,19 @@ class ManageSocietiesIndex extends Component
     }
 
     public function render()
-    {
-        return view('livewire.societies.manage-societies-index', [
-            'societies' => Societies::latest()->where('accountant_id', Auth::user()->id)->get(),
-        ])
-            ->with([
-                'button' => 'Create new user',
-                'success' => 'Society saved',
-                
-            ]);
-    }
+{
+    $societies = Societies::all()->map(function ($society) {
+        $daysLeft = Carbon::now()->diffInDays(Carbon::parse($society->renews_at), false);
+        $society->days_left = $daysLeft;
+        $society->is_subscription_over = $daysLeft <= 0;
+        $society->show_renew_button = $society->is_subscription_over;
+        $society->registered_members = $this->RegisteredMembers($society->id);
+        $society->total_members = $society->member_count;
+        return $society;
+    });
+
+    return view('livewire.societies.manage-societies-index', [
+        'societies' => $societies,
+    ]);
+}
 }
