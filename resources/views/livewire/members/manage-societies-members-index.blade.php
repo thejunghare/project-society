@@ -1,13 +1,31 @@
 <div class="mt-12">
+    <div class="mb-6 mt-13 border-gray-200 dark:border-gray-700">
+        <ul
+            class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+            <li class="me-2">
+                <button aria-current="page"
+                    class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300" wire:click="goBack">Society
+                    Dashboard</button>
+            </li>
+            
+            <li class="me-2">
+                <button aria-current="page"
+                    class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500"
+                    >See Members</button>
+            </li>
+
+        </ul>
+
+    </div>
     <div class="relative overflow-x-auto flex items-center justify-between py-4 bg-white dark:bg-gray-900">
-        <div>
+        {{-- <div>
             <button id="actionButton"
                 class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                 type="button">
                 <span class="sr-only">Action button</span>
                 Add New Member
             </button>
-        </div>
+        </div> --}}
         <label for="table-search" class="sr-only">Search</label>
         <div class="relative">
             <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -23,7 +41,7 @@
         </div>
     </div>
     <div class="mb-3 flex">
-        <h2 class="text-xl">Total Members: {{ $totalMembers }}</h2>
+        <h2 class="text-xl">Members: {{ $totalMembers }}</h2>
         <h2 class="text-xl pl-6">Registered Members: {{ $registeredMembers }}</h2>
     </div>
 
@@ -98,7 +116,7 @@
             @endforeach
         </tbody>
     </table>
-    <div class="mt-3 flex">
+    {{-- <div class="mt-3 flex">
         <a wire:click="goBack" style="cursor: pointer;"
             class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
             <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
@@ -108,7 +126,7 @@
             </svg>
             Previous
         </a>
-    </div>
+    </div> --}}
     
 
     
