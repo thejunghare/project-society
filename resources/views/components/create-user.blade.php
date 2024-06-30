@@ -1,4 +1,4 @@
-<!-- Main modal --> {{-- wire:ignore.self --}}
+<!-- Main modal -->
 <div id="crud-modal" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -21,7 +21,14 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form class="p-4 md:p-5" wire:submit.prevent="save">
+            <form class="p-4 md:p-5" wire:submit.prevent="save" method="POST">
+                <div>
+                    @if (session()->has('message'))
+                        <div class="alert alert-success">
+                            {{ session('message') }}
+                        </div>
+                    @endif
+                </div>
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     {{-- name --}}
                     <div class="col-span-2">
@@ -34,17 +41,17 @@
                         @error('name')
                             <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                 role="alert">
-                                <span class="font-medium"> {{ $message }}
+                                <span class="font-medium">{{ $message }}</span>
                             </div>
                         @enderror
                     </div>
                     {{-- role id --}}
                     <div class="col-span-2">
-                        <label for="role_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role
-                            ID</label>
-                        <select id="roles" wire:model="role_id"
+                        <label for="role_id"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role ID</label>
+                        <select id="role_id" wire:model="role_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option selected>Choose a role</option>
+                            <option value="">Choose a role</option>
                             <option value="1">admin</option>
                             <option value="2">accountant</option>
                             <option value="3">user</option>
@@ -53,7 +60,7 @@
                         @error('role_id')
                             <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                 role="alert">
-                                <span class="font-medium"> {{ $message }}
+                                <span class="font-medium">{{ $message }}</span>
                             </div>
                         @enderror
                     </div>
@@ -68,7 +75,7 @@
                         @error('email')
                             <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                 role="alert">
-                                <span class="font-medium"> {{ $message }}
+                                <span class="font-medium">{{ $message }}</span>
                             </div>
                         @enderror
                     </div>
@@ -76,14 +83,14 @@
                     <div class="col-span-2">
                         <label for="phone"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
-                        <input type="number" wire:model="phone" id="phone"
+                        <input type="text" wire:model="phone" id="phone"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Type user phone">
 
                         @error('phone')
                             <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                 role="alert">
-                                <span class="font-medium"> {{ $message }}
+                                <span class="font-medium">{{ $message }}</span>
                             </div>
                         @enderror
                     </div>
@@ -98,13 +105,12 @@
                         @error('password')
                             <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                 role="alert">
-                                <span class="font-medium"> {{ $message }}
+                                <span class="font-medium">{{ $message }}</span>
                             </div>
                         @enderror
                     </div>
                 </div>
-                <button type="submit" wire.loading wire:loading.attr="disabled" wire:loading.class="hidden"
-                    type="submit"
+                    <button type="submit" wire:loading.attr="disabled" wire:loading.class="hidden"
                     class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">

@@ -6,7 +6,7 @@
     <x-error-toaster />
 
     {{-- modal form --}}    
-    <x-create-user />
+    <x-create-society />
 
     {{-- table --}}
     {{-- wire:click.prevent="delete({{ $user->id }})" --}}
@@ -90,7 +90,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($users as $user)
+                @foreach ($societies as $society)
                     <tr
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="w-4 p-4">
@@ -105,12 +105,12 @@
                             <img class="w-10 h-10 rounded-full"
                                 src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Jese image">
                             <div class="ps-3">
-                                <div class="text-base font-semibold"> {{ $user->name }}</div>
-                                <div class="font-normal text-gray-500"> {{ $user->email }}</div>
+                                <div class="text-base font-semibold"> {{ $society->name }}</div>
+                                <div class="font-normal text-gray-500"> {{ $society->email }}</div>
                             </div>
                         </th>
                         <td class="px-6 py-4">
-                            {{ $user->role_id }}
+                            {{ $society->role_id }}
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center">
@@ -121,13 +121,13 @@
                             <!-- Modal toggle -->
                             <a href="#" type="button" data-modal-target="editUserModal"
                                 data-modal-show="editUserModal"
-                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="edit({{ $user->id }})">Edit</a>
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="edit({{ $society->id }})">Edit</a>
                                 <a href="#" type="button" data-modal-target="deletUserModal"
                                 data-modal-show="deleteUserModal"
-                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="deleteUser({{ $user->id }})"
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="delete({{ $society->id}})"
                                 wire:click="delete"
-                                wire:confirm="Are you sure you want to delete this post?"
-                            >Delete</a>
+    wire:confirm="Are you sure you want to delete this post?"
+>Delete</a>
                         </td>
                     </tr>
                 @endforeach
@@ -139,7 +139,7 @@
             @csrf <!-- Add this line for CSRF token if you are using Laravel -->
             <div class="relative w-full max-w-2xl max-h-full">
                 <!-- Modal content -->
-                <form wire:submit.prevent="updateUser" method="POST" action="App\Models\User" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <form wire:submit.prevent="updateSociety" method="POST" action="App\Models\User" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 
                     <div>
                         @if (session()->has('message'))
@@ -152,7 +152,7 @@
                     <!-- Modal header -->
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            Edit user
+                            Edit Society
                         </h3>
                         <button type="button"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -177,25 +177,50 @@
                                     required value="{{$name}}">
                             </div>
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="role_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
-                                <input type="number" name="role_id" id="role_id" wire:model="role_id"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$role_id}}" readonly>
-                            </div>
-                            <div class="col-span-6 sm:col-span-3">
-                                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                                <input type="email" name="email" id="email" wire:model="email"
-                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$email}}">
-                            </div>
-                            <div class="col-span-6 sm:col-span-3">
                                 <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
                                 <input type="text" name="phone" id="phone" wire:model="phone"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$phone}}">
                             </div>
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address</label>
+                                <input type="text" name="address" id="address" wire:model="address"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$address}}">
+                            </div>
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="member_count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Member Count</label>
+                                <input type="number" name="member_count" id="member_count" wire:model="member_count"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$member_count}}">
+                            </div>
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="bank_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank Name</label>
+                                <input type="text" name="bank_name" id="bank_name" wire:model="bank_name"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$bank_name}}">
+                            </div>
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="bank_account_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank Account Number</label>
+                                <input type="text" name="bank_account_number" id="bank_account_number" wire:model="bank_account_number"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$bank_account_number}}">
+                            </div>
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="bank_ifsc_code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank IFSC Code</label>
+                                <input type="text" name="bank_ifsc_code" id="bank_ifsc_code" wire:model="bank_ifsc_code"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$bank_ifsc_code}}">
+                            </div>
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="accountant_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Accountant ID</label>
+                                <input type="number" name="accountant_id" id="accountant_id" wire:model="accountant_id"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                            </div>
                         </div>
                     </div>
+                    
                     {{-- @endforeach --}}
                     <!-- Modal footer -->
                     <div

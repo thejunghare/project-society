@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\ManageUser\ManageUserIndex;
+use App\Livewire\ManageUser\ManageSocietyIndex;
 use App\Http\Controllers\AccountantController;
 use App\Livewire\Societies\ManageSocietiesIndex;
 use App\Livewire\Members\ManageSocietiesMembersIndex;
@@ -54,7 +55,8 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'check-role:1'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/admin/manage/users', ManageUserIndex::class)->name('users');
+    Route::get('/admin/manage/users', ManageUserIndex::class,)->name('users');
+    Route::get('/admin/manage/societiesIndex', ManageSocietyIndex::class)->name('societiesIndex');
 });
 
 
