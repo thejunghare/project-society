@@ -69,7 +69,13 @@ Route::middleware(['auth', 'check-role:1'])->group(function () {
 Route::middleware(['auth', 'check-role:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
     Route::get('/accountant/manage/societies', ManageSocietiesIndex::class)->name('societies');
-    Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)->name('societyDetails');
+    Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)->name('societyDetails')
+    ;
+
+    // Route::get('/accountant/manage/societies/{society}/society-details', [SocietyDetails::class, 'show'])
+    //     ->name('societyDetails')
+    //     ->middleware('check-subscription');
+
     Route::get('/accountant/manage/societies/{society}/society-details/members', ManageSocietiesMembersIndex::class)->name('members');
     Route::get('/accountant/manage/societies/{society}/society-details/bills/maintenance-bill', MaintenanceBillIndex::class)->name('maintenance-bill');
 });

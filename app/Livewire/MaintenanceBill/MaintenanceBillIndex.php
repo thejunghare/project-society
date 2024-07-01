@@ -104,6 +104,7 @@ class MaintenanceBillIndex extends Component
                     'maintenance_bills.id as bill_id',
                     'maintenance_bills.billing_month',
                     'maintenance_bills.amount',
+                    'maintenance_bills.advance',
                     'maintenance_bills.status',
                     'members.created_at'
                 )
@@ -235,6 +236,11 @@ class MaintenanceBillIndex extends Component
             'body' => $message,
             'mediaUrl' => [url('storage/invoice-' . basename($filePath))],
         ]);
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
     }
 
 

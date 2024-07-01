@@ -5,6 +5,7 @@ namespace App\Livewire\Members;
 use Livewire\Component;
 use App\Models\Societies;
 use App\Models\Member;
+use App\Models\MaintenanceBill;
 use App\Models\User;
 use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Redirect;
@@ -121,6 +122,19 @@ class ManageSocietiesMembersIndex extends Component
   {
     return redirect('/accountant/manage/societies/' . $this->societyId . '/society-details');
   }
+
+
+
+  public function maintenanceBills()
+  {
+      return $this->hasMany(MaintenanceBill::class);
+  }
+
+  public function society()
+  {
+      return $this->belongsTo(Society::class);
+  }
+
 
   public function render()
   {

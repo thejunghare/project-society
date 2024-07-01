@@ -32,7 +32,8 @@
                         <p class="text-1xl font-medium text-gray-900 dark:text-white">Total Receivable</p>
                     </div>
                     <div class="text-center pb-2">
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white">Rs {{ number_format($receivableAmount, 2) }} /-</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">Rs
+                            {{ number_format($receivableAmount, 2) }} /-</p>
                     </div>
                 </div>
 
@@ -50,19 +51,19 @@
                     class="flex flex-col items-center justify-center h-auto col-span-1 sm:col-span-2 lg:col-span-2 rounded bg-gray-50 dark:bg-gray-800 border">
                     <div class="flex flex-wrap items-center justify-around w-full">
                         <div class="flex flex-col items-center p-4">
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">12</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">{{$advance}}</p>
                             <p class="text-1xl font-medium text-gray-900 dark:text-white">Advance/No Dues</p>
                         </div>
                         <div class="flex flex-col items-center p-4">
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">2</p>
-                            <p class="text-1xl font-medium text-gray-900 dark:text-white">Current Bill Date</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">{{ $currentBill }}</p>
+                            <p class="text-1xl font-medium text-gray-900 dark:text-white">Current Bill</p>
                         </div>
                         <div class="flex flex-col items-center p-4">
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">12</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">{{ $billDues }}</p>
                             <p class="text-1xl font-medium text-gray-900 dark:text-white">Bill Dues</p>
                         </div>
                         <div class="flex flex-col items-center p-4">
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">12</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white pb-2">{{ $neverPaid }}</p>
                             <p class="text-1xl font-medium text-gray-900 dark:text-white">Never Paid</p>
                         </div>
                     </div>
@@ -73,7 +74,8 @@
 
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-                <div class="flex-col items-center justify-center bg-gray-50 h-auto dark:bg-gray-800 border" style="border-radius: 9px">
+                <div class="flex-col items-center justify-center bg-gray-50 h-auto dark:bg-gray-800 border"
+                    style="border-radius: 9px">
                     <div class="align-center flex flex-col items-center bg-slate-400">
                         <p class="text-lg font-bold text-gray-900 dark:text-white p-3">Society Details</p>
                     </div>
@@ -154,54 +156,55 @@
 
 
                 <div
-                    class="flex flex-col items-center justify-center bg-gray-50 h-auto dark:bg-gray-800 border" style="border-radius: 9px">
-                    <div class="w-full bg-slate-400 py-3">
+                    class="flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800 border rounded-lg p-4">
+                    <div class="w-full bg-slate-400 py-3 rounded-t-lg">
                         <p class="text-lg font-bold text-gray-900 dark:text-white text-center">Bank & Cash Summary</p>
                     </div>
-                    <div class="relative overflow-x-auto bg-gray-50 w-full">
-                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-10">
+                    <div class="relative overflow-x-auto w-full mt-4">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                             <thead
-                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 font-medium">Total Balance as of 27 June 2024
+                                    <th scope="col" class="px-6 py-3 font-medium">Total Balance as of {{ now()->format('d F Y') }}
                                     </th>
-                                    <th scope="col" class="px-6 py-3 font-medium">Rs 23456/-</th>
+                                    <th scope="col" class="px-6 py-3 font-medium">Rs
+                                        {{ $society->updated_balance }}/-</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr
-                                    class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                         CashBook</th>
                                     <td class="px-6 py-4">00.00</td>
                                 </tr>
                                 <tr
-                                    class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                         PhonePay</th>
                                     <td class="px-6 py-4">00.00</td>
                                 </tr>
                                 <tr
-                                    class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{$society->bank_name}}</th>
+                                        class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        {{ $society->bank_name }}</th>
                                     <td class="px-6 py-4">Rs 23456/-</td>
                                 </tr>
                                 <tr
-                                    class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    class="bg-white dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                         Cheque</th>
                                     <td class="px-6 py-4">00.00</td>
                                 </tr>
-                                
                             </tbody>
                         </table>
                     </div>
                 </div>
+
             </div>
 
 

@@ -25,6 +25,15 @@ return new class extends Migration {
             $table->text('secretary_name')->nullable();
             $table->date('renews_at'); 
 
+            $table->string('upi_id')->unique();
+            $table->string('upi_number')->unique();
+            $table->decimal('parking_charges', 8, 2)->nullable();
+            $table->decimal('service_charges', 8, 2)->nullable();
+            $table->decimal('maintenance_amount_owner', 8, 2)->nullable();
+            $table->decimal('maintenance_amount_rented', 8, 2)->nullable();
+            $table->decimal('registered_balance', 10, 2)->default(0);
+            $table->decimal('updated_balance', 10, 2)->default(0);
+
             $table->unsignedBigInteger('accountant_id');
 
             $table->foreign('accountant_id')->references('user_id')->on('accountants');

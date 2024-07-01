@@ -133,6 +133,9 @@
                             Invoice Number
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Advance Payment
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Status
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -155,7 +158,7 @@
                                         dark:border-gray-600">
                                     <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                                 </div>
-                            </td>
+                            </td> 
                             <td class="px-6 py-4">
                                 1
                             </td>
@@ -169,6 +172,14 @@
                             </th>
                             <td class="px-6 py-4">
                                 {{ $member->bill_id }}
+                            </td>
+                            <td class="px-6 py-4">
+                                @if( $member->advance == 0 )
+                                    <span class="text-red-500">No</span>
+                                @else
+                                    <span class="text-green-500">Yes</span>
+                                @endif
+
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center">

@@ -335,25 +335,41 @@ class ManageSocietiesIndex extends Component
     //     ]);
     // }
 
+
     public function seeSociety($societyId)
     {
-        return redirect()->route('societyDetails', ['society' => $societyId]);
+        $society = Societies::findOrFail($societyId);
+
+        if ($society->is_subscription_over) {
+            // Handle subscription over logic here, like showing a message or redirecting elsewhere
+            session()->flash('error', 'Subscription is over for this society.');
+            return redirect()->back();
+        } else {
+            return redirect()->route('societyDetails', ['society' => $societyId]);
+        }
     }
 
-    public function render()
-{
-    $societies = Societies::all()->map(function ($society) {
-        $daysLeft = Carbon::now()->diffInDays(Carbon::parse($society->renews_at), false);
-        $society->days_left = $daysLeft;
-        $society->is_subscription_over = $daysLeft <= 0;
-        $society->show_renew_button = $society->is_subscription_over;
-        $society->registered_members = $this->RegisteredMembers($society->id);
-        $society->total_members = $society->member_count;
-        return $society;
-    });
+    public function members()
+    {
+        return $this->hasMany(Member::class);
+    }
 
-    return view('livewire.societies.manage-societies-index', [
-        'societies' => $societies,
-    ]);
-}
+    
+
+    public function render()
+    {
+        $societies = Societies::all()->map(function ($society) {
+            $daysLeft = Carbon::now()->diffInDays(Carbon::parse($society->renews_at), false);
+            $society->days_left = $daysLeft;
+            $society->is_subscription_over = $daysLeft <= 0;
+            $society->show_renew_button = $society->is_subscription_over;
+            $society->registered_members = $this->RegisteredMembers($society->id);
+            $society->total_members = $society->member_count;
+            return $society;
+        });
+
+        return view('livewire.societies.manage-societies-index', [
+            'societies' => $societies,
+        ]);
+    }
 }
