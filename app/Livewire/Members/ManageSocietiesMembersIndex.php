@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Models\Societies;
 use App\Models\Member;
 use App\Models\MaintenanceBill;
-use App\Models\User;
+use App\Models\User;  
 use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Redirect;
 

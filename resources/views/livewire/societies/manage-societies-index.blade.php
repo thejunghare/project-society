@@ -6,7 +6,7 @@
     @if ($societies->isEmpty())
         <x-alert-no-registered-societies />
     @else
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-4"> 
             <div class="relative mt-3">
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -531,6 +531,7 @@
             </div>
         </div>
     @endforeach
+    
 </div>
 
 

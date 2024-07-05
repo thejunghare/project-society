@@ -72,9 +72,9 @@ Route::middleware(['auth', 'check-role:2'])->group(function () {
     Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)->name('societyDetails')
     ;
 
-    // Route::get('/accountant/manage/societies/{society}/society-details', [SocietyDetails::class, 'show'])
-    //     ->name('societyDetails')
-    //     ->middleware('check-subscription');
+    // Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)
+    // ->name('societyDetails')
+    // ->middleware('check.society.subscription');
 
     Route::get('/accountant/manage/societies/{society}/society-details/members', ManageSocietiesMembersIndex::class)->name('members');
     Route::get('/accountant/manage/societies/{society}/society-details/bills/maintenance-bill', MaintenanceBillIndex::class)->name('maintenance-bill');

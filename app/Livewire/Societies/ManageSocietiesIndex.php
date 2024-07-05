@@ -4,6 +4,7 @@ namespace App\Livewire\Societies;
 
 use Livewire\Component;
 use App\Models\Societies;
+
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Ixudra\Curl\Facades\Curl;
@@ -336,14 +337,25 @@ class ManageSocietiesIndex extends Component
     // }
 
 
+    // public function seeSociety($societyId)
+    // {
+    //     $society = Societies::findOrFail($societyId);
+
+    //     if ($society->is_subscription_over) {
+    //         // Handle subscription over logic here, like showing a message or redirecting elsewhere
+    //         session()->flash('error', 'Subscription is over for this society.');
+    //         return redirect()->back();
+    //     } else {
+    //         return redirect()->route('societyDetails', ['society' => $societyId]);
+    //     }
+    // }
     public function seeSociety($societyId)
     {
         $society = Societies::findOrFail($societyId);
+        $daysLeft = Carbon::now()->diffInDays(Carbon::parse($society->renews_at), false);
 
-        if ($society->is_subscription_over) {
-            // Handle subscription over logic here, like showing a message or redirecting elsewhere
-            session()->flash('error', 'Subscription is over for this society.');
-            return redirect()->back();
+        if ($daysLeft <= 0) {
+            $this->dispatch('error', ['message' => 'Subscription is over for this society. Access denied.']);
         } else {
             return redirect()->route('societyDetails', ['society' => $societyId]);
         }
@@ -354,11 +366,13 @@ class ManageSocietiesIndex extends Component
         return $this->hasMany(Member::class);
     }
 
-    
+
 
     public function render()
     {
-        $societies = Societies::all()->map(function ($society) {
+        $societies = Societies::where('accountant_id', Auth::user()->id)->get();
+
+        $societies = $societies->map(function ($society) {
             $daysLeft = Carbon::now()->diffInDays(Carbon::parse($society->renews_at), false);
             $society->days_left = $daysLeft;
             $society->is_subscription_over = $daysLeft <= 0;
@@ -370,6 +384,8 @@ class ManageSocietiesIndex extends Component
 
         return view('livewire.societies.manage-societies-index', [
             'societies' => $societies,
+            'debugSocietiesCount' => $societies->count(), // Add this line
         ]);
     }
 }
+

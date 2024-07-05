@@ -24,8 +24,8 @@ class Kernel extends HttpKernel
     ];
 
     // protected $routeMiddleware = [
-    //     // Other middleware entries...
-    //     'check-subscription' => \App\Http\Middleware\CheckSubscription::class,
+    //     // ... other middleware
+    //     'check.society.subscription' => \App\Http\Middleware\CheckSocietySubscription::class,
     // ];
 
     /**
@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check-role' => \App\Http\Middleware\RoleAccess::class,
+        // 'check.society.subscription' => \App\Http\Middleware\CheckSocietySubscription::class,
     ];
 }
