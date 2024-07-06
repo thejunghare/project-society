@@ -70,6 +70,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check-role' => \App\Http\Middleware\RoleAccess::class,
-        // 'check.society.subscription' => \App\Http\Middleware\CheckSocietySubscription::class,
+        'check.subscription' => \App\Http\Middleware\CheckSubscription::class,
     ];
 }

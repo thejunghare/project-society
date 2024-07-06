@@ -6,9 +6,11 @@ use App\Models\Member;
 use App\Models\Societies;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-
+use Livewire\Attributes\Title;
+   
 class AccountantIndex extends Component
 {
+    #[Title('Accountant dashboard - Society')]
     public $registeredSocietiesCount;
     public $registeredSocietyMembersCount;
     public $presidentCount;
