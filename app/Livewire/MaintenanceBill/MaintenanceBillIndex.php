@@ -6,7 +6,7 @@ use DateTime;
 use App\Models\Member;
 use App\Models\Societies;
 use Livewire\Component;
-use Twilio\Rest\Client;  
+use Twilio\Rest\Client;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use App\Models\MaintenanceBill;
@@ -46,7 +46,7 @@ class MaintenanceBillIndex extends Component
     {
         return redirect('/accountant/manage/societies/' . $this->society->id . '/society-details');
     }
-    
+
 
     public function returnMonths()
     {

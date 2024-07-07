@@ -40,6 +40,20 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Route::get('/download-invoice/{billId}', [BillController::class, 'downloadInvoice'])->name('download.invoice');
+
+// Route::get('/download-receipt/{paymentId}', [BillController::class, 'downloadReceipt'])->name('download.receipt');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('show.pay.bill');
+    Route::get('/download-invoice/{billId}', [BillController::class, 'downloadInvoice'])->name('download.invoice');
+    Route::post('/process-payment', [BillController::class, 'processPayment'])->name('process.payment');
+    Route::get('/download-receipt/{paymentId}', [BillController::class, 'downloadReceipt'])->name('download.receipt');
+});
+
+
+
 
 Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('pay.bill');
 Route::post('/process-payment', [BillController::class, 'processPayment'])->name('process.payment');
