@@ -18,7 +18,7 @@ class ManageMemberIndex extends Component
     #[Title('Manage Members')]
 
     // create member properties
-    public $role_id = "3";
+    public $role_id = "4";
     public $society_id = "";
     public $society_name = "";
 
@@ -85,6 +85,10 @@ class ManageMemberIndex extends Component
             'room_number' => 'nullable',
         ]);
 
+        if ($this->checkMemberCountToUpdate($this->society_id)==false){
+            return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
+        }
+
         $member = Member::find($this->s_id);
         $user = $member->user;
 
@@ -110,8 +114,6 @@ class ManageMemberIndex extends Component
 
         $member->update($memberData);
 
-        $this->updateMemberCountForSociety($this->society_id);
-
         $this->resetInputFields();
         
         $this->showModal = false;
@@ -125,8 +127,8 @@ class ManageMemberIndex extends Component
     {
         // Validate input fields
         $validatedData = $this->validate([
-            'role_id' => 'required|numeric|min:1|max:3',
-            'name' => 'required|string|min:4|max:50',
+            'role_id' => 'required|numeric|min:1|max:4',
+            'name' => 'required|string|min:3|max:50',
             'email' => 'required|email|unique:users,email', // Ensure email is unique in the users table
             'phone' => 'required|digits:10',
             'password' => 'required|min:8',
@@ -134,6 +136,10 @@ class ManageMemberIndex extends Component
             'is_rented' => 'nullable|in:Yes,No', // Optional, only Yes or No
             'room_number' => 'nullable|string', // Optional room number
         ]);
+
+        if (!$this->checkMemberCountForSociety($this->society_id)){
+            return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
+        }
 
 
         // Create the user
@@ -158,9 +164,7 @@ class ManageMemberIndex extends Component
             'is_rented' => $isRented,
             'room_number' => $this->room_number ?? '',
         ]);
-
-        // Updates the member_count
-        $this->updateMemberCountForSociety($this->society_id);
+        
 
         // Reset input fields
         $this->resetInputFields();
@@ -169,11 +173,37 @@ class ManageMemberIndex extends Component
         return redirect(route('membersIndex'))->with(['success' => 'Member added.']);
     }
 
-    // Function to update the member_count
-    public function updateMemberCountForSociety($society_id)
+    // Checks Member count to update
+
+    public function checkMemberCountForSociety($society_id): bool
     {
-        $memberCount = Member::where('society_id', $society_id)->count();
-        Societies::where('id', $society_id)->update(['member_count' => $memberCount]);
+      $currentMemberCount = Member::where('society_id', $society_id)->count();
+      $society = Societies::where('id', $society_id)->first();
+    
+      if (is_null($society)) {
+          // Handle the case where the society is not found (optional)
+          return redirect(route('membersIndex'))->with(['error' => 'Society is full']); // Or throw an exception
+      }
+    
+      $societyMemberCount = $society->member_count;
+    
+      return $currentMemberCount < $societyMemberCount;
+    }
+    
+    // Checks Member count to update
+    public function checkMemberCountToUpdate($society_id): bool
+    {
+      $currentMemberCount = Member::where('society_id', $society_id)->count();
+      $society = Societies::where('id', $society_id)->first();
+    
+      if (is_null($society)) {
+          // Handle the case where the society is not found (optional)
+          return redirect(route('membersIndex'))->with(['error' => 'Society is full']); // Or throw an exception
+      }
+    
+      $societyMemberCount = $society->member_count;
+
+      return $currentMemberCount <= $societyMemberCount;
     }
 
     public function deleteMember($id)

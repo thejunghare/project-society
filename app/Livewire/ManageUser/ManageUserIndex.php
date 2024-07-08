@@ -4,6 +4,7 @@ namespace App\Livewire\ManageUser;
 
 use Exception;
 use App\Models\User;
+use App\Models\Role;
 use App\Models\Member;
 use App\Models\Societies;
 use App\Models\Accountant;
@@ -74,7 +75,7 @@ class ManageUserIndex extends Component
     public function updateUser()
     {
         $this->validate([
-            'name' => 'required|string|min:4|max:50',
+            'name' => 'required|string|min:3|max:50',
             'role_id' => 'required',
             'email' => 'required|email',
             'phone' => 'required|digits:10',
@@ -178,6 +179,7 @@ class ManageUserIndex extends Component
 
     public function viewUser($userId){
         $user = User::find($userId);
+        
 
         $this->userId = $userId;
         $this->name = $user->name;
@@ -185,6 +187,9 @@ class ManageUserIndex extends Component
         $this->email = $user->email;
         $this->phone = $user->phone;
         $this->password = $user->password;
+
+        $role = Role::find($this->role_id);
+        $this->roleName = $role->role;
 
         
         if($user->role_id == 2){
@@ -200,6 +205,8 @@ class ManageUserIndex extends Component
                 return redirect(route('usersIndex'));
             }
         }
+
+        // dd($this->roleName);
                 
 
         return view('livewire.manage-user.manage-user-index', with([
@@ -229,6 +236,10 @@ class ManageUserIndex extends Component
             'room_number' => 'nullable|string',
         ]);
 
+        if (!$this->checkMemberCountForSociety($this->society_id)){
+            return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
+        }
+
         $user = User::find($this->selectedUsers[0]);
         // dd( $user->id,$this->name,$this->role_id,$this->email,$this->phone,$this->society_id,$this->room_number ?? '');
         
@@ -242,7 +253,6 @@ class ManageUserIndex extends Component
         // Determine if the member is rented
         $isRented = $this->is_rented === 'Yes' ? '1' : '0';
 
-
         // Create the member
         Member::create([
             'user_id' => $user->id,
@@ -251,8 +261,6 @@ class ManageUserIndex extends Component
             'room_number' => $this->room_number ?? '',
         ]);
         
-        // Updates the member_count
-        $this->updateMemberCountForSociety($this->society_id);
     }else if( $this->promoteTo == "Accountant"){
 
         $this->validate([
@@ -300,10 +308,19 @@ class ManageUserIndex extends Component
 
     }
 
-    public function updateMemberCountForSociety($society_id)
+    public function checkMemberCountForSociety($society_id): bool
     {
-        $memberCount = Member::where('society_id', $society_id)->count();
-        Societies::where('id', $society_id)->update(['member_count' => $memberCount]);
+      $currentMemberCount = Member::where('society_id', $society_id)->count();
+      $society = Societies::where('id', $society_id)->first();
+    
+      if (is_null($society)) {
+          // Handle the case where the society is not found (optional)
+          return redirect(route('membersIndex'))->with(['error' => 'Society is full']); // Or throw an exception
+      }
+    
+      $societyMemberCount = $society->member_count;
+    
+      return $currentMemberCount < $societyMemberCount;
     }
 
 
