@@ -1,3 +1,4 @@
+
 <div>
     {{-- success toast --}}
     <x-success-toaster />
@@ -6,17 +7,13 @@
     <x-error-toaster />
 
     {{-- modal form --}}    
-    <x-create-user />
-
+    <x-create-member :societies="$societies"/>
     
-    <x-promote-user :societies="$societies" :promoteTo="$promoteTo"
-               :name="$name" :roleName="$roleName"
-               :email="$email" :phone="$phone" :userId="$userId" :password="$password"/>
-
-
+    
     {{-- table --}}
     {{-- wire:click.prevent="delete({{ $user->id }})" --}}
 
+    
     <div class="mt-12 relative overflow-x-auto p-1">
         <div
             class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
@@ -40,21 +37,9 @@
                             <a href="#" data-modal-target="crud-modal" data-modal-toggle="crud-modal"
                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{ $button }}</a>
                         </li>
-                        <li class="relative group">
-                            <a href="#" id="promote-button"
+                        <li>
+                            <a href="#"
                                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Promote</a>
-                            <ul class="absolute left-full top-0 hidden mt-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 group-hover:block">
-                                <li class="relative group">
-                                    <a href="#" id="promote-button" data-modal-target="promote-modal" data-modal-toggle="promote-modal"
-                                    wire:click.prevent="buttonClicked('Member')"
-                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Member</a>
-                                </li>
-                                <li class="relative group">
-                                    <a href="#" id="promote-button" data-modal-target="promote-modal" data-modal-toggle="promote-modal" 
-                                    wire:click.prevent="buttonClicked('Accountant')"
-                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Accountant</a>
-                                </li>
-                            </ul>
                         </li>
                         <li>
                             <a href="#"
@@ -108,41 +93,40 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($users as $user)
+                @foreach ($members as $member)
                     <tr
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="w-4 p-4">
                             <div class="flex items-center">
-                                <input id="checkbox-{{ $user->id }}" type="checkbox" wire:model="selectedUsers"
-                                value="{{ $user->id }}"
+                                <input id="checkbox-table-search-1" type="checkbox"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="checkbox-{{ $user->id }}" class="sr-only">checkbox</label>
+                                <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                             </div>
                         </td>
                         <td class="px-2 py-4 whitespace-nowrap">
-                            {{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}
+                            {{ ($members->currentPage() - 1) * $members->perPage() + $loop->iteration }}
                         </td>
                         <th scope="row"
                             class="flex items-center px-2 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                             <img class="w-10 h-10 rounded-full"
                                 src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Jese image">
                             <div class="ps-3">
-                                <div class="text-base font-semibold"> {{ $user->name }}</div>
-                                <div class="font-normal text-gray-500"> {{ $user->email }}</div>
+                                <div class="text-base font-semibold"> {{ $member->user->name }}</div>
+                                <div class="font-normal text-gray-500"> {{ $member->user->email }}</div>
                             </div>
                         </th>
                         <td class="px-6 py-4">
-                            {{ $user->phone }}
+                            {{ $member->user->phone }}
                         </td>
                         
                         <td class="px-6 py-4">
                             <!-- Modal toggle -->
                             <a href="#" type="button" data-modal-target="editUserModal"
                                 data-modal-show="editUserModal"
-                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="edit({{ $user->id }})">Edit</a>
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="edit({{ $member->id }})">Edit</a>
                                 <a href="#" type="button" data-modal-target="deletUserModal"
                                 data-modal-show="deleteUserModal"
-                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="deleteUser({{ $user->id }})"
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="deleteMember({{ $member->id }})"
                                 wire:click="delete"
                                 wire:confirm="Are you sure you want to delete this post?"
                             >Delete</a>
@@ -157,12 +141,14 @@
             @csrf <!-- Add this line for CSRF token if you are using Laravel -->
             <div class="relative w-full max-w-2xl max-h-full">
                 <!-- Modal content -->
-                <form wire:submit.prevent="updateUser" method="POST" action="App\Models\User" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <form wire:submit.prevent="updateMember" method="POST" action="App\Models\User" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 
+                    
+                    
                     <!-- Modal header -->
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            Edit user
+                            Edit Member
                         </h3>
                         <button type="button"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -180,27 +166,48 @@
                     {{-- @foreach ($users as $user) --}}
                     <div class="p-6 space-y-6">
                         <div class="grid grid-cols-6 gap-6">
+
                             {{-- name --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                                 <input type="text" name="name" id="name" wire:model="name"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$name}}">
-                                    @error('name')
-                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                                    role="alert">
-                                    <span class="font-medium">{{ $message }}</span>
-                                </div>
-                                @enderror
                             </div>
+                            @error('name')
+                            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                role="alert">
+                                <span class="font-medium">{{ $message }}</span>
+                            </div>
+                            @enderror
 
-                            {{-- number --}}
+                            {{-- society_name --}}
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="role_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
-                                <input type="number" name="role_id" id="role_id" wire:model="role_id"
+                                <label for="society_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Society Name</label>
+                                <select id="society_id" wire:model="society_id" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option>Choose a Society</option>
+                                    @foreach($societies as $society)
+                                        <option value="{{ $society->id }}" @if($society->id == $society_id) selected @endif>
+                                            {{ $society->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('society_id')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                                        <span class="font-medium">{{ $message }}</span>
+                                    </div>
+                                @enderror
+                            </div>
+                            
+
+                            {{-- room_number --}}
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="room_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Room Number</label>
+                                <input type="text" name="room_number" id="room_number" wire:model="room_number"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$role_id}}" readonly>
-                                    @error('role_id')
+                                    required value="{{$room_number}}">
+                                    @error('room_number')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
                                     <span class="font-medium">{{ $message }}</span>
@@ -208,7 +215,26 @@
                                 @enderror
                             </div>
 
-                            {{-- emil --}}
+                            {{-- is_rented --}}
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="is_rented" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Is Rented</label>
+                              
+                                <select id="is_rented" wire:model="is_rented" required
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                  <option value="">Choose</option>  <option value="Yes" {{ $is_rented === 'Yes' ? 'selected' : '' }}>Yes</option>
+                                  <option value="No" {{ $is_rented === 'No' ? 'selected' : '' }}>No</option>
+                                </select>
+                              
+                                @error('is_rented')
+                                  <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                       role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                  </div>
+                                @enderror
+                              </div>
+                              
+
+                            {{-- email --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
                                 <input type="email" name="email" id="email" wire:model="email"
@@ -225,7 +251,7 @@
                             {{-- phone --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
-                                <input type="text" name="phone" id="phone" wire:model="phone"
+                                <input type="number" name="phone" id="phone" wire:model="phone"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$phone}}">
                                     @error('phone')
@@ -236,7 +262,8 @@
                                 @enderror
                             </div>
 
-                            <div class="col-span-6 sm:col-span-3">
+                             {{-- password --}}
+                             <div class="col-span-6 sm:col-span-3">
                                 <label for="password"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                                 <input type="password" wire:model="password" id="password"
@@ -249,6 +276,8 @@
                                     </div>
                                 @enderror
                             </div>
+
+
                         </div>
                     </div>
                     {{-- @endforeach --}}
@@ -265,14 +294,7 @@
     </div>
 
     <div class="my-4">
-        {{ $users->links() }}
+        {{ $members->links() }}
     </div>
-
+    
 </div>
-
-<script>
-    window.addEventListener('userUpdated', () => {
-        location.reload();
-    });
-</script>
-

@@ -4,6 +4,9 @@ namespace App\Livewire\ManageUser;
 
 use Exception;
 use App\Models\User;
+use App\Models\Member;
+use App\Models\Societies;
+use App\Models\Accountant;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Rule;
@@ -13,23 +16,41 @@ use Illuminate\Support\Facades\Hash;
 class ManageUserIndex extends Component
 {
     #[Rule('required|string')]
-    #[Title('Manage Members - Society')]
+    #[Title('Manage Users')]
 
+
+    public $selectedUsers = [];
     // create user properties
-    public $role_id = "";
+    public $role_id = "3";
+    public $roleName = "";
+    
     public $name = "";
     public $email = "";
     public $phone = "";
     public $password = "";
     public $search = "";
     public $showModal = false;
-    public $s_id;
+    public $s_id="";
+    public $userId="";
+    public $promoteTo ="";
+    public $promotionId ="";
+
+    public $societies = "";
+    
+    public $society_id = "";
+    public $is_rented = "";
+    public $room_number = "";
+
+
+
 
     use WithPagination;
 
+
+
     public function mount()
     {
-        $this->resetInputFields();
+        $this->societies = Societies::all();
     }
 
     public function resetInputFields()
@@ -40,12 +61,13 @@ class ManageUserIndex extends Component
     public function edit($id)
     {
         $user = User::findOrFail($id);
-
+    
         $this->s_id = $user->id;
         $this->name = $user->name;
         $this->role_id = $user->role_id;
         $this->email = $user->email;
         $this->phone = $user->phone;
+        $this->password = $user->password;
         $this->showModal = true;
     }
 
@@ -53,9 +75,10 @@ class ManageUserIndex extends Component
     {
         $this->validate([
             'name' => 'required|string|min:4|max:50',
-            'role_id' => 'required|numeric|min:1|max:3',
+            'role_id' => 'required',
             'email' => 'required|email',
-            'phone' => 'required',
+            'phone' => 'required|digits:10',
+            'password' => 'required|min:8'
         ]);
 
         $user = User::findOrFail($this->s_id);
@@ -64,32 +87,27 @@ class ManageUserIndex extends Component
             'role_id' => $this->role_id,
             'email' => $this->email,
             'phone' => $this->phone,
+            'password' => $this->password
         ]);
 
         $this->resetInputFields();
-        session()->flash('message', 'User updated successfully.');
+        session()->flash('success', 'User updated successfully.');
 
         $this->showModal = false;
 
         // Emit a browser event to refresh the page
-        return redirect()->to(route('users'));;
+        return redirect()->to(route('usersIndex'));;
     }
 
     public function save()
     {
-        // $this->validate([
-        //     'role_id' => 'required|numeric|min:1|max:3',
-        //     'name' => 'required|string|min:4|max:50',
-        //     'email' => 'required|email|unique:users',
-        //     'phone' => 'required',
-        //     'password' => 'required|min:8',
-        // ]);
-
+        
         $this->validate([
             'name' => 'required|string|min:2|max:50',
-            'role_id' => 'required|numeric|min:1|max:3',
-            'email' => 'required|email',
-            'phone' => 'required',
+            'role_id' => 'required',
+            'email' => 'required',
+            'phone' => 'required|digits:10',
+            'password' => 'required|min:8'
         ]);
         // dd('Users data called', $this->name, $this->role_id, $this->email, $this->phone, $this->password);
 
@@ -101,9 +119,9 @@ class ManageUserIndex extends Component
             'password' => Hash::make('password'),
         ]);
 
-        session()->flash('message', 'User added.');
+        session()->flash('success', 'User added.');
         $this->resetInputFields();  
-        return redirect(route('users'));    
+        return redirect(route('usersIndex'));    
     }
 
     public function deleteUser($id)
@@ -125,18 +143,184 @@ class ManageUserIndex extends Component
         session()->flash('success', 'User deleted successfully.');
 
         // Optionally, refresh the page
-        return redirect(route('users'));
+        return redirect(route('usersIndex'));
     }
+    
+    public function buttonClicked($role)
+    {
+        $this->promoteTo = $role;
+
+        if($this->promoteTo=='Member'){
+            $this->promotionId = 4;
+            if (count($this->selectedUsers) ==1 ){
+                $this->viewUser( $this->selectedUsers[0]);
+            }elseif (count($this->selectedUsers) ==0 ){
+                session()->flash('error', 'Select user to promote.');
+                return redirect(route('usersIndex'));
+            }else{
+                session()->flash('error', 'Select only one user.');
+                return redirect(route('usersIndex'));
+            }
+        }elseif ($this->promoteTo=='Accountant'){
+            $this->promotionId = 2;
+            if (count($this->selectedUsers) ==1 ){
+                $this->viewUser( $this->selectedUsers[0]);
+            }elseif (count($this->selectedUsers) ==0 ){
+                session()->flash('error', 'Select user to promote.');
+                return redirect(route('usersIndex'));
+            }else{
+                session()->flash('error', 'Select only one user.');
+                return redirect(route('usersIndex'));
+            }
+        }
+        // dd($this->promoteTo);
+    }
+
+    public function viewUser($userId){
+        $user = User::find($userId);
+
+        $this->userId = $userId;
+        $this->name = $user->name;
+        $this->role_id = $user->role_id;
+        $this->email = $user->email;
+        $this->phone = $user->phone;
+        $this->password = $user->password;
+
+        
+        if($user->role_id == 2){
+            $this->roleName = "Accountant";
+            if($this->promoteTo=='Accountant'){
+                session()->flash('error', 'Already an Accountant');
+                return redirect(route('usersIndex'));
+            }
+        }elseif($user->role_id == 4){
+            $this->roleName = "Member";
+            if($this->promoteTo=='Member'){
+                session()->flash('error', 'Already a Member');
+                return redirect(route('usersIndex'));
+            }
+        }
+                
+
+        return view('livewire.manage-user.manage-user-index', with([
+            'name' => $this->name,
+            'roleName' => $this->roleName,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'userId' => $this->userId,
+            'password' =>  $this->password ,
+        ]));    
+    }
+
+    public function promoteUser(){
+
+
+        if( $this->promoteTo == "Member"){
+
+        
+        $this->validate([
+            'name' => 'required|string|min:4|max:50',
+            'role_id' => 'required|numeric',
+            'email' => 'required|email',
+            'phone' => 'required|digits:10',
+            'society_id' => 'required|exists:societies,id|not_in:0',
+            'password' => 'required|min:8',
+            'is_rented' => 'nullable|in:Yes,No', // Optional, only Yes or No
+            'room_number' => 'nullable|string',
+        ]);
+
+        $user = User::find($this->selectedUsers[0]);
+        // dd( $user->id,$this->name,$this->role_id,$this->email,$this->phone,$this->society_id,$this->room_number ?? '');
+        
+        $user->update([
+            'name' => $this->name,
+            'role_id' => 4,
+            'email' => $this->email,
+            'phone' => $this->phone,
+        ]);
+
+        // Determine if the member is rented
+        $isRented = $this->is_rented === 'Yes' ? '1' : '0';
+
+
+        // Create the member
+        Member::create([
+            'user_id' => $user->id,
+            'society_id' => $this->society_id,
+            'is_rented' => $isRented,
+            'room_number' => $this->room_number ?? '',
+        ]);
+        
+        // Updates the member_count
+        $this->updateMemberCountForSociety($this->society_id);
+    }else if( $this->promoteTo == "Accountant"){
+
+        $this->validate([
+            'role_id' => 'required|numeric',
+            'name' => 'required|string|min:3|max:50',
+            'email' => 'required|email',
+            'phone' => 'required|digits:10',
+            'password' => 'required|min:8',
+        ]);
+        
+        $user = User::find($this->selectedUsers[0]);
+
+        // dd( $user->id,$this->name,$this->role_id,$this->email,$this->phone);
+        $user->update([
+            'name' => $this->name,
+            'role_id' => 2,
+            'email' => $this->email,
+            'phone' => $this->phone,
+        ]);
+
+
+        Accountant::create([
+            'user_id' => $user->id,
+        ]);
+
+
+    }
+
+
+        // Reset input fields
+        $this->resetInputFields();
+
+        // Redirect with success message
+        return redirect(route('usersIndex'))->with(['success' => 'Promoted Successfully ']);
+    }
+
+
+    public function selectUser($userId)
+    {
+        if (in_array($userId, $this->selectedUsers)) {
+            $this->selectedUsers = array_diff($this->selectedUsers, [$userId]);
+        } else {
+            $this->selectedUsers[] = $userId;
+        }
+
+    }
+
+    public function updateMemberCountForSociety($society_id)
+    {
+        $memberCount = Member::where('society_id', $society_id)->count();
+        Societies::where('id', $society_id)->update(['member_count' => $memberCount]);
+    }
+
 
     public function render()
-    {
-        $users = User::where('role_id', 3)
-            ->where('name', 'like', "%{$this->search}%")
-            ->latest()
-            ->paginate(5);
+{
+    $users = User::where('name', 'like', "%{$this->search}%")
+        ->latest()
+        ->paginate(5);
 
-        return view('livewire.manage-user.manage-user-index', [
-            'users' => $users,
-        ])->with('button', 'Create new user');
-    }
+    $societies = Societies::all(); // Assuming it's Society model
+    // dd($societies); // Uncomment for debugging
+
+    return view('livewire.manage-user.manage-user-index', [
+        'users' => $users,
+        'societies' => $societies,
+        'promoteTo' => $this->promoteTo,
+    ])->with('button', 'Create new user');
+}
+
 }

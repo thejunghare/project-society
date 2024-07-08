@@ -11,7 +11,7 @@
     {{-- table --}}
     {{-- wire:click.prevent="delete({{ $user->id }})" --}}
 
-    <div class="mt-12 relative overflow-x-auto ">
+    <div class="mt-12 relative overflow-x-auto p-1 ">
         <div
             class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
             <div>
@@ -62,7 +62,7 @@
                 </div>
                 <input wire:model.live.debounce.500ms="search" type="text" id="table-search-users"
                     class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Search for users">
+                    placeholder="Search for society">
             </div>
         </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -75,15 +75,16 @@
                             <label for="checkbox-all-search" class="sr-only">checkbox</label>
                         </div>
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-2 py-3 w-20">
+                        Sr.No.
+                    </th>
+                    <th scope="col" class="px-2 py-3">
                         Name
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Position
+                        Accountant Name
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        Status
-                    </th>
+                    
                     <th scope="col" class="px-6 py-3">
                         Action
                     </th>
@@ -95,28 +96,30 @@
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="w-4 p-4">
                             <div class="flex items-center">
-                                <input id="checkbox-table-search-1" type="checkbox"
+                                <input id="checkbox-{{ $society->id }}" type="checkbox"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                                <label for="checkbox-{{ $society->id }}" class="sr-only">checkbox</label>
                             </div>
                         </td>
+                        <td class="px-2 py-4 whitespace-nowrap">
+                            {{-- {{ ($societies->currentPage() - 1) * $societies->perPage() + $loop->iteration }} --}}
+                        </td>
                         <th scope="row"
-                            class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                            class="flex items-center px-2 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                             <img class="w-10 h-10 rounded-full"
                                 src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Jese image">
                             <div class="ps-3">
                                 <div class="text-base font-semibold"> {{ $society->name }}</div>
-                                <div class="font-normal text-gray-500"> {{ $society->email }}</div>
+                                <div class="font-normal text-gray-500"> {{ $society->phone }}</div>
                             </div>
                         </th>
                         <td class="px-6 py-4">
-                            {{ $society->role_id }}
+                            {{-- {{ $society->accountant->user->name }} --}}
+                            {{$society->accountant_id}}
+                            {{-- {{dd($society->user)}} --}}
+                            {{-- {{ $society->accountant->user->name ?? 'No Accountant Assigned' }} --}}
                         </td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center">
-                                <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div> Online
-                            </div>
-                        </td>
+                        
                         <td class="px-6 py-4">
                             <!-- Modal toggle -->
                             <a href="#" type="button" data-modal-target="editUserModal"
@@ -126,8 +129,8 @@
                                 data-modal-show="deleteUserModal"
                                 class="font-medium text-blue-600 dark:text-blue-500 hover:underline" wire:click="delete({{ $society->id}})"
                                 wire:click="delete"
-    wire:confirm="Are you sure you want to delete this post?"
->Delete</a>
+                                wire:confirm="Are you sure you want to delete this post?"
+                            >Delete</a>
                         </td>
                     </tr>
                 @endforeach
@@ -141,14 +144,7 @@
                 <!-- Modal content -->
                 <form wire:submit.prevent="updateSociety" method="POST" action="App\Models\User" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 
-                    <div>
-                        @if (session()->has('message'))
-                            <div class="alert alert-success">
-                                {{ session('message') }}
-                            </div>
-                        @endif
-                    </div>
-                    
+                   
                     <!-- Modal header -->
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
@@ -170,54 +166,119 @@
                     {{-- @foreach ($users as $user) --}}
                     <div class="p-6 space-y-6">
                         <div class="grid grid-cols-6 gap-6">
+
+                            {{-- name --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                                 <input type="text" name="name" id="name" wire:model="name"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$name}}">
+                                    @error('name')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
+
+                            {{-- phone --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
                                 <input type="text" name="phone" id="phone" wire:model="phone"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$phone}}">
+                                    @error('phone')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
+
+                            {{-- address --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address</label>
                                 <input type="text" name="address" id="address" wire:model="address"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$address}}">
+                                    @error('address')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
+
+                            {{-- member_count --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="member_count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Member Count</label>
                                 <input type="number" name="member_count" id="member_count" wire:model="member_count"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$member_count}}">
+                                    @error('member_count')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
+
+                            {{-- bank_name --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="bank_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank Name</label>
                                 <input type="text" name="bank_name" id="bank_name" wire:model="bank_name"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$bank_name}}">
+                                    @error('bank_name')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
+
+                            {{-- bank_account_number --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="bank_account_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank Account Number</label>
                                 <input type="text" name="bank_account_number" id="bank_account_number" wire:model="bank_account_number"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$bank_account_number}}">
+                                    @error('bank_account_number')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
+
+                            {{-- bank_ifsc_code --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="bank_ifsc_code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bank IFSC Code</label>
                                 <input type="text" name="bank_ifsc_code" id="bank_ifsc_code" wire:model="bank_ifsc_code"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$bank_ifsc_code}}">
+                                    @error('bank_ifsc_code')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
+
+                            {{-- accountant_id --}}
                             <div class="col-span-6 sm:col-span-3">
                                 <label for="accountant_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Accountant ID</label>
                                 <input type="number" name="accountant_id" id="accountant_id" wire:model="accountant_id"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     required value="{{$accountant_id}}">
+                                    @error('accountant_id')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
+
                         </div>
                     </div>
                     
@@ -234,15 +295,13 @@
         </div>
     </div>
 
+    
     <div class="my-4">
-        {{ $users->links() }}
+        <div class="my-4">
+            {{-- {{ $societies->links() }} --}}
+        </div>
     </div>
     
 </div>
 
-<script>
-    window.addEventListener('userUpdated', () => {
-        location.reload();
-    });
-</script>
 

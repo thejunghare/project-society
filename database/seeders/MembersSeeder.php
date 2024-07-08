@@ -31,7 +31,7 @@ class MembersSeeder extends Seeder
                     'society_id' => 1,
                     'user_id' => $userId,
                     'room_number' => 1,
-                    'is_rented' => true,
+                    'is_rented' => true,    
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

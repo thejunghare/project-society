@@ -14,7 +14,9 @@ class Member extends Model
 
     protected $fillable = [
         'user_id',
-        'society_id'
+        'society_id',
+        'room_number',
+        'is_rented'
     ];
 
     public function society(): BelongsTo

@@ -1,3 +1,4 @@
+
 <div wire:ignore.self id="crud-modal" tabindex="-1" aria-hidden="true"
             class="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
             @csrf <!-- Add this line for CSRF token if you are using Laravel -->
@@ -5,10 +6,12 @@
                 <!-- Modal content -->
                 <form wire:submit.prevent="save" method="POST" action="App\Models\User" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 
+                    
+                    
                     <!-- Modal header -->
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            Create New User
+                            Create New Member
                         </h3>
                         <button type="button"
                     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -40,44 +43,91 @@
                                 @enderror
                             </div>
                             
-        
-                            {{-- email --}}
+                            {{-- society_id --}}
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="email"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                                <input type="email" wire:model="email" id="email"
-                                class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                >
-        
-                                @error('email')
+                                <label for="society_id"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Society Name</label>
+                                <select id="society_id" wire:model="society_id" required
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option value="0">Choose a Society</option>
+                                    @foreach($societies as $society)
+                                        <option value="{{ $society->id }}">{{ $society->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('society_id')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                         role="alert">
                                         <span class="font-medium">{{ $message }}</span>
                                     </div>
                                 @enderror
                             </div>
-        
-                            {{-- phone --}}
+
+                            {{-- room_number --}}
                             <div class="col-span-6 sm:col-span-3">
-                                <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
-                                <input type="text" name="phone" id="phone" wire:model="phone"
+                                <label for="room_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Room Number</label>
+                                <input type="text" name="room_number" id="room_number" wire:model="room_number"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required >
-                                    @error('phone')
+                                    required>
+                                    @error('room_number')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
                                     <span class="font-medium">{{ $message }}</span>
                                 </div>
                                 @enderror
                             </div>
+
+                            {{-- is_rented --}}
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="is_rented" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Is Rented</label>
                             
+                                <select id="is_rented" wire:model="is_rented" required
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option value="0">Choose a Society</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                    </select>
+                                    @error('is_rented')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                            {{-- email --}}
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                                <input type="email" name="email" id="email" wire:model="email"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required >
+                                    @error('email')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                            {{-- phone --}}
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
+                                <input type="number" name="phone" id="phone" wire:model="phone"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required >@error('phone')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
                             {{-- password --}}
-                            <div class="col-span-6 sm:col-span-3">                                <label for="password"
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="password"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                                 <input type="password" wire:model="password" id="password"
-                                class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                >
-        
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Type user password">
                                 @error('password')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                         role="alert">

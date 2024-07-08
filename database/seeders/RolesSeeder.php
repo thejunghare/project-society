@@ -33,6 +33,12 @@ class RolesSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            // role four
+            [
+                'role' => 'member',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }
