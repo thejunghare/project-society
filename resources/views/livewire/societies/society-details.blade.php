@@ -1,4 +1,5 @@
 <div class="mt-12 p-0">
+    @section('title', 'Society Dashboard')
     <div class="">
         <div class="mb-4 border-gray-200 dark:border-gray-700">
 

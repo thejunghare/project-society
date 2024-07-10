@@ -1,4 +1,5 @@
 <div class='mt-5'>
+    @section('title', 'Maintenance Bill')
     <div class="mb-6 mt-12 border-gray-200 dark:border-gray-700">
         <ul
             class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">

@@ -2,7 +2,7 @@
     {{-- Do your work, then step back. --}}
     {{-- Abckj --}}
     <x-success-toaster />
-
+    @section('title', 'manage Societies')
     @if ($societies->isEmpty())
         <x-alert-no-registered-societies />
     @else
@@ -477,11 +477,11 @@
                 </div>
                 
                 <p class="text-gray-700 text-base society-address">
-                    Address : {{ $society->address }}
+                    Address: {{ $society->address }}
                 </p>
             </div>
             <div class="px-6 pb-2">
-                <p class="text-justify text-gray-500 dark:text-gray-400">
+                <p class="text-justify text-gray-500 dark:text-gray-400 society-phone">
                     Contact number: +91{{ $society->phone }}
                 </p>
             </div>
@@ -490,25 +490,6 @@
                     Members: {{ $society->registered_members }}/{{ $society->total_members }}
                 </p>
             </div>
-            <style>
-                .disabled-icon {
-                    display: none;
-                    position: absolute;
-                    right: 5px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    color: red;
-                }
-                
-                button:disabled:hover .disabled-icon {
-                    display: inline;
-                }
-                
-                button:disabled:hover {
-                    cursor: not-allowed;
-                }
-            </style>
-            
             <div class="px-6 py-4">
                 <button type="button"
                         class="relative text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -531,74 +512,31 @@
             </div>
         </div>
     @endforeach
-    
 </div>
 
-
-
-
 <script>
-    // Get the input element
-    var input = document.getElementById('table-search');
-
-    // Add event listener
-    input.addEventListener('input', function() {
-        var filter = input.value.toLowerCase();
+    document.addEventListener('DOMContentLoaded', function() {
+        var input = document.getElementById('table-search');
         var societies = document.querySelectorAll('.society-item');
 
-        societies.forEach(function(society) {
-            var name = society.querySelector('.society-name').textContent.toLowerCase();
-            var address = society.querySelector('.society-address').textContent.toLowerCase();
-            var phone = society.querySelector('.society-phone').textContent.toLowerCase();
+        input.addEventListener('input', function() {
+            var filter = this.value.toLowerCase();
 
-            if (name.includes(filter) || address.includes(filter) || phone.includes(filter)) {
-                society.style.display = 'block';
-            } else {
-                society.style.display = 'none';
-            }
+            societies.forEach(function(society) {
+                var name = society.querySelector('.society-name').textContent.toLowerCase();
+                var address = society.querySelector('.society-address').textContent.toLowerCase();
+                var phone = society.querySelector('.society-phone').textContent.toLowerCase();
+
+                if (name.includes(filter) || address.includes(filter) || phone.includes(filter)) {
+                    society.style.display = '';
+                } else {
+                    society.style.display = 'none';
+                }
+            });
         });
     });
 </script>
 
-{{-- <script>
-    window.addEventListener('close-model',event->{
-        $('#add-society-manually-modal').modal('hide');
-    })
-</script> --}}
 
-{{-- <script>
-    // Get the form element
-    var editForm = document.getElementById('editSocietyForm');
 
-    // Variable to store the success alert reference
-    var successAlertRef = null;
 
-    // Add event listener for form submission
-    editForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
-
-        // Get the success alert container
-        var successAlertContainer = document.getElementById('success-alert-container');
-
-        // Create the success alert
-        var successAlert = document.createElement('div');
-        successAlert.innerHTML =
-            '<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="success"><span class="font-medium">Society details updated successfully</span></div>';
-
-        // Append the new success alert to the container
-        successAlertContainer.appendChild(successAlert);
-
-        // Store the reference to the success alert
-        successAlertRef = successAlert;
-
-        // Optional: Reset the form fields if needed
-
-        // Set a timeout to remove the alert after 5 seconds
-        setTimeout(function() {
-            if (successAlertRef) {
-                successAlertRef.remove();
-                successAlertRef = null;
-            }
-        }, 5000); // 5000 milliseconds = 5 seconds
-    });
-</script> --}}
