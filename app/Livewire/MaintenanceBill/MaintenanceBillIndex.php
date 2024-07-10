@@ -22,6 +22,7 @@ class MaintenanceBillIndex extends Component
     public $societies, $months, $search, $selected_society, $selected_year, $selected_month, $members;
     public $selectedMembers = [];
     public $selectAll = false;
+    public $amount, $due_date;
 
     public function updatedSelectAll($value)
     {
@@ -36,7 +37,7 @@ class MaintenanceBillIndex extends Component
     {
         $this->societies = Societies::where('accountant_id', Auth::user()->id)->pluck('name', 'id');
         $this->months = $this->returnMonths();
-        $this->members = collect();
+        $this->members = collect(); // Initialize members as an empty collection
     }
 
     public function returnMonths()
@@ -123,8 +124,6 @@ class MaintenanceBillIndex extends Component
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
         }, 'invoice.pdf');
-
-        
     }
 
     public function downloadSelected()
@@ -171,15 +170,19 @@ class MaintenanceBillIndex extends Component
             return;
         }
 
+        // Convert billing month number to month name
         $billingMonth = DateTime::createFromFormat('!m', $bill->billing_month)->format('F');
 
+        // Adjust the message to use the month name
         $message = $bill->status
             ? "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is paid. Your invoice number is {$bill->id}. Thank you!"
             : "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is pending. Please pay by {$bill->due_date}. Your invoice number is {$bill->id}.";
 
 
+        // Sending the WhatsApp message
         $this->sendWhatsApp($member->user->phone, $message);
 
+        // Generate and attach the invoice PDF
         $data = [
             'member' => $member,
             'bill' => $bill,
@@ -190,8 +193,10 @@ class MaintenanceBillIndex extends Component
         $filePath = storage_path('app/public/invoice-' . $bill->id . '.pdf');
         $pdf->save($filePath);
 
+        // Send the PDF as an attachment
         $this->sendWhatsAppWithMedia($member->user->phone, $message, $filePath);
 
+        // Dispatch an event to indicate that the message was sent
         $this->dispatch('whatsappMessageSent');
     }
 
@@ -222,6 +227,41 @@ class MaintenanceBillIndex extends Component
             'body' => $message,
             'mediaUrl' => [url('storage/invoice-' . basename($filePath))],
         ]);
+    }
+
+    public function generateBills()
+    {
+
+        //dd('generateBills called', $this->members, $this->amount, $this->due_date, $this->selected_month, $this->selected_year);
+
+        $this->validate([
+            'amount' => 'required|numeric|min:0',
+            'due_date' => 'required|date',
+        ]);
+
+        //dd('generateBills called', $this->members, $this->amount, $this->due_date, $this->selected_month, $this->selected_year);
+        $members = Member::All();
+        try {
+            foreach ($members as $member) {
+                MaintenanceBill::create([
+                    'member_id' => $member->id,
+                    'amount' => $this->amount,
+                    'status' => 0,
+                    'due_date' => $this->due_date,
+                    'billing_month' => $this->selected_month,
+                    'billing_year' => $this->selected_year,
+                ]);
+            }
+            session()->flash('success', 'Post Created Successfully!!');
+
+        } catch (\Exception $ex) {
+            session()->flash('error', 'Something goes wrong!!');
+        }
+
+
+        $this->fetchMembers();
+
+        return redirect()->to('/accountant/manage/bills/maintenance-bill');
     }
 
     public function render()

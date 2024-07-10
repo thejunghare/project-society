@@ -75,7 +75,6 @@
                 </div>
 
 
-
                 {{-- search bar --}}
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="relative">
@@ -129,8 +128,8 @@
                                 <div class="flex items-center">
                                     <input id="checkbox-table-search-1" type="checkbox" wire:model="selectedMembers"
                                         value="{{ $member->id }}
-                                        class="w-4
-                                        h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500
+                                                                    class="
+                                        w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500
                                         dark:focus:ring-blue-600 dark:ring-offset-gray-800
                                         dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700
                                         dark:border-gray-600">
@@ -169,7 +168,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <button type="button" wire:click.prevent="download({{ $member->member_id }})"
+                                <button type="button" wire:click="download({{ $member->member_id }})"
                                     class=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 text-sm px-3 py-1.5">
 
                                     <svg class="w-3.5 h-3.5 me-2" aria-hidden="true"
@@ -180,8 +179,7 @@
                                     </svg>
                                 </button>
 
-                                <button type="button"
-                                    wire:click.prevent="sendWhatsAppMessage({{ $member->member_id }})"
+                                <button type="button" wire:click="sendWhatsAppMessage({{ $member->member_id }})"
                                     class=" text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 text-sm px-3 py-1.5">
                                     <svg class="w-3.5 h-3.5 me-2" aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -193,6 +191,7 @@
                                             d="M16.735 13.492c-.038-.018-1.497-.736-1.756-.83a1.008 1.008 0 0 0-.34-.075c-.196 0-.362.098-.49.291-.146.217-.587.732-.723.886-.018.02-.042.045-.057.045-.013 0-.239-.093-.307-.123-1.564-.68-2.751-2.313-2.914-2.589-.023-.04-.024-.057-.024-.057.005-.021.058-.074.085-.101.08-.079.166-.182.249-.283l.117-.14c.121-.14.175-.25.237-.375l.033-.066a.68.68 0 0 0-.02-.64c-.034-.069-.65-1.555-.715-1.711-.158-.377-.366-.552-.655-.552-.027 0 0 0-.112.005-.137.005-.883.104-1.213.311-.35.22-.94.924-.94 2.16 0 1.112.705 2.162 1.008 2.561l.041.06c1.161 1.695 2.608 2.951 4.074 3.537 1.412.564 2.081.63 2.461.63.16 0 .288-.013.4-.024l.072-.007c.488-.043 1.56-.599 1.804-1.276.192-.534.243-1.117.115-1.329-.088-.144-.239-.216-.43-.308Z" />
                                     </svg>
                                 </button>
+                                {{-- use a --}} 
                             </td>
                         </tr>
                     @endforeach
@@ -206,6 +205,45 @@
                 role="alert">
                 <span class="font-medium">No bills found!</span>
             </div>
+
+
+
+            <form class="max-w w-3/4 mx-auto flex item-center justify-evenly"  wire:click.prevent="generateBills">
+                <div class="mb-5">
+
+                </div>
+                <div class="mb-5">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                            </svg>
+                        </div>
+                        <input wire:model="due_date" type="datetime-local"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Select due date">
+                    </div>
+                </div>
+                <div class="mb-5">
+                    <input wire:model="amount" type="number"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Enter amount">
+                </div>
+                <div>
+                    <button type="submit"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Generate Bills
+                        <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                        </svg>
+                    </button>
+                    {{-- <span wire:loading>Saving...</span> --}}
+                </div>
+            </form>
         @endif
 
         <div class="my-5">
@@ -225,12 +263,6 @@
         document.addEventListener('livewire:load', function() {
             Livewire.on('whatsappMessageSent', function() {
                 console.log('WhatsApp message sent successfully!');
-            });
-        });
-
-        document.addEventListener('livewire:load', function() {
-            Livewire.on('actionCompleted', function(message) {
-                console.log(message);
             });
         });
     </script>

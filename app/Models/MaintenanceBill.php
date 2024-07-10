@@ -9,8 +9,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MaintenanceBill extends Model
 {
     use HasFactory;
+    protected $table = 'maintenance_bills';
 
-    public function member(): BelongsTo
+    protected $fillable = [
+        'member_id',
+        'amount',
+        'status',
+        'due_date',
+        'billing_month',
+        'billing_year'
+    ];
+
+    protected $casts = [
+        'due_date' => 'datetime',
+    ];
+
+    public function member() :BelongsTo
     {
         return $this->belongsTo(Member::class);
     }
