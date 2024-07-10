@@ -2,12 +2,12 @@
     {{-- Do your work, then step back. --}}
     {{-- Abckj --}}
     <x-success-toaster />
-
+    @section('title', 'manage Societies')
     @if ($societies->isEmpty())
         <x-alert-no-registered-societies />
     @else
-        <div class="flex items-center justify-between mb-4">
-            <div class="relative">
+        <div class="flex items-center justify-between mb-4"> 
+            <div class="relative mt-3">
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -23,7 +23,7 @@
 
             {{-- Action Button --}}
             <div class="">
-                <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction"
+                {{-- <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction"
                     class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                     type="button">
                     <span class="sr-only">Action button</span>
@@ -33,7 +33,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="m1 1 4 4 4-4" />
                     </svg>
-                </button>
+                </button> --}}
                 <!-- Dropdown menu -->
                 <div id="dropdownAction"
                     class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 ">
@@ -164,7 +164,7 @@
                                 <input type="text" name="member-count" id="member-count"
                                     wire:model="member_count"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Member Count" required value="{{ $member_count }}">
+                                    placeholder="Member Count" required value="{{ $member_count }}" readonly>
                             </div>
                             <div class="">
                                 <label for="president-name"
@@ -463,99 +463,80 @@
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     @foreach ($societies as $society)
-        <div class="max-w-sm rounded-lg drop-shadow-sm overflow-hidden  border border-black-300 society-item">
+        <div class="max-w-sm rounded-lg drop-shadow-sm overflow-hidden border border-black-300 society-item">
             <div class="px-6 py-4">
-                <div class="font-bold text-xl mb-2 society-name">{{ $society->name }}</div>
+                <div class="flex items-center justify-between flex-wrap">
+                    <div class="font-bold text-xl mb-2 society-name">{{ $society->name }}</div>
+                    <div class="mt-2 sm:mt-0">
+                        @if ($society->is_subscription_over)
+                            <span class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Subscription Over</span>
+                        @else
+                            <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{ $society->days_left }} Days Left</span>
+                        @endif
+                    </div>
+                </div>
+                
                 <p class="text-gray-700 text-base society-address">
-                    Address : {{ $society->address }}
+                    Address: {{ $society->address }}
                 </p>
             </div>
             <div class="px-6 pb-2">
-                <p class="text-justify text-gray-500 dark:text-gray-400">
+                <p class="text-justify text-gray-500 dark:text-gray-400 society-phone">
                     Contact number: +91{{ $society->phone }}
                 </p>
             </div>
             <div class="px-6 pb-2">
                 <p class="text-justify text-gray-500 dark:text-gray-400">
-                    Total member: {{ $society->member_count }}
+                    Members: {{ $society->registered_members }}/{{ $society->total_members }}
                 </p>
             </div>
             <div class="px-6 py-4">
                 <button type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    data-modal-target="editUserModal" data-modal-show="editUserModal"
-                    wire:click="updateSociety({{ $society->id }})">View Details</button>
-                    
-                <button type="button" wire:click="seeMembers({{ $society->id }})"
-                    class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">See
-                    Members</button>
+                        class="relative text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        wire:click="seeSociety({{ $society->id }})"
+                        @if ($society->is_subscription_over)
+                            disabled
+                        @endif
+                >
+                    View Details
+                    <span class="disabled-icon"></span>
+                </button>
+            
+                @if ($society->show_renew_button)
+                    <button type="button"
+                            class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                            wire:click="renewSociety({{ $society->id }})">
+                        Re-New
+                    </button>
+                @endif
             </div>
         </div>
     @endforeach
 </div>
 
 <script>
-    // Get the input element
-    var input = document.getElementById('table-search');
-
-    // Add event listener
-    input.addEventListener('input', function() {
-        var filter = input.value.toLowerCase();
+    document.addEventListener('DOMContentLoaded', function() {
+        var input = document.getElementById('table-search');
         var societies = document.querySelectorAll('.society-item');
 
-        societies.forEach(function(society) {
-            var name = society.querySelector('.society-name').textContent.toLowerCase();
-            var address = society.querySelector('.society-address').textContent.toLowerCase();
-            var phone = society.querySelector('.society-phone').textContent.toLowerCase();
+        input.addEventListener('input', function() {
+            var filter = this.value.toLowerCase();
 
-            if (name.includes(filter) || address.includes(filter) || phone.includes(filter)) {
-                society.style.display = 'block';
-            } else {
-                society.style.display = 'none';
-            }
+            societies.forEach(function(society) {
+                var name = society.querySelector('.society-name').textContent.toLowerCase();
+                var address = society.querySelector('.society-address').textContent.toLowerCase();
+                var phone = society.querySelector('.society-phone').textContent.toLowerCase();
+
+                if (name.includes(filter) || address.includes(filter) || phone.includes(filter)) {
+                    society.style.display = '';
+                } else {
+                    society.style.display = 'none';
+                }
+            });
         });
     });
 </script>
 
-{{-- <script>
-    window.addEventListener('close-model',event->{
-        $('#add-society-manually-modal').modal('hide');
-    })
-</script> --}}
 
-{{-- <script>
-    // Get the form element
-    var editForm = document.getElementById('editSocietyForm');
 
-    // Variable to store the success alert reference
-    var successAlertRef = null;
 
-    // Add event listener for form submission
-    editForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
-
-        // Get the success alert container
-        var successAlertContainer = document.getElementById('success-alert-container');
-
-        // Create the success alert
-        var successAlert = document.createElement('div');
-        successAlert.innerHTML =
-            '<div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="success"><span class="font-medium">Society details updated successfully</span></div>';
-
-        // Append the new success alert to the container
-        successAlertContainer.appendChild(successAlert);
-
-        // Store the reference to the success alert
-        successAlertRef = successAlert;
-
-        // Optional: Reset the form fields if needed
-
-        // Set a timeout to remove the alert after 5 seconds
-        setTimeout(function() {
-            if (successAlertRef) {
-                successAlertRef.remove();
-                successAlertRef = null;
-            }
-        }, 5000); // 5000 milliseconds = 5 seconds
-    });
-</script> --}}

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SocietiesSeeder::class);
         $this->call(MembersSeeder::class);
         $this->call(MaintenanceBillSeeder::class);
+        $this->call(PaymentSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

@@ -1,24 +1,44 @@
 <div class='mt-5'>
-    <div class='w-full flex flex-row items-center justify-between mb-5 '>
+    @section('title', 'Maintenance Bill')
+    <div class="mb-6 mt-12 border-gray-200 dark:border-gray-700">
+        <ul
+            class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+            <li class="me-2">
+                <button aria-current="page"
+                    class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300" wire:click="goBack">Society
+                    Dashboard</button>
+            </li>
+            
+            <li class="me-2">
+                <button aria-current="page"
+                    class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500"
+                    >Maintenance Bill</button>
+            </li>
+
+        </ul>
+
+    </div>
+    <div class='w-full flex flex-row items-center  mb-5 '>
         {{-- If you look to others for fulfillment, you will never truly be fulfilled. --}}
-        <div class='w-1/4'>
-            @if ($societies->isEmpty())
+        {{-- <div class='w-1/4'>
+            @if ($societiesList->isEmpty())
                 <x-alert-no-registered-societies />
             @else
-                <label for="societies" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select your
-                    country</label>
+                <label for="societies" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
+                    Society</label>
                 <select id="societies" wire:model.live="selected_society"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    disabled>
                     <option value="">Select society</option>
-                    @foreach ($societies as $key => $value)
+                    @foreach ($societiesList as $key => $value)
                         <option value="{{ $key }}">{{ $value }}</option>
                     @endforeach
                 </select>
             @endif
-        </div>
+        </div> --}}
 
-        <div class='w-1/4'>
-            <label for="months" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select your
+        <div class='w-1/4 pr-4'>
+            <label for="months" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
                 month</label>
             <select id="months" wire:model.live="selected_month"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -31,8 +51,8 @@
 
 
         <div class='w-1/4'>
-            <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select your
-                country</label>
+            <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
+                Year</label>
             <select id="yaer" wire:model.live="selected_year"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 
@@ -114,6 +134,9 @@
                             Invoice Number
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Advance Payment
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Status
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -122,7 +145,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($members as $member)
+                    @foreach ($members as $member)  
                         <tr
                             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td class="w-4 p-4">
@@ -136,9 +159,9 @@
                                         dark:border-gray-600">
                                     <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                                 </div>
-                            </td>
+                            </td> 
                             <td class="px-6 py-4">
-                                1
+                               1
                             </td>
                             <th scope="row"
                                 class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -150,6 +173,14 @@
                             </th>
                             <td class="px-6 py-4">
                                 {{ $member->bill_id }}
+                            </td>
+                            <td class="px-6 py-4">
+                                @if( $member->advance == 0 )
+                                    <span class="text-red-500">No</span>
+                                @else
+                                    <span class="text-green-500">Yes</span>
+                                @endif
+
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
@@ -197,8 +228,10 @@
                     @endforeach
                 </tbody>
             </table>
+            
 
         </div>
+       
 
         @if ($members->isEmpty())
             <div class="my-4 p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
@@ -206,6 +239,18 @@
                 <span class="font-medium">No bills found!</span>
             </div>
         @endif
+
+        {{-- <div class="mt-3 flex">
+            <a wire:click="goBack"
+                class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 5H1m0 0 4 4M1 5l4-4" />
+                </svg>
+                Previous
+            </a>
+        </div> --}}
 
         <div class="my-5">
             {{-- {{ $members->links() }} --}}

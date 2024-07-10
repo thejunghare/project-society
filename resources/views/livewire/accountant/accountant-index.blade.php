@@ -28,14 +28,13 @@
         <div id="fullWidthTabContent" class="border-t border-gray-200 dark:border-gray-600">
             <div class="hidden p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel"
                 aria-labelledby="stats-tab">
-                <dl
-                    class="grid max-w-screen-xl grid-cols-2 gap-8 p-4 mx-auto text-gray-900 sm:grid-cols-3 xl:grid-cols-6 dark:text-white sm:p-8">
+                <dl class="grid max-w-screen-xl grid-cols-2 gap-8 p-4 mx-auto text-gray-900 sm:grid-cols-3 xl:grid-cols-6 dark:text-white sm:p-8">
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl font-extrabold">
                             {{ $registeredSocietiesCount }}
                         </dt>
-                        <dd class="text-gray-500 dark:text-gray-400">Total Socities</dd>
-                    </div>
+                        <dd class="text-gray-500 dark:text-gray-400">Total Societies</dd>
+                    </div> 
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl font-extrabold">
                             {{ $registeredSocietyMembersCount }}
@@ -44,13 +43,13 @@
                     </div>
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl font-extrabold">
-                            2
+                            {{ $presidentCount }}
                         </dt>
                         <dd class="text-gray-500 dark:text-gray-400">Presidents</dd>
                     </div>
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl font-extrabold">
-                            2
+                            {{ $vicePresidentCount }}
                         </dt>
                         <dd class="text-gray-500 dark:text-gray-400">
                             Vice presidents
@@ -58,13 +57,13 @@
                     </div>
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl font-extrabold">
-                            2
+                            {{ $secretaryCount }}
                         </dt>
-                        <dd class="text-gray-500 dark:text-gray-400">Secretarys</dd>
+                        <dd class="text-gray-500 dark:text-gray-400">Secretaries</dd>
                     </div>
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl font-extrabold">
-                            2
+                            {{ $treasurerCount }}
                         </dt>
                         <dd class="text-gray-500 dark:text-gray-400">Treasurers</dd>
                     </div>

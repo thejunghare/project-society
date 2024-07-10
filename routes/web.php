@@ -9,6 +9,9 @@ use App\Http\Controllers\AccountantController;
 use App\Livewire\Societies\ManageSocietiesIndex;
 use App\Livewire\Members\ManageSocietiesMembersIndex;
 use App\Livewire\MaintenanceBill\MaintenanceBillIndex;
+use App\Livewire\Societies\SocietyDetails;
+use App\Http\Controllers\BillController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +39,24 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Route::get('/download-invoice/{billId}', [BillController::class, 'downloadInvoice'])->name('download.invoice');
+
+// Route::get('/download-receipt/{paymentId}', [BillController::class, 'downloadReceipt'])->name('download.receipt');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('show.pay.bill');
+    Route::get('/download-invoice/{billId}', [BillController::class, 'downloadInvoice'])->name('download.invoice');
+    Route::post('/process-payment', [BillController::class, 'processPayment'])->name('process.payment');
+    Route::get('/download-receipt/{paymentId}', [BillController::class, 'downloadReceipt'])->name('download.receipt');
+});
+
+
+
+
+Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('pay.bill');
+Route::post('/process-payment', [BillController::class, 'processPayment'])->name('process.payment');
 
 
 Route::middleware('auth')->group(function () {
@@ -68,8 +89,17 @@ Route::middleware(['auth', 'check-role:1'])->group(function () {
 Route::middleware(['auth', 'check-role:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
     Route::get('/accountant/manage/societies', ManageSocietiesIndex::class)->name('societies');
-    Route::get('/accountant/manage/societies/{society}/members', ManageSocietiesMembersIndex::class)->name('members');
-    Route::get('/accountant/manage/bills/maintenance-bill', MaintenanceBillIndex::class)->name('maintenance-bill');
+    // Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)->name('societyDetails')
+    // ;
+
+    Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)
+    ->name('societyDetails')
+    ->middleware(['auth', 'check-role:2', 'check.subscription']);
+
+    Route::get('/accountant/manage/societies/{society}/society-details/members', ManageSocietiesMembersIndex::class)->name('members')
+    ->middleware(['auth', 'check-role:2', 'check.subscription']);;
+    Route::get('/accountant/manage/societies/{society}/society-details/bills/maintenance-bill', MaintenanceBillIndex::class)->name('maintenance-bill')
+    ->middleware(['auth', 'check-role:2', 'check.subscription']);;
 });
 
 

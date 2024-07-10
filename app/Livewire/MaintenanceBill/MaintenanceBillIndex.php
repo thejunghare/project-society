@@ -4,9 +4,9 @@ namespace App\Livewire\MaintenanceBill;
 
 use DateTime;
 use App\Models\Member;
+use App\Models\Societies;
 use Livewire\Component;
 use Twilio\Rest\Client;
-use App\Models\Societies;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use App\Models\MaintenanceBill;
@@ -19,7 +19,8 @@ class MaintenanceBillIndex extends Component
     use WithPagination;
 
     #[Title('Maintenance Bill - mySocietyERP')]
-    public $societies, $months, $search, $selected_society, $selected_year, $selected_month, $members;
+    public $society;
+    public $societiesList, $months, $search, $selected_society, $selected_year, $selected_month, $members;
     public $selectedMembers = [];
     public $selectAll = false;
 
@@ -32,12 +33,20 @@ class MaintenanceBillIndex extends Component
         }
     }
 
-    public function mount()
+    public function mount(Societies $society)
     {
-        $this->societies = Societies::where('accountant_id', Auth::user()->id)->pluck('name', 'id');
+        $this->society = $society;
+        $this->societiesList = Societies::where('accountant_id', Auth::user()->id)->pluck('name', 'id');
         $this->months = $this->returnMonths();
-        $this->members = collect(); // Initialize members as an empty collection
+        $this->members = collect();
+        $this->selected_society = $society->id;
     }
+
+    public function goBack()
+    {
+        return redirect('/accountant/manage/societies/' . $this->society->id . '/society-details');
+    }
+
 
     public function returnMonths()
     {
@@ -95,6 +104,7 @@ class MaintenanceBillIndex extends Component
                     'maintenance_bills.id as bill_id',
                     'maintenance_bills.billing_month',
                     'maintenance_bills.amount',
+                    'maintenance_bills.advance',
                     'maintenance_bills.status',
                     'members.created_at'
                 )
@@ -228,11 +238,22 @@ class MaintenanceBillIndex extends Component
         ]);
     }
 
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
+
+    // ... other properties
+
+
+
     public function render()
     {
         return view('livewire.maintenance-bill.maintenance-bill-index', [
             'months' => $this->months,
             'members' => $this->members,
+            'currentSociety' => $this->society,
         ]);
     }
 }
