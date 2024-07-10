@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     /**
-     * Run the migrations.
+     * Run the migrations. 
      */
     public function up(): void
     {
@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->dateTime('due_date');
             $table->integer('billing_month');
             $table->integer('billing_year');
+            $table->boolean('advance')->default(0);
             $table->timestamps();
         });
     }
