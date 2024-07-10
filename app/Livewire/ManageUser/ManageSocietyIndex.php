@@ -167,12 +167,13 @@ class ManageSocietyIndex extends Component
             ->latest()
             ->paginate(2);
 
-        $users= User::all();
+            $user = User::find($this->accountant_id);
+            
         $accountants = Accountant::with('user')->get();
 
         return view('livewire.manage-user.manage-society-index', [
             'societies' => $societies,
-            'users' => $users,
+            'users' => $user,
             'accountants' => $accountants,
         ])->with('button', 'Create new society');
     }

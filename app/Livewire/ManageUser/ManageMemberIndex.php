@@ -29,6 +29,7 @@ class ManageMemberIndex extends Component
     public $phone = "";
     public $password = "";
     public $search = "";
+    public $user_Id = "";
     public $showModal = false;
     public $s_id;
 
@@ -53,6 +54,7 @@ class ManageMemberIndex extends Component
         $user = $member->user;
         $society = Societies::find($member->society_id);
 
+        $this->user_Id = $user->id;
         // dd($society->name);
 
         if ($member->is_rented == 1) {
@@ -85,9 +87,15 @@ class ManageMemberIndex extends Component
             'room_number' => 'nullable',
         ]);
 
-        if ($this->checkMemberCountToUpdate($this->society_id)==false){
-            return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
+        $member = Member::find($this->user_Id);
+        // dd($member->society_id);
+        
+        if($this->society_id != $member->society_id){
+            if (!$this->checkMemberCountForSociety($this->society_id)){
+                return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
+            }       
         }
+        
 
         $member = Member::find($this->s_id);
         $user = $member->user;
@@ -186,25 +194,16 @@ class ManageMemberIndex extends Component
       }
     
       $societyMemberCount = $society->member_count;
+
+      if($currentMemberCount = $societyMemberCount){
+        return false;
+      }
     
       return $currentMemberCount < $societyMemberCount;
     }
     
     // Checks Member count to update
-    public function checkMemberCountToUpdate($society_id): bool
-    {
-      $currentMemberCount = Member::where('society_id', $society_id)->count();
-      $society = Societies::where('id', $society_id)->first();
     
-      if (is_null($society)) {
-          // Handle the case where the society is not found (optional)
-          return redirect(route('membersIndex'))->with(['error' => 'Society is full']); // Or throw an exception
-      }
-    
-      $societyMemberCount = $society->member_count;
-
-      return $currentMemberCount <= $societyMemberCount;
-    }
 
     public function deleteMember($id)
     {

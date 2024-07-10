@@ -70,6 +70,10 @@ class ManageUserIndex extends Component
         $this->phone = $user->phone;
         $this->password = $user->password;
         $this->showModal = true;
+
+        $role = Role::find($this->role_id);
+        $this->roleName = $role->role;
+        // dd($this->roleName);
     }
 
     public function updateUser()
@@ -236,7 +240,7 @@ class ManageUserIndex extends Component
             'room_number' => 'nullable|string',
         ]);
 
-        if (!$this->checkMemberCountForSociety($this->society_id)){
+        if (!$this->checkMemberCountForSociety($this->society_id,$this->userId)){
             return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
         }
 
@@ -308,7 +312,7 @@ class ManageUserIndex extends Component
 
     }
 
-    public function checkMemberCountForSociety($society_id): bool
+    public function checkMemberCountForSociety($society_id,$userId): bool
     {
       $currentMemberCount = Member::where('society_id', $society_id)->count();
       $society = Societies::where('id', $society_id)->first();
@@ -319,6 +323,16 @@ class ManageUserIndex extends Component
       }
     
       $societyMemberCount = $society->member_count;
+
+      $user = User::find($userId);
+      $role = $user->role_id;
+
+     
+        if($currentMemberCount = $societyMemberCount){
+            return false;
+          } 
+      
+      
     
       return $currentMemberCount < $societyMemberCount;
     }

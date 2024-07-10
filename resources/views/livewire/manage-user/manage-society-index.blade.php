@@ -82,7 +82,7 @@
                         Name
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Accountant Name
+                        Accountant Id
                     </th>
                     
                     <th scope="col" class="px-6 py-3">
@@ -140,13 +140,13 @@
         <div wire:ignore.self id="editUserModal" tabindex="-1" aria-hidden="true"
             class="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
             @csrf <!-- Add this line for CSRF token if you are using Laravel -->
-            <div class="relative w-full max-w-2xl max-h-full">
+            <div class="relative w-full max-w-4xl max-h-full">
                 <!-- Modal content -->
                 <form wire:submit.prevent="updateSociety" method="POST" action="App\Models\User" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 
                    
                     <!-- Modal header -->
-                    <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                    <div class="flex items-start justify-between p-3 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                             Edit Society
                         </h3>
@@ -164,8 +164,8 @@
                     </div>
                     <!-- Modal body -->
                     {{-- @foreach ($users as $user) --}}
-                    <div class="p-6 space-y-6">
-                        <div class="grid grid-cols-6 gap-6">
+                    <div class="p-4 space-y-6">
+                        <div class="grid grid-cols-9 gap-4">
 
                             {{-- name --}}
                             <div class="col-span-6 sm:col-span-3">
@@ -180,6 +180,7 @@
                                 </div>
                                 @enderror
                             </div>
+                            
 
                             {{-- phone --}}
                             <div class="col-span-6 sm:col-span-3">
@@ -278,6 +279,121 @@
                                 </div>
                                 @enderror
                             </div>
+
+                             {{-- upi_id --}}
+                             <div class="col-span-6 sm:col-span-3">
+                                <label for="upi_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">UPI ID</label>
+                                <input type="number" name="upi_id" id="upi_id" wire:model="upi_id"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                                    @error('upi_id')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                             {{-- upi_number --}}
+                             <div class="col-span-6 sm:col-span-3">
+                                <label for="upi_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">UPI Number</label>
+                                <input type="number" name="upi_number" id="upi_number" wire:model="upi_number"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                                    @error('upi_number')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+
+                             {{-- parking_charges --}}
+                             <div class="col-span-6 sm:col-span-3">
+                                <label for="parking_charges" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parking Charges</label>
+                                <input type="number" name="parking_charges" id="parking_charges" wire:model="parking_charges"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                                    @error('parking_charges')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                             {{-- service_charges --}}
+                             <div class="col-span-6 sm:col-span-3">
+                                <label for="service_charges" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Service Charges</label>
+                                <input type="number" name="service_charges" id="service_charges" wire:model="service_charges"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                                    @error('service_charges')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                             {{-- maintenance_amount_owner --}}
+                             <div class="col-span-6 sm:col-span-3">
+                                <label for="maintenance_amount_owner" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maintenance Amount Owner</label>
+                                <input type="number" name="maintenance_amount_owner" id="maintenance_amount_owner" wire:model="maintenance_amount_owner"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                                    @error('maintenance_amount_owner')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                             {{-- maintenance_amount_rented --}}
+                             <div class="col-span-6 sm:col-span-3">
+                                <label for="maintenance_amount_rented" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maintenance Amount Owner</label>
+                                <input type="number" name="maintenance_amount_rented" id="maintenance_amount_rented" wire:model="maintenance_amount_rented"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                                    @error('maintenance_amount_rented')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                             {{-- registered_balance --}}
+                             <div class="col-span-6 sm:col-span-3">
+                                <label for="registered_balance" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Registered Balance</label>
+                                <input type="number" name="registered_balance" id="registered_balance" wire:model="registered_balance"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                                    @error('registered_balance')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                             {{-- updated_balence --}}
+                             <div class="col-span-6 sm:col-span-3">
+                                <label for="updated_balence" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Updated Balance</label>
+                                <input type="number" name="updated_balence" id="updated_balence" wire:model="updated_balence"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$accountant_id}}">
+                                    @error('updated_balence')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                            
 
                         </div>
                     </div>
