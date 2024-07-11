@@ -13,8 +13,6 @@ class SocietiesSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-
         DB::table('societies')->insert([
             // Society one
             [
@@ -29,9 +27,18 @@ class SocietiesSeeder extends Seeder
                 'bank_name' => 'citibank',
                 'bank_ifsc_code' => '1',
                 'bank_account_number' => '1',
+                'upi_id' => 'vighaneshwar@upi',
+                'upi_number' => '9004289600@upi',
+                'parking_charges' => 50.00,
+                'service_charges' => 100.00,
+                'maintenance_amount_owner' => 2000.00,
+                'maintenance_amount_rented' => 1500.00,
                 'accountant_id' => 2,
+                'registered_balance' => 0,
+                'updated_balance' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'renews_at' => now()->addYear(), // Renew date set to one year from now
             ],
 
             // Society two
@@ -47,9 +54,18 @@ class SocietiesSeeder extends Seeder
                 'bank_name' => 'citibank',
                 'bank_ifsc_code' => '1',
                 'bank_account_number' => '2',
+                'upi_id' => 'mauli@upi',
+                'upi_number' => '9920882371@upi',
+                'parking_charges' => 75.00,
+                'service_charges' => 125.00,
+                'maintenance_amount_owner' => 1800.00,
+                'maintenance_amount_rented' => 1200.00,
                 'accountant_id' => 3,
+                'registered_balance' => 0,
+                'updated_balance' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'renews_at' => now()->addYear(), // Renew date set to one year from now
             ],
 
             // Society three
@@ -65,9 +81,18 @@ class SocietiesSeeder extends Seeder
                 'bank_name' => 'citibank',
                 'bank_ifsc_code' => '1',
                 'bank_account_number' => '3',
+                'upi_id' => 'balaji@upi',
+                'upi_number' => '9004286900@upi',
+                'parking_charges' => 60.00,
+                'service_charges' => 110.00,
+                'maintenance_amount_owner' => 1900.00,
+                'maintenance_amount_rented' => 1300.00,
                 'accountant_id' => 2,
+                'registered_balance' => 0,
+                'updated_balance' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'renews_at' => now()->addYear(), // Renew date set to one year from now
             ],
         ]);
     }

@@ -12,7 +12,7 @@
     <ul>
         @foreach ($society->members as $member)
             <li>
-                Member ID: {{ $member->user_id }}<br>
+                Member ID: {{ $member->user_id }}<br>  
                 Room Number: {{ $member->room_number }}<br>
                 Is Rented: {{ $member->is_rented ? 'Yes' : 'No' }}
             </li>

@@ -46,9 +46,9 @@
             @endif
 
             @if (Auth::user()->role_id == 3)
-            <li class="{{ Request::routeIs('pay') ? 'bg-gray-200 dark:bg-gray-700 rounded-lg' : '' }}">
-                <a href="/pay"
-                   class="pointer-events-none flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <li>
+                <a href="{{ route('pay.bill') }}"
+                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
                          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -76,8 +76,8 @@
             </li>
             @endif
 
-            @if (Auth::user()->role_id == 2)
-            <li class="{{ Request::routeIs('maintenance-bill') ? 'bg-gray-200 dark:bg-gray-700 rounded-lg' : '' }}">
+            {{-- @if (Auth::user()->role_id == 2)
+            <li>
                 <a href="{{ route('maintenance-bill') }}"
                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -88,9 +88,9 @@
                     {{-- <span
                         class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span>
                     --}}
-                </a>
+                {{-- </a>
             </li>
-            @endif
+            @endif --}} 
 
 
             @if (Auth::user()->role_id == 1)

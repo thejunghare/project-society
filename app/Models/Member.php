@@ -41,4 +41,12 @@ class Member extends Model
     {
         return $this->hasOne(MaintenanceBill::class);
     }
+
+    // Newly added
+
+
+    public function maintenanceBills()
+    {
+        return $this->hasMany(MaintenanceBill::class);
+    }
 }
