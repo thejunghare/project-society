@@ -145,11 +145,14 @@ class ManageUserIndex extends Component
         //     // Delete related members
         //     $user->members()->delete();
         // }
+        try {
 
-        $user->delete();
+            $user->delete();
 
-        session()->flash('success', 'User deleted successfully.');
-
+            session()->flash('success', 'User deleted successfully.');
+        } catch (Exception) {
+            return redirect(route('usersIndex'))->with(['error' => 'Something went wrong. Try again later.']);
+        }
         // Optionally, refresh the page
         return redirect(route('usersIndex'));
     }

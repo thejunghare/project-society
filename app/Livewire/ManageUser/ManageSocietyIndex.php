@@ -53,9 +53,12 @@ class ManageSocietyIndex extends Component
 
     public function delete($id)
     {
-        Societies::find($id)->delete();
-        $this->societies = Societies::all();
-
+        try {
+            Societies::find($id)->delete();
+            $this->societies = Societies::all();
+        } catch (Exception) {
+            return redirect(route('societiesIndex'))->with(['error' => 'Something went wrong. Try again later.']);
+        }
         return redirect()->route('societiesIndex')->with(['success' => 'Society Deleted successfully.']);
     }
 
@@ -129,8 +132,8 @@ class ManageSocietyIndex extends Component
             'bank_ifsc_code' => 'required|string|max:255',
             'accountant_id' => 'required|integer|exists:accountants,id',
             'upi_id' => 'nullable|string',
-            'upi_number' => 'nullable|string',       
-             'parking_charges' => 'nullable|numeric|min:0',
+            'upi_number' => 'nullable|string',
+            'parking_charges' => 'nullable|numeric|min:0',
             'maintenance_amount_owner' => 'nullable|numeric|min:0',
             'service_charges' => 'nullable|numeric|min:0',
             'maintenance_amount_rented' => 'nullable|numeric|min:0',
@@ -149,7 +152,7 @@ class ManageSocietyIndex extends Component
             'bank_account_number' => $this->bank_account_number,
             'bank_ifsc_code' => $this->bank_ifsc_code,
             'accountant_id' => $this->accountant_id,
-            'renews_at'=>$this->renews_at,
+            'renews_at' => $this->renews_at,
             'upi_id' => $this->upi_id,
             'upi_number' => $this->upi_number,
             'parking_charges' => $this->parking_charges,
@@ -202,7 +205,7 @@ class ManageSocietyIndex extends Component
             'bank_account_number' => $this->bank_account_number,
             'bank_ifsc_code' => $this->bank_ifsc_code,
             'accountant_id' => $this->accountant_id,
-            'renews_at'=>$this->renews_at,
+            'renews_at' => $this->renews_at,
             'upi_id' => $this->upi_id,
             'upi_number' => $this->upi_number,
             'parking_charges' => $this->parking_charges,

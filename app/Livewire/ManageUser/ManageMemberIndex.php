@@ -231,7 +231,7 @@ class ManageMemberIndex extends Component
             $member->user->delete();
             $member->delete();
         } catch (Exception) {
-            return redirect(route('membersIndex'))->with(['error' => 'Something went round. Try again later.']);
+            return redirect(route('membersIndex'))->with(['error' => 'Something went wrong. Try again later.']);
         }
 
 

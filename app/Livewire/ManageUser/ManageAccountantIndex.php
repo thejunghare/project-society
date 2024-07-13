@@ -45,7 +45,7 @@ class ManageAccountantIndex extends Component
 
         // dd($this->s_id,$this->name);
 
-       
+
         $this->s_id = $accountant->id;
         $this->name = $user->name;
         $this->role_id = $user->role_id;
@@ -82,18 +82,18 @@ class ManageAccountantIndex extends Component
         $this->showModal = false;
 
         // Emit a browser event to refresh the page
-        return redirect(route('accountantsIndex'))->with(['success'=>'Accountant updated successfully.']);
+        return redirect(route('accountantsIndex'))->with(['success' => 'Accountant updated successfully.']);
     }
 
     public function save()
     {
-         $this->validate([
-             'role_id' => 'required|numeric|min:1|max:3',
-             'name' => 'required|string|min:3|max:50',
-             'email' => 'required|email',
-             'phone' => 'required|digits:10',
-             'password' => 'required|min:8',
-         ]);
+        $this->validate([
+            'role_id' => 'required|numeric|min:1|max:3',
+            'name' => 'required|string|min:3|max:50',
+            'email' => 'required|email',
+            'phone' => 'required|digits:10',
+            'password' => 'required|min:8',
+        ]);
 
         // dd($this->role_id);
 
@@ -110,19 +110,22 @@ class ManageAccountantIndex extends Component
         ]);
 
         // session()->flash('success', 'accountant added.');
-        $this->resetInputFields();  
-        return redirect(route('accountantsIndex'))->with(['success'=>'Accountant added.']);    
+        $this->resetInputFields();
+        return redirect(route('accountantsIndex'))->with(['success' => 'Accountant added.']);
     }
 
     public function deleteaccountant($id)
     {
-        $accountant = Accountant::findOrFail($id);
+        try {
+            $accountant = Accountant::findOrFail($id);
 
-        $accountant->user->delete();
-        $accountant->delete();
+            $accountant->user->delete();
+            $accountant->delete();
 
-        session()->flash('success', 'Accountant deleted successfully.');
-
+            session()->flash('success', 'Accountant deleted successfully.');
+        } catch (Exception) {
+            return redirect(route('accountantsIndex'))->with(['error' => 'Something went wrong. Try again later.']);
+        }
 
         // Optionally, refresh the page
         return redirect(route('accountantsIndex'));
@@ -132,13 +135,13 @@ class ManageAccountantIndex extends Component
     {
         $accountants = Accountant::whereHas('user', function ($query) {
             $query->where('role_id', 2)
-                  ->where('name', 'like', '%' . $this->search . '%');
+                ->where('name', 'like', '%' . $this->search . '%');
         })
-        ->latest()
-        ->paginate(5);
+            ->latest()
+            ->paginate(5);
 
-        
-        
+
+
         return view('livewire.manage-user.manage-accountant-index', [
             'accountants' => $accountants,
         ])->with('button', 'Create new accountant');
