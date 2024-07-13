@@ -253,9 +253,9 @@ class MaintenanceBillIndex extends Component
      //   dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
 
         $this->validate([
-            // 'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0',
             'due_date' => 'required|date',
-        ]);
+        ]); 
 
        // dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
         $members = Member::All();
@@ -264,6 +264,7 @@ class MaintenanceBillIndex extends Component
                 $society = Societies::find($member->society_id);
                 $parkingCharges = $society->parking_charges;
                 $servicesCharges = $society->services_charges;
+               $maintenance_due_date = $society->maintenance_due_date;
                 $maintenanceAmount = $member->isRented
                     ? $society->maintenance_amount_rented
                     : $society->maintenance_amount_owner;
@@ -275,7 +276,7 @@ class MaintenanceBillIndex extends Component
                     'member_id' => $member->id,
                     'amount' => $amount,
                     'status' => 0,
-                    'due_date' => $this->due_date,
+                    'due_date' => $maintenance_due_date,
                     'billing_month' => $this->selected_month,
                     'billing_year' => $this->selected_year,
                 ]);
