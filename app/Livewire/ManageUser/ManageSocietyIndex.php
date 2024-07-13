@@ -29,8 +29,17 @@ class ManageSocietyIndex extends Component
     public $bank_account_number = "";
     public $bank_ifsc_code = "";
     public $accountant_id = "";
+    public $upi_id = "";
+    public $upi_number = "";
+    public $parking_charges = "";
+    public $maintenance_amount_owner = "";
+    public $service_charges = "";
+    public $maintenance_amount_rented = "";
+    public $registered_balance = "";
+    public $updated_balance = "";
+    public $renews_at = "";
     public $showModal = false;
-    
+
 
     use WithPagination;
 
@@ -81,9 +90,7 @@ class ManageSocietyIndex extends Component
     public function edit($id)
     {
         $society = Societies::findOrFail($id);
-        
-        $this->updateMemberCountForSociety($id);
-        
+
         $this->s_id = $society->id;
         $this->name = $society->name;
         $this->phone = $society->phone;
@@ -93,6 +100,15 @@ class ManageSocietyIndex extends Component
         $this->bank_account_number = $society->bank_account_number;
         $this->bank_ifsc_code = $society->bank_ifsc_code;
         $this->accountant_id = $society->accountant_id;
+        $this->renews_at = $society->renews_at;
+        $this->upi_id = $society->upi_id;
+        $this->upi_number = $society->upi_number;
+        $this->parking_charges = $society->parking_charges;
+        $this->maintenance_amount_owner = $society->maintenance_amount_owner;
+        $this->service_charges = $society->service_charges;
+        $this->maintenance_amount_rented = $society->maintenance_amount_rented;
+        $this->registered_balance = $society->registered_balance;
+        $this->updated_balance = $society->updated_balance;
         $this->showModal = true;
 
 
@@ -102,6 +118,26 @@ class ManageSocietyIndex extends Component
     public function updateSociety()
     {
         // $this->validate();
+        $this->validate([
+
+            'name' => 'required|string|max:255',
+            'phone' => 'required|digits:10', // Adjust based on phone number format requirements
+            'address' => 'required|string',
+            'member_count' => 'required|integer|min:0',
+            'bank_name' => 'required|string|max:255',
+            'bank_account_number' => 'required|string|max:255',
+            'bank_ifsc_code' => 'required|string|max:255',
+            'accountant_id' => 'required|integer|exists:accountants,id',
+            'upi_id' => 'nullable|string',
+            'upi_number' => 'nullable|string',       
+             'parking_charges' => 'nullable|numeric|min:0',
+            'maintenance_amount_owner' => 'nullable|numeric|min:0',
+            'service_charges' => 'nullable|numeric|min:0',
+            'maintenance_amount_rented' => 'nullable|numeric|min:0',
+            'registered_balance' => 'nullable|numeric',
+            'updated_balance' => 'nullable|numeric',
+            'renews_at' => 'required|date_format:Y-m-d',
+        ]);
 
         $society = Societies::findOrFail($this->s_id);
         $society->update([
@@ -113,6 +149,15 @@ class ManageSocietyIndex extends Component
             'bank_account_number' => $this->bank_account_number,
             'bank_ifsc_code' => $this->bank_ifsc_code,
             'accountant_id' => $this->accountant_id,
+            'renews_at'=>$this->renews_at,
+            'upi_id' => $this->upi_id,
+            'upi_number' => $this->upi_number,
+            'parking_charges' => $this->parking_charges,
+            'maintenance_amount_owner' => $this->maintenance_amount_owner,
+            'service_charges' => $this->service_charges,
+            'maintenance_amount_rented' => $this->maintenance_amount_rented,
+            'registered_balance' => $this->registered_balance,
+            'updated_balance' => $this->updated_balance,
         ]);
 
         $this->resetInputFields();
@@ -125,50 +170,65 @@ class ManageSocietyIndex extends Component
     }
 
 
-    public function updateMemberCountForSociety($society_id)
-    {
-        $memberCount = Member::where('society_id', $society_id)->count();
-        Societies::where('id', $society_id)->update(['member_count' => $memberCount]);
-    }
-
     public function save()
     {
-         $this->validate([
-             'name' => 'required|string',
-             'phone' => 'required|digits:10',
-             'address' => 'required',
-             'bank_name' => 'required',
-             'bank_account_number' => 'required',
-             'bank_ifsc_code' => 'required',
-             'accountant_id' => 'required|exists:accountants,id',
-         ]);
+        $this->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|digits:10', // Adjust based on phone number format requirements
+            'address' => 'required|string',
+            'member_count' => 'required|integer|min:0',
+            'bank_name' => 'required|string|max:255',
+            'bank_account_number' => 'required|string|max:255|unique:societies,bank_account_number',
+            'bank_ifsc_code' => 'required|string|max:255',
+            'accountant_id' => 'required|integer|exists:accountants,id',
+            'upi_id' => 'nullable|string|unique:societies,upi_id',
+            'upi_number' => 'nullable|string|unique:societies,upi_number',
+            'parking_charges' => 'nullable|numeric|min:0',
+            'maintenance_amount_owner' => 'nullable|numeric|min:0',
+            'service_charges' => 'nullable|numeric|min:0',
+            'maintenance_amount_rented' => 'nullable|numeric|min:0',
+            'registered_balance' => 'nullable|numeric',
+            'updated_balance' => 'nullable|numeric',
+            'renews_at' => 'required|date_format:Y-m-d',
+
+        ]);
 
         Societies::create([
             'name' => $this->name,
             'phone' => $this->phone,
             'address' => $this->address,
-            'member_count' => 0,
+            'member_count' => $this->member_count,
             'bank_name' => $this->bank_name,
             'bank_account_number' => $this->bank_account_number,
             'bank_ifsc_code' => $this->bank_ifsc_code,
             'accountant_id' => $this->accountant_id,
+            'renews_at'=>$this->renews_at,
+            'upi_id' => $this->upi_id,
+            'upi_number' => $this->upi_number,
+            'parking_charges' => $this->parking_charges,
+            'maintenance_amount_owner' => $this->maintenance_amount_owner,
+            'service_charges' => $this->service_charges,
+            'maintenance_amount_rented' => $this->maintenance_amount_rented,
+            'registered_balance' => $this->registered_balance,
+            'updated_balance' => $this->updated_balance,
+
         ]);
 
         // session()->flash('success', 'Society created successfully.');
         return redirect()->route('societiesIndex')->with(['success' => 'Society created successfully.']);
-        
+
     }
 
 
     public function render()
     {
-        
+
         $societies = Societies::where('name', 'like', '%' . $this->search . '%')
             ->latest()
             ->paginate(2);
 
-            $user = User::find($this->accountant_id);
-            
+        $user = User::find($this->accountant_id);
+
         $accountants = Accountant::with('user')->get();
 
         return view('livewire.manage-user.manage-society-index', [

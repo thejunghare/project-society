@@ -11,6 +11,7 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class ManageMemberIndex extends Component
 {
@@ -89,13 +90,13 @@ class ManageMemberIndex extends Component
 
         $member = Member::find($this->user_Id);
         // dd($member->society_id);
-        
-        if($this->society_id != $member->society_id){
-            if (!$this->checkMemberCountForSociety($this->society_id)){
+
+        if ($this->society_id != $member->society_id) {
+            if (!$this->checkMemberCountForSociety($this->society_id)) {
                 return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
-            }       
+            }
         }
-        
+
 
         $member = Member::find($this->s_id);
         $user = $member->user;
@@ -115,7 +116,7 @@ class ManageMemberIndex extends Component
             $memberData['is_rented'] = '0'; // Ensure is_rented is reset if it's not 'Yes'
             // $memberData['room_number'] = '0'; // Reset room_number if not rented
         }
-        
+
         $memberData['room_number'] = $this->room_number;
         $memberData['society_id'] = $this->society_id;
 
@@ -123,13 +124,24 @@ class ManageMemberIndex extends Component
         $member->update($memberData);
 
         $this->resetInputFields();
-        
+
         $this->showModal = false;
 
         // Emit a browser event to refresh the page
         return redirect(route('membersIndex'))->with(['success' => 'Member updated successfully.']);
     }
 
+    public function checkRoomNo($society_id, $room_no)
+    {
+        // Check if the room number exists within the given society
+        $exists = DB::table('members')
+            ->where('society_id', $society_id)
+            ->where('room_number', $room_no)
+            ->exists();
+
+        // Return false if it exists, true otherwise
+        return !$exists;
+    }
 
     public function save()
     {
@@ -145,8 +157,14 @@ class ManageMemberIndex extends Component
             'room_number' => 'nullable|string', // Optional room number
         ]);
 
-        if (!$this->checkMemberCountForSociety($this->society_id)){
+
+
+        if (!$this->checkMemberCountForSociety($this->society_id)) {
             return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
+        }
+
+        if (!$this->checkRoomNo($this->society_id, $this->room_number)) {
+            return redirect(route('membersIndex'))->with(['error' => 'The room number must be unique within the same society.']);
         }
 
 
@@ -164,7 +182,7 @@ class ManageMemberIndex extends Component
 
 
         // dd($this->society_id,);
-        
+
         // Create the member
         Member::create([
             'user_id' => $user->id,
@@ -172,7 +190,7 @@ class ManageMemberIndex extends Component
             'is_rented' => $isRented,
             'room_number' => $this->room_number ?? '',
         ]);
-        
+
 
         // Reset input fields
         $this->resetInputFields();
@@ -185,36 +203,42 @@ class ManageMemberIndex extends Component
 
     public function checkMemberCountForSociety($society_id): bool
     {
-      $currentMemberCount = Member::where('society_id', $society_id)->count();
-      $society = Societies::where('id', $society_id)->first();
-    
-      if (is_null($society)) {
-          // Handle the case where the society is not found (optional)
-          return redirect(route('membersIndex'))->with(['error' => 'Society is full']); // Or throw an exception
-      }
-    
-      $societyMemberCount = $society->member_count;
+        $currentMemberCount = Member::where('society_id', $society_id)->count();
+        $society = Societies::where('id', $society_id)->first();
 
-      if($currentMemberCount = $societyMemberCount){
-        return false;
-      }
-    
-      return $currentMemberCount < $societyMemberCount;
+        if (is_null($society)) {
+            // Handle the case where the society is not found (optional)
+            return redirect(route('membersIndex'))->with(['error' => 'Society is full']); // Or throw an exception
+        }
+
+        $societyMemberCount = $society->member_count;
+
+        if ($currentMemberCount = $societyMemberCount) {
+            return false;
+        }
+
+        return $currentMemberCount < $societyMemberCount;
     }
-    
+
     // Checks Member count to update
-    
+
 
     public function deleteMember($id)
     {
-        $member = Member::findOrFail($id);
+        try {
+            $member = Member::findOrFail($id);
 
-        $member->user->delete();
-        $member->delete();
+            $member->user->delete();
+            $member->delete();
+        } catch (Exception) {
+            return redirect(route('membersIndex'))->with(['error' => 'Something went round. Try again later.']);
+        }
+
+
 
         session()->flash('success', 'Member deleted successfully.');
 
-        
+
 
         // Optionally, refresh the page
         return redirect(route('membersIndex'));

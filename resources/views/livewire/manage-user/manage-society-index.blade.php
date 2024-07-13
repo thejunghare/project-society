@@ -153,7 +153,7 @@
                         <button type="button"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                             data-modal-hide="editUserModal"
-                            wire:click="$set('showModal', false)">
+                            wire:click="$set('showModal', false)" id="close-button">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                 fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -280,12 +280,27 @@
                                 @enderror
                             </div>
 
+                            {{-- renews_at --}}
+                            <div class="col-span-6 sm:col-span-3">
+                                <label for="renews_at" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Renews At</label>
+                                <input type="date" name="renews_at" id="renews_at" wire:model="renews_at"
+                                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required value="{{$renews_at}}">
+                                    @error('renews_at')
+                                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                                    role="alert">
+                                    <span class="font-medium">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+
                              {{-- upi_id --}}
                              <div class="col-span-6 sm:col-span-3">
                                 <label for="upi_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">UPI ID</label>
-                                <input type="number" name="upi_id" id="upi_id" wire:model="upi_id"
+                                <input type="text" name="upi_id" id="upi_id" wire:model="upi_id"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$accountant_id}}">
+                                    required value="{{$upi_id}}">
                                     @error('upi_id')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
@@ -297,9 +312,9 @@
                              {{-- upi_number --}}
                              <div class="col-span-6 sm:col-span-3">
                                 <label for="upi_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">UPI Number</label>
-                                <input type="number" name="upi_number" id="upi_number" wire:model="upi_number"
+                                <input type="text" name="upi_number" id="upi_number" wire:model="upi_number"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$accountant_id}}">
+                                    required value="{{$upi_number}}">
                                     @error('upi_number')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
@@ -314,7 +329,7 @@
                                 <label for="parking_charges" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parking Charges</label>
                                 <input type="number" name="parking_charges" id="parking_charges" wire:model="parking_charges"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$accountant_id}}">
+                                    required value="{{$parking_charges}}">
                                     @error('parking_charges')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
@@ -328,7 +343,7 @@
                                 <label for="service_charges" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Service Charges</label>
                                 <input type="number" name="service_charges" id="service_charges" wire:model="service_charges"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$accountant_id}}">
+                                    required value="{{$service_charges}}">
                                     @error('service_charges')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
@@ -342,7 +357,7 @@
                                 <label for="maintenance_amount_owner" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maintenance Amount Owner</label>
                                 <input type="number" name="maintenance_amount_owner" id="maintenance_amount_owner" wire:model="maintenance_amount_owner"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$accountant_id}}">
+                                    required value="{{$maintenance_amount_owner}}">
                                     @error('maintenance_amount_owner')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
@@ -353,10 +368,10 @@
 
                              {{-- maintenance_amount_rented --}}
                              <div class="col-span-6 sm:col-span-3">
-                                <label for="maintenance_amount_rented" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maintenance Amount Owner</label>
+                                <label for="maintenance_amount_rented" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maintenance Amount Rented</label>
                                 <input type="number" name="maintenance_amount_rented" id="maintenance_amount_rented" wire:model="maintenance_amount_rented"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$accountant_id}}">
+                                    required value="{{$maintenance_amount_rented}}">
                                     @error('maintenance_amount_rented')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
@@ -370,7 +385,7 @@
                                 <label for="registered_balance" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Registered Balance</label>
                                 <input type="number" name="registered_balance" id="registered_balance" wire:model="registered_balance"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$accountant_id}}">
+                                    required value="{{$registered_balance}}">
                                     @error('registered_balance')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
@@ -379,13 +394,13 @@
                                 @enderror
                             </div>
 
-                             {{-- updated_balence --}}
+                             {{-- updated_balance --}}
                              <div class="col-span-6 sm:col-span-3">
-                                <label for="updated_balence" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Updated Balance</label>
-                                <input type="number" name="updated_balence" id="updated_balence" wire:model="updated_balence"
+                                <label for="updated_balance" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Updated Balance</label>
+                                <input type="number" name="updated_balance" id="updated_balance" wire:model="updated_balance"
                                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required value="{{$accountant_id}}">
-                                    @error('updated_balence')
+                                    required value="{{$updated_balance}}">
+                                    @error('updated_balance')
                                     <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                                     role="alert">
                                     <span class="font-medium">{{ $message }}</span>
@@ -420,4 +435,10 @@
     
 </div>
 
-
+<script>
+    document.getElementById('close-button').addEventListener('click', function() {
+        // Refresh the page
+        location.reload();
+    });
+</script>
+    
