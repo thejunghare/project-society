@@ -7,6 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/css?family=Raleway:500,800" rel="stylesheet">
     <title>access forbidden!</title>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -65,8 +68,8 @@
 
 <body>
     <use>
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-            viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve" class="whistle">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+            y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve" class="whistle">
             <metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
             <g>
                 <g transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)">
@@ -82,6 +85,24 @@
     </use>
     <h1>403</h1>
     <h2>Not this time, access forbidden!</h2>
+
+    <div class='flex flex-row items-center justify-center m-5'>
+        @auth
+            @if (auth()->user()->role_id == 2)
+                <a href="{{ url('/accountant/dashboard') }}" class="font-medium text-white hover:underline">
+                    Take me to my dashboard!
+                </a>
+            @elseif(auth()->user()->role_id == 1)
+                <a href="{{ url('/admin/dashboard') }}" class="font-medium text-white hover:underline">
+                    Take me to my dashboard!
+                </a>
+            @else
+                <a href="{{ url('/dashboard') }}" class="font-medium text-white hover:underline">
+                    Take me to my dashboard!
+                </a>
+            @endif
+        @endauth
+    </div>
 </body>
 
 </html>

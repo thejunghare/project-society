@@ -5,14 +5,21 @@
             class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
             <li class="me-2">
                 <button aria-current="page"
-                    class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300" wire:click="goBack">Society
-                    Dashboard</button>
+                    class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                    wire:click="goBack">Society
+                    Dashboard
+
+                </button>
             </li>
-            
+
             <li class="me-2">
                 <button aria-current="page"
-                    class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500"
-                    >Maintenance Bill</button>
+                    class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">
+
+                    Maintenance
+                    Bill
+
+                </button>
             </li>
 
         </ul>
@@ -20,22 +27,26 @@
     </div>
     <div class='w-full flex flex-row items-center  mb-5 '>
         {{-- If you look to others for fulfillment, you will never truly be fulfilled. --}}
-        {{-- <div class='w-1/4'>
+        {{--
+
+        <div class='w-1/4'>
             @if ($societiesList->isEmpty())
-                <x-alert-no-registered-societies />
+            <x-alert-no-registered-societies/>
             @else
-                <label for="societies" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
-                    Society</label>
-                <select id="societies" wire:model.live="selected_society"
+            <label for="societies" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
+                Society</label>
+            <select id="societies" wire:model.live="selected_society"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     disabled>
-                    <option value="">Select society</option>
-                    @foreach ($societiesList as $key => $value)
-                        <option value="{{ $key }}">{{ $value }}</option>
-                    @endforeach
-                </select>
+                <option value="">Select society</option>
+                @foreach ($societiesList as $key => $value)
+                <option value="{{ $key }}">{{ $value }}</option>
+                @endforeach
+            </select>
             @endif
-        </div> --}}
+        </div>
+
+        --}}
 
         <div class='w-1/4 pr-4'>
             <label for="months" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
@@ -95,7 +106,6 @@
                 </div>
 
 
-
                 {{-- search bar --}}
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="relative">
@@ -145,23 +155,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($members as $member)  
+                    @foreach ($members as $member)
                         <tr
                             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td class="w-4 p-4">
                                 <div class="flex items-center">
                                     <input id="checkbox-table-search-1" type="checkbox" wire:model="selectedMembers"
                                         value="{{ $member->id }}
-                                        class="w-4
+                                        class=" w-4
                                         h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500
                                         dark:focus:ring-blue-600 dark:ring-offset-gray-800
                                         dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700
                                         dark:border-gray-600">
                                     <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                                 </div>
-                            </td> 
+                            </td>
                             <td class="px-6 py-4">
-                               1
+                                {{ $loop->iteration }}
                             </td>
                             <th scope="row"
                                 class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -175,27 +185,24 @@
                                 {{ $member->bill_id }}
                             </td>
                             <td class="px-6 py-4">
-                                @if( $member->advance == 0 )
-                                    <span class="text-red-500">No</span>
-                                @else
-                                    <span class="text-green-500">Yes</span>
-                                @endif
-
+                                <div class="flex items-center">
+                                    @if ($member->advance == 0)
+                                        <span
+                                            class=" w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                                    @else
+                                        <span
+                                            class=" w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                                    @endif
+                                </div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
                                     @if ($member->status == 1)
                                         <span
-                                            class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
-                                            <span class="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
-                                            PAID
-                                        </span>
+                                            class=" w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                                     @elseif($member->status == 0)
                                         <span
-                                            class="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
-                                            <span class="w-2 h-2 me-1 bg-red-500 rounded-full"></span>
-                                            UNPAID
-                                        </span>
+                                            class=" w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                                     @endif
                                 </div>
                             </td>
@@ -228,32 +235,70 @@
                     @endforeach
                 </tbody>
             </table>
-            
-
         </div>
-       
+
 
         @if ($members->isEmpty())
             <div class="my-4 p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
                 role="alert">
-                <span class="font-medium">No bills found!</span>
+                <span class="font-medium">No bills found! Please generate bills.</span>
             </div>
+
+            {{-- form --}}
+            <form class="max-w w-3/4 mx-auto flex item-center justify-evenly" wire:click.prevent="generateBills">
+                <div class="mb-5">
+
+                </div>
+                <div class="mb-5">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                            </svg>
+                        </div>
+                        <input wire:model="due_date" type="datetime-local"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Select due date">
+                    </div>
+                </div>
+                {{-- <div class="mb-5">
+                    <input wire:model="amount" type="number"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Enter amount">
+                </div> --}}
+                <div>
+                    <button type="submit"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Generate Bills
+                        <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                        </svg>
+                    </button>
+                    {{-- <span wire:loading>Saving...</span> --}}
+                </div>
+            </form>
         @endif
 
+        {{-- pervious button --}}
         {{-- <div class="mt-3 flex">
-            <a wire:click="goBack"
-                class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 5H1m0 0 4 4M1 5l4-4" />
-                </svg>
-                Previous
-            </a>
-        </div> --}}
+        <a wire:click="goBack"
+           class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 5H1m0 0 4 4M1 5l4-4"/>
+            </svg>
+            Previous
+        </a>
+    </div> --}}
 
+        {{-- pagination --}}
         <div class="my-5">
-            {{-- {{ $members->links() }} --}}
+            {{-- {{ $members->links() }}  --}}{{-- TODO: -> fix pagination --}}
         </div>
     @else
         @if ($societies)
