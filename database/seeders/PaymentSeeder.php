@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\MaintenanceBill;
 use App\Models\Payment;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class PaymentSeeder extends Seeder
 {
@@ -36,6 +37,7 @@ class PaymentSeeder extends Seeder
             'maintenance_bills_id' => $bill->id,
             'amount_paid' => $amountPaid,
             'payment_date' => $paymentDate,
+            
         ]);
 
         // Update bill status if fully paid

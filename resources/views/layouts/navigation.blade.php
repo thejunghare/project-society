@@ -104,7 +104,7 @@
             <div class="flex items-center justify-start rtl:justify-end">
                 <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
                     type="button"
-                    class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                    class="inline-flex items-center p-2 text-sm text-mygreen-500 rounded-lg sm:hidden hover:bg-mygreen-100 focus:outline-none focus:ring-2 focus:ring-mygreen-200 dark:text-mygreen-400 dark:hover:bg-gray-700 dark:focus:ring-mygreen-600">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
@@ -113,29 +113,13 @@
                         </path>
                     </svg>
                 </button>
-                <a href="https://flowbite.com" class="flex ms-2 md:me-24">
-                    <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 me-3" alt="FlowBite Logo" />
-                    <span
-                        class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Society</span>
-                </a>
+                <div class="w-1/2 flex items-center">
+                    <img src="{{ asset('images/logo.png') }}" class="h-12 w-auto" alt="Logo">
+                    <p class="ml-2 text-2xl italic tracking-wide font-extrabold">
+                        <a href="#" class="cursor-not-allowed text-teal-500">mySocietyERP</a>
+                    </p>
+                </div>
             </div>
-
-            {{-- <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-                </div>
-
-                <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('profile.edit')">
-                        {{ __('Profile') }}
-                    </x-responsive-nav-link>
-
-
-
-                </div>
-            </div> --}}
-
             <div class="flex items-center">
                 <div class="flex items-center ms-3">
                     <div>
@@ -147,7 +131,7 @@
                                 src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo">
                         </button>
                     </div>
-                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-mygreen-600"
                         id="dropdown-user">
                         <div class="px-4 py-3" role="none">
                             <p class="text-sm text-gray-900 dark:text-white" role="none">
@@ -160,36 +144,25 @@
                         <ul class="py-1" role="none">
                             <li>
                                 <a href="/dashboard"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-mygreen-100 dark:text-mygreen-300 dark:hover:bg-mygreen-600 dark:hover:text-white"
                                     role="menuitem">Dashboard</a>
                             </li>
                             <li>
-                               {{--  <a href="profile.edit"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                <x-responsive-nav-link :href="route('profile.edit')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-mygreen-100 dark:text-mygreen-300 dark:hover:bg-mygreen-600 dark:hover:text-white"
                                     role="menuitem">
-
-
-                                </a> --}}
-
-                                <x-responsive-nav-link :href="route('profile.edit')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    role="menuitem">
-                                        {{ __('Profile') }}
-                                    </x-responsive-nav-link>
+                                    {{ __('Profile') }}
+                                </x-responsive-nav-link>
                             </li>
                             <li>
-                                {{-- <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    role="menuitem">Sign out</a> --}}
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-
-                                        <x-responsive-nav-link :href="route('logout')"
-                                                onclick="event.preventDefault();
-                                                            this.closest('form').submit();" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    role="menuitem">
-                                            {{ __('Log Out') }}
-                                        </x-responsive-nav-link>
-                                    </form>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <x-responsive-nav-link :href="route('logout')"
+                                            onclick="event.preventDefault();
+                                                        this.closest('form').submit();" class="block px-4 py-2 text-sm text-gray-700 hover:bg-mygreen-100 dark:text-mygreen-300 dark:hover:bg-mygreen-600 dark:hover:text-white"
+                                        role="menuitem">
+                                        {{ __('Log Out') }}
+                                    </x-responsive-nav-link>
+                                </form>
                             </li>
                         </ul>
                     </div>
@@ -198,3 +171,4 @@
         </div>
     </div>
 </nav>
+

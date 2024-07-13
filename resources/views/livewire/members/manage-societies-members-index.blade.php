@@ -1,18 +1,19 @@
-<div class="mt-12">
+<div class="mt-16">
     @section('title', 'Manage Members')
-    <div class="mb-6 mt-13 border-gray-200 dark:border-gray-700">
+    <div class="mb-6 mt-13 border-mygreen-200 dark:border-mygreen-700">
+       
         <ul
             class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
             <li class="me-2">
                 <button aria-current="page"
-                    class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                    class="inline-block p-4 rounded-t-lg hover:text-mygreen-600 hover:bg-mygreen-50 dark:hover:bg-mygreen-800 dark:hover:text-mygreen-300"
                     wire:click="goBack">Society
                     Dashboard</button>
             </li>
 
             <li class="me-2">
                 <button aria-current="page"
-                    class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">See
+                    class="inline-block p-4 text-mygreen-600 bg-mygreen-100 rounded-t-lg active dark:bg-mygreen-800 dark:text-mygreen-500">See
                     Members</button>
             </li>
 
@@ -47,7 +48,7 @@
                     </svg>
                 </div>
                 <input type="text" id="table-search-users"
-                    class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-mygreen-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-mygreen-500 dark:focus:border-mygreen-500"
                     placeholder="Search for members">
             </div>
         </div>

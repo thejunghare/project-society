@@ -1,18 +1,19 @@
-<div class='mt-5'>
+<div class='mt-16'>
     @section('title', 'Maintenance Bill')
     <div class="mb-6 mt-12 border-gray-200 dark:border-gray-700">
         <ul
             class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
             <li class="me-2">
                 <button aria-current="page"
-                    class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300" wire:click="goBack">Society
+                    class="inline-block p-4 rounded-t-lg hover:text-mygreen-600 hover:bg-mygreen-50 dark:hover:bg-mygreen-800 dark:hover:text-mygreen-300"
+                    wire:click="goBack">Society
                     Dashboard</button>
             </li>
-            
+
             <li class="me-2">
                 <button aria-current="page"
-                    class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500"
-                    >Maintenance Bill</button>
+                    class="inline-block p-4 text-mygreen-600 bg-mygreen-100 rounded-t-lg active dark:bg-mygreen-800 dark:text-mygreen-500">Maintenance
+                    Bill</button>
             </li>
 
         </ul>
@@ -41,7 +42,7 @@
             <label for="months" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
                 month</label>
             <select id="months" wire:model.live="selected_month"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-mygreen-500 focus:border-mygreen-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:mygreen-500 dark:focus:border-mygreen-500">
                 <option value="">Select Month</option>
                 @foreach ($months as $index => $month)
                     <option value="{{ $index + 1 }}">{{ $month }}</option>
@@ -54,7 +55,7 @@
             <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
                 Year</label>
             <select id="yaer" wire:model.live="selected_year"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-mygreen-500 focus:border-mygreen-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-mygreen-500 dark:focus:border-mygreen-500">
 
                 <option value="">Select Year</option>
                 @for ($year = now()->year; $year >= 2000; $year--)
@@ -107,7 +108,7 @@
                         </svg>
                     </div>
                     <input type="text" id="table-search-members" wire:model.live.debounce.500ms="search"
-                        class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-mygreen-500 focus:border-mygreen-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-mygreen-500 dark:focus:border-blue-500"
                         placeholder="Search for members">
                 </div>
 
@@ -120,7 +121,7 @@
                         <th scope="col" class="p-4">
                             <div class="flex items-center">
                                 <input id="checkbox-all-search" type="checkbox" wire:model="selectAll"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="checkbox-all-search" class="sr-only">checkbox</label>
                             </div>
                         </th>
@@ -145,7 +146,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($members as $member)  
+                    @foreach ($members as $member)
                         <tr
                             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td class="w-4 p-4">
@@ -153,15 +154,15 @@
                                     <input id="checkbox-table-search-1" type="checkbox" wire:model="selectedMembers"
                                         value="{{ $member->id }}
                                         class="w-4
-                                        h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500
-                                        dark:focus:ring-blue-600 dark:ring-offset-gray-800
+                                        h-4 text-mygreen-600 bg-gray-100 border-gray-300 rounded focus:ring-mygreen-500
+                                        dark:focus:ring-mygreen-600 dark:ring-offset-gray-800
                                         dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700
                                         dark:border-gray-600">
                                     <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                                 </div>
-                            </td> 
+                            </td>
                             <td class="px-6 py-4">
-                               1
+                                1
                             </td>
                             <th scope="row"
                                 class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -175,7 +176,7 @@
                                 {{ $member->bill_id }}
                             </td>
                             <td class="px-6 py-4">
-                                @if( $member->advance == 0 )
+                                @if ($member->advance == 0)
                                     <span class="text-red-500">No</span>
                                 @else
                                     <span class="text-green-500">Yes</span>
@@ -228,10 +229,10 @@
                     @endforeach
                 </tbody>
             </table>
-            
+
 
         </div>
-       
+
 
         @if ($members->isEmpty())
             <div class="my-4 p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"

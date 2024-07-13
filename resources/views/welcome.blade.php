@@ -841,8 +841,9 @@
 <body class="h-screen flex flex-col">
     {{-- header --}}
     <nav class="h-16 flex justify-center items-center">
-        <div class="w-1/2 ">
-            <p class="px-6 text-2xl italic tracking-wide subpixel-antialiased font-extrabold">
+        <div class="w-1/2 flex items-center p-3">
+            <img src="{{ asset('images/logo.png') }}" class="h-12 w-auto" alt="Logo">
+            <p class="ml-2 text-2xl italic tracking-wide font-extrabold">
                 <a href="#" class="cursor-not-allowed text-teal-500">mySocietyERP</a>
             </p>
         </div>

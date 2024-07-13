@@ -8,7 +8,7 @@
         </h2>
 
     </x-slot> --}}
-    {{-- @section('title', 'User Dashboard') --}}
+    @section('title', 'User Dashboard')
 
     <x-success-toaster />
 
