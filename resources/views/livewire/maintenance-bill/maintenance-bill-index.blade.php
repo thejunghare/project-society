@@ -207,10 +207,12 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
+                                {{-- download invoice button --}}
+                                {{-- TODO -> show receipt if bill is paid --}}
                                 <button type="button" wire:click="download({{ $member->member_id }})"
-                                    class=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 text-sm px-3 py-1.5">
+                                    class=" text-blue-700  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-center inline-flex items-center  text-sm px-3 py-1.5">
 
-                                    <svg class="w-3.5 h-3.5 me-2" aria-hidden="true"
+                                    <svg class="w-[30px] h-[30px] me-2" aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                             stroke-width="2"
@@ -218,9 +220,10 @@
                                     </svg>
                                 </button>
 
+                                {{-- whatsapp button --}}
                                 <button type="button" wire:click="sendWhatsAppMessage({{ $member->member_id }})"
-                                    class=" text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 text-sm px-3 py-1.5">
-                                    <svg class="w-3.5 h-3.5 me-2" aria-hidden="true"
+                                    class=" text-green-700  focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-center inline-flex items-center  text-sm px-3 py-1.5">
+                                    <svg class="w-[30px] h-[30px] me-2" aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         fill="none" viewBox="0 0 24 24">
                                         <path fill="currentColor" fill-rule="evenodd"
@@ -230,14 +233,34 @@
                                             d="M16.735 13.492c-.038-.018-1.497-.736-1.756-.83a1.008 1.008 0 0 0-.34-.075c-.196 0-.362.098-.49.291-.146.217-.587.732-.723.886-.018.02-.042.045-.057.045-.013 0-.239-.093-.307-.123-1.564-.68-2.751-2.313-2.914-2.589-.023-.04-.024-.057-.024-.057.005-.021.058-.074.085-.101.08-.079.166-.182.249-.283l.117-.14c.121-.14.175-.25.237-.375l.033-.066a.68.68 0 0 0-.02-.64c-.034-.069-.65-1.555-.715-1.711-.158-.377-.366-.552-.655-.552-.027 0 0 0-.112.005-.137.005-.883.104-1.213.311-.35.22-.94.924-.94 2.16 0 1.112.705 2.162 1.008 2.561l.041.06c1.161 1.695 2.608 2.951 4.074 3.537 1.412.564 2.081.63 2.461.63.16 0 .288-.013.4-.024l.072-.007c.488-.043 1.56-.599 1.804-1.276.192-.534.243-1.117.115-1.329-.088-.144-.239-.216-.43-.308Z" />
                                     </svg>
                                 </button>
+
+                                {{-- edit button --}}
+                                <button type="button" wire:click="sendWhatsAppMessage({{ $member->member_id }})"
+                                    class=" text-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-center inline-flex items-center  text-sm px-3 py-1.5">
+                                    <svg class="w-[30px] h-[30px] me-2" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="42"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" />
+                                    </svg>
+
+                                </button>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+
+            {{-- pagination --}}
+            <div class="my-5">
+                {{-- TODO: -> fix pagination --}}
+                {{-- {{ $members->links() }} --}}
+            </div>
         </div>
 
 
+        {{-- if no bills found --}}
         @if ($members->isEmpty())
             <div class="my-4 p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
                 role="alert">
@@ -282,24 +305,6 @@
                 </div>
             </form>
         @endif
-
-        {{-- pervious button --}}
-        {{-- <div class="mt-3 flex">
-        <a wire:click="goBack"
-           class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
-                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M13 5H1m0 0 4 4M1 5l4-4"/>
-            </svg>
-            Previous
-        </a>
-    </div> --}}
-
-        {{-- pagination --}}
-        <div class="my-5">
-            {{-- {{ $members->links() }}  --}}{{-- TODO: -> fix pagination --}}
-        </div>
     @else
         @if ($societies)
             <div class="my-2 p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300"
@@ -320,3 +325,17 @@
 
 
 </div>
+
+
+{{-- pervious button --}}
+{{-- <div class="mt-3 flex">
+        <a wire:click="goBack"
+           class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 5H1m0 0 4 4M1 5l4-4"/>
+            </svg>
+            Previous
+        </a>
+    </div> --}}

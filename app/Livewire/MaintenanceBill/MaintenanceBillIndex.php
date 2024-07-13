@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\Societies;
 use Livewire\Component;
 use Twilio\Rest\Client;
+use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use App\Models\MaintenanceBill;
@@ -16,14 +17,21 @@ use Illuminate\Support\Facades\Storage;
 
 class MaintenanceBillIndex extends Component
 {
-    use WithPagination;
+    use WithPagination, WithoutUrlPagination;
 
     #[Title('Maintenance Bill - mySocietyERP')]
     public $society;
-    public $societiesList, $months, $search, $selected_society, $selected_year, $selected_month, $members;
+    public $societiesList;
+    public $months;
+    public $search;
+    public $selected_society;
+    public $selected_year;
+    public $selected_month;
+    public $members;
     public $selectedMembers = [];
     public $selectAll = false;
-    public $amount, $due_date;
+    public $amount;
+    public $due_date;
 
     public function updatedSelectAll($value)
     {
@@ -112,6 +120,7 @@ class MaintenanceBillIndex extends Component
                 )
                 ->latest('members.created_at')
                 ->get();
+
         } else {
             $this->members = collect();
         }
@@ -250,21 +259,21 @@ class MaintenanceBillIndex extends Component
     public function generateBills()
     {
 
-     //   dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
+        //   dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
 
         $this->validate([
             'amount' => 'required|numeric|min:0',
             'due_date' => 'required|date',
-        ]); 
+        ]);
 
-       // dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
+        // dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
         $members = Member::All();
         try {
             foreach ($members as $member) {
                 $society = Societies::find($member->society_id);
                 $parkingCharges = $society->parking_charges;
                 $servicesCharges = $society->services_charges;
-               $maintenance_due_date = $society->maintenance_due_date;
+                $maintenance_due_date = $society->maintenance_due_date;
                 $maintenanceAmount = $member->isRented
                     ? $society->maintenance_amount_rented
                     : $society->maintenance_amount_owner;
@@ -298,6 +307,7 @@ class MaintenanceBillIndex extends Component
 
     public function render()
     {
+        $this->fetchMembers();
         return view('livewire.maintenance-bill.maintenance-bill-index', [
             'months' => $this->months,
             'members' => $this->members,
