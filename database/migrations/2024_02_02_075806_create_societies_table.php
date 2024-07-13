@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->text('vice_president_name')->nullable();
             $table->text('treasurer_name')->nullable();
             $table->text('secretary_name')->nullable();
-            $table->date('renews_at'); 
+            $table->date('renews_at');
 
             $table->string('upi_id')->unique();
             $table->string('upi_number')->unique();
@@ -31,6 +31,7 @@ return new class extends Migration {
             $table->decimal('service_charges', 8, 2)->nullable();
             $table->decimal('maintenance_amount_owner', 8, 2)->nullable();
             $table->decimal('maintenance_amount_rented', 8, 2)->nullable();
+            // $table->date('maintenance_due_date')->nullable();
             $table->decimal('registered_balance', 10, 2)->default(0);
             $table->decimal('updated_balance', 10, 2)->default(0);
 
