@@ -289,6 +289,8 @@ class MaintenanceBillIndex extends Component
 
         $this->fetchMembers();
 
+        // for temp uses only
+        // TODO -> fix redirect
         return redirect()->to('accountant/manage/societies/1/society-details/bills/maintenance-bill');
     }
 
