@@ -180,7 +180,7 @@
                                         Total Balance as of {{ now()->format('d F Y') }} <br>
                                     </th>
                                     <th scope="col" class="px-6 py-4">Rs
-                                        {{ number_format($society->updated_balance, 2) }}/-</th>
+                                        {{ number_format($this->society->registered_balance + $this->society->updated_balance, 2) }}/-</th>
                                 </tr>
                                 <tr
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
@@ -196,7 +196,7 @@
                                         class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                         PhonePay
                                     </th>
-                                    <td class="px-6 py-4">00.00</td>
+                                    <td class="px-6 py-4">{{ $payOnline}}/-</td>
                                 </tr>
                                 <tr
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">

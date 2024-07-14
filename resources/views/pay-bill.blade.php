@@ -26,7 +26,7 @@
                         </div>
                     </div>
 
-                    <h3 class="text-lg font-semibold text-green-700 mb-4">Unpaid Bills</h3>
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Unpaid Bills</h3>
 
                     @if ($unpaidBills->isEmpty())
                         <p class="text-green-500 mb-6">No unpaid bills at the moment.</p>
@@ -64,30 +64,30 @@
                         </div>
                     @endif
 
-                    <h3 class="text-lg font-semibold text-green-700 mb-4">Paid Bills</h3>
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Paid Bills</h3>
 
                     @if ($paidBills->isEmpty())
                         <p class="text-green-500">No paid bills to display.</p>
                     @else
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             @foreach ($paidBills as $bill)
-                                <div class="max-w-sm p-6 bg-green-100 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h5 class="text-xl font-bold text-green-900 dark:text-green-100">Bill #{{ $bill->id }}</h5>
-                                        <span class="text-green-500 font-semibold"><i class="fas fa-check-circle mr-2"></i>Paid</span>
-                                    </div>
+                                <div class="max-w-sm p-6 bg-gray-100 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
+                                    {{-- <div class="flex justify-between items-center mb-2">
+                                        <h5 class="text-xl font-bold text-gray-900 dark:text-gray-100">Bill {{ $bill->id }}</h5>
+                                        <span class="text-mygreen-500 font-semibold"><i class="fas fa-check-circle mr-2"></i>Paid</span>
+                                    </div> --}}
                                     <div class="mb-4">
-                                        <div class="text-lg font-bold text-green-900 dark:text-green-100">
+                                        <div class="text-lg font-bold text-gray-900 dark:text-gray-100">
                                             ₹{{ number_format($bill->amount, 2) }}
                                         </div>
-                                        <div class="text-sm text-green-500 dark:text-green-400">
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">
                                             <i class="fas fa-calendar-check mr-2"></i>Paid Date: {{ $bill->updated_at->format('d-m-Y') }}
                                         </div>
                                     </div>
                                     <hr class="my-4 border-gray-200 dark:border-gray-700">
                                     <div class="flex items-center justify-between">
                                         @if ($bill->payment)
-                                            <a href="{{ route('download.receipt', $bill->payment->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center space-x-2 shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
+                                            <a href="{{ route('download.receipt', $bill->payment->id) }}" class="bg-mygreen-500 hover:bg-mygreen-600 text-white font-bold py-2 px-4 rounded flex items-center space-x-2 shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
                                                 <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
                                                 </svg>

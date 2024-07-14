@@ -1,4 +1,4 @@
-<div>
+<div class="mt-16">
     <div class="mt-14 w-full p-6 bg-white border align-middle border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
         style="border-radius: 9px; width: 100%;">
         <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Welcome, </h3>

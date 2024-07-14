@@ -33,6 +33,12 @@ class MaintenanceBillIndex extends Component
     public $amount;
     public $due_date;
 
+    public $editingBillId = null;
+    public $editPaymentStatus;
+    public $editPaymentMode;
+    public $editAdvance;
+    public $isEditModalOpen = false;
+
     public function updatedSelectAll($value)
     {
         if ($value) {
@@ -54,6 +60,44 @@ class MaintenanceBillIndex extends Component
     public function goBack()
     {
         return redirect('/accountant/manage/societies/' . $this->society->id . '/society-details');
+    }
+
+    public function openEditModal($billId)
+    {
+        $this->editingBillId = $billId;
+        $bill = MaintenanceBill::find($billId);
+        $this->editPaymentStatus = $bill->status;
+        $this->editPaymentMode = $bill->payment_mode;
+        $this->editAdvance = $bill->advance;
+        $this->isEditModalOpen = true;
+    }
+
+    public function closeEditModal()
+    {
+        $this->isEditModalOpen = false;
+        $this->editingBillId = null;
+        $this->editPaymentStatus = null;
+        $this->editPaymentMode = null;
+        $this->editAdvance = null;
+    }
+
+    public function saveEditedBill()
+    {
+        $this->validate([
+            'editPaymentStatus' => 'required|boolean',
+            'editPaymentMode' => 'required|string',
+            'editAdvance' => 'required|boolean',
+        ]);
+
+        $bill = MaintenanceBill::find($this->editingBillId);
+        $bill->update([
+            'status' => $this->editPaymentStatus,
+            'payment_mode' => $this->editPaymentMode,
+            'advance' => $this->editAdvance,
+        ]);
+
+        $this->editingBillId = null;
+        $this->fetchMembers();
     }
 
 
@@ -120,7 +164,6 @@ class MaintenanceBillIndex extends Component
                 )
                 ->latest('members.created_at')
                 ->get();
-
         } else {
             $this->members = collect();
         }
@@ -291,7 +334,6 @@ class MaintenanceBillIndex extends Component
                 ]);
             }
             session()->flash('success', 'Post Created Successfully!!');
-
         } catch (\Exception $ex) {
             session()->flash('error', 'Something goes wrong!!');
         }
@@ -312,6 +354,6 @@ class MaintenanceBillIndex extends Component
             'months' => $this->months,
             'members' => $this->members,
             'currentSociety' => $this->society,
-        ]);
+        ])->layout('layouts.app', ['society' => $this->society]);
     }
 }

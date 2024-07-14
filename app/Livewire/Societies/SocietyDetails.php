@@ -1,17 +1,15 @@
 <?php
-
 namespace App\Livewire\Societies;
 
 use Livewire\Component;
 use App\Models\MaintenanceBill;
 use App\Models\Societies;
-use App\Models\Member;
 use Carbon\Carbon;
 use Livewire\Attributes\Title;
 
 class SocietyDetails extends Component
 {
-    #[Title(' Societies Details - mySocietyERP')]
+    #[Title('Societies Details - mySocietyERP')]
     public $society;
     public $registeredMembers;
     public $receivableAmount;
@@ -21,6 +19,7 @@ class SocietyDetails extends Component
     public $advance;
     public $totalPayable;
     public $balance;
+    public $payOnline;
 
     public function mount(Societies $society)
     {
@@ -28,16 +27,11 @@ class SocietyDetails extends Component
         $this->calculateReceivableAmount();
         $this->calculateBillDues();
         $this->calculateNeverPaid();
-        $this->currentBill();
-        $this->advanceBill();
+        $this->calculateCurrentBill();
+        $this->calculateAdvanceBill();
         $this->calculateTotalPayable();
-        $this->totalBalance();
-
-
-
-
-        // $this->calculateBillDues();
-        // $this->calculateNeverPaid();
+        $this->calculateBalance();
+        $this->calculatePayOnline();
     }
 
     public function seeMembers()
@@ -55,34 +49,33 @@ class SocietyDetails extends Component
         return redirect()->route('maintenance-bill', ['society' => $this->society->id]);
     }
 
-    // public function societyTab(){
-    //     return redirect()->
-    // }
-
     public function calculateReceivableAmount()
     {
-        // $this->registeredMembers = $this->society->members()->count();
-        // $charges = $this->society->parking_charges + $this->society->service_charges;
-
-        // $this->receivableAmount = $this->registeredMembers * $charges;
         $this->registeredMembers = $this->society->members()->count();
         $this->receivableAmount = 0;
-    
-        $members = $this->society->members;
-    
-        foreach ($members as $member) {
-            // Add parking and service charges for each member
+
+        foreach ($this->society->members as $member) {
             $this->receivableAmount += $this->society->parking_charges + $this->society->service_charges;
-    
-            // Add appropriate maintenance amount based on is_rented status
-            if ($member->is_rented == 1) {
-                $this->receivableAmount += $this->society->maintenance_amount_rented;
-            } else {
-                $this->receivableAmount += $this->society->maintenance_amount_owner;
-            }
+            $this->receivableAmount += $member->is_rented ? $this->society->maintenance_amount_rented : $this->society->maintenance_amount_owner;
         }
+
+        // Ensure it's a float for number_format
+        $this->receivableAmount = (float) $this->receivableAmount;
     }
 
+    public function calculatePayOnline()
+    {
+        $today = Carbon::today();
+    
+        $this->payOnline = MaintenanceBill::whereHas('member', function ($query) {
+            $query->where('society_id', $this->society->id);
+        })
+        ->whereDate('updated_at', $today)
+        ->where('status', 1)
+        ->where('payment_mode_id', 1)
+        ->sum('amount');  // Summing the 'amount' field
+    }
+    
 
     public function calculateBillDues()
     {
@@ -91,9 +84,10 @@ class SocietyDetails extends Component
 
         $this->billDues = MaintenanceBill::whereHas('member', function ($query) {
             $query->where('society_id', $this->society->id);
-        })->whereMonth('created_at', $currentMonth)
-            ->whereYear('created_at', $currentYear)
-            ->count();
+        })
+        ->whereMonth('created_at', $currentMonth)
+        ->whereYear('created_at', $currentYear)
+        ->count();
     }
 
     public function calculateNeverPaid()
@@ -101,58 +95,42 @@ class SocietyDetails extends Component
         $this->neverPaid = MaintenanceBill::whereHas('member', function ($query) {
             $query->where('society_id', $this->society->id);
         })
-            ->select('member_id')
-            ->groupBy('member_id')
-            ->havingRaw('MAX(status) != 1')
-            ->count();
+        ->select('member_id')
+        ->groupBy('member_id')
+        ->havingRaw('MAX(status) != 1')
+        ->count();
     }
 
-    public function advanceBill()
+    public function calculateAdvanceBill()
     {
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
         $this->advance = MaintenanceBill::whereHas('member', function ($query) {
             $query->where('society_id', $this->society->id);
-        })->whereMonth('updated_at', $currentMonth)
-            ->whereYear('updated_at', $currentYear)
-            ->where('advance', '=', 1)->count();
+        })
+        ->whereMonth('updated_at', $currentMonth)
+        ->whereYear('updated_at', $currentYear)
+        ->where('advance', 1)
+        ->count();
     }
 
-    public function currentBill()
+    public function calculateCurrentBill()
     {
-        // $currentMonth = Carbon::now()->month;
-        // $currentYear = Carbon::now()->year;
-        // $this->currentBill = MaintenanceBill::whereHas('member', function ($query) {
-        //     $query->where('society_id', $this->society->id);
-        // })->whereMonth('updated_at', $currentMonth)
-        // ->whereYear('updated_at', $currentYear)
-        // ->where('status', '=', 1)->count();
         $today = Carbon::today();
-
         $this->currentBill = MaintenanceBill::whereHas('member', function ($query) {
             $query->where('society_id', $this->society->id);
         })
-            ->whereDate('updated_at', $today)
-            ->where('status', '=', 1)
-            ->count();
+        ->whereDate('updated_at', $today)
+        ->where('status', 1)
+        ->count();
     }
-
-    // public function calculateTotalPayable()
-    // {
-    //     // Calculate total charges based on society's parking and service charges
-    //     $totalCharges = $this->society->parking_charges + $this->society->service_charges;
-
-    //     // Calculate total payable by multiplying the number of advances by total charges
-    //     $this->totalPayable = $totalCharges;
-    // }
 
     public function calculateTotalPayable()
     {
         $totalPayable = 0;
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
-    
-        // Get all maintenance bills for advance payments this month
+
         $advancePayingBills = MaintenanceBill::whereHas('member', function ($query) {
             $query->where('society_id', $this->society->id);
         })
@@ -160,41 +138,21 @@ class SocietyDetails extends Component
         ->whereMonth('updated_at', $currentMonth)
         ->whereYear('updated_at', $currentYear)
         ->get();
-    
+
         foreach ($advancePayingBills as $bill) {
             $member = $bill->member;
-            
-            // Add parking and service charges for each bill
             $totalPayable += $this->society->parking_charges + $this->society->service_charges;
-    
-            // Add appropriate maintenance amount based on is_rent status
-            if ($member->is_rented) {
-                $totalPayable += $this->society->maintenance_amount_rented;
-            } else {
-                $totalPayable += $this->society->maintenance_amount_owner;
-            }
+            $totalPayable += $member->is_rented ? $this->society->maintenance_amount_rented : $this->society->maintenance_amount_owner;
         }
-    
-        $this->totalPayable = $totalPayable;
+
+        // Ensure it's a float for number_format
+        $this->totalPayable = (float) $totalPayable;
     }
 
-
-    public function totalBalance()
+    public function calculateBalance()
     {
-        $this->balance = $this->society->registered_balance + $this->society->updated_balance;
+        $this->balance = (float) ($this->society->registered_balance + $this->society->updated_balance);
     }
-
-    // public function addMember($memberId)
-    // {
-    //     $member = Members::find($memberId);
-    //     if ($member) {
-    //         $this->society->members()->attach($member);
-    //         $this->removeMaintenanceBill($memberId);
-    //         $this->calculateReceivableAmount();
-    //         $this->calculateBillDues();
-    //         $this->calculateNeverPaid();
-    //     }
-    // }
 
     public function render()
     {
@@ -207,7 +165,7 @@ class SocietyDetails extends Component
             'advance' => $this->advance,
             'totalPayable' => $this->totalPayable,
             'balance' => $this->balance,
-            'registeredMembers' => $this->registeredMembers
-        ]);
+            'payOnline' => $this->payOnline,
+        ])->layout('layouts.app', ['society' => $this->society]);
     }
 }

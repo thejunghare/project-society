@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :society="$society ?? null">
     @section('title', 'Accountant Dashboard')
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -23,7 +23,8 @@
     {{-- facts --}}
 
 
-
+  
 
     @livewire('accountant.accountant-index')
+
 </x-app-layout>
