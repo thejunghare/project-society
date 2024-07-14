@@ -225,16 +225,20 @@
                                     </svg>
                                 </button>
                                 <!-- Button to open the modal -->
-                                <button type="button" wire:click="openEditModal({{ $member->bill_id }})"
-                                    class="text-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-center inline-flex items-center text-sm px-3 py-1.5">
+                                <button type="button" data-modal-target="edit-modal" data-modal-toggle="edit-modal"
+                                    class="text-white bg-mygreen hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-mygreen dark:hover:bg-green-700 dark:focus:ring-green-800">
                                     Edit
+                                    <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                                    </svg>
                                 </button>
 
                                 <!-- Edit modal -->
                                 <div id="edit-modal" tabindex="-1" aria-hidden="true"
-                                    class="fixed top-0 right-0 left-0 z-50 w-full h-full flex items-center justify-center bg-black bg-opacity-50"
-                                    x-data="{ show: @entangle('isEditModalOpen') }" x-show="show" x-on:keydown.escape.window="show = false"
-                                    style="display: none;">
+                                class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+                                wire:ignore.self>
                                     <div
                                         class="relative p-4 w-full max-w-md max-h-full bg-white rounded-lg shadow dark:bg-gray-700">
                                         <div
@@ -359,6 +363,7 @@
 
 
 </div>
+{{-- <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script> --}}
 
 <script src="https://unpkg.com/flowbite@1.5.0/dist/flowbite.min.js"></script>
 {{-- pervious button --}}

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use Ixudra\Curl\Facades\Curl;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use App\Helpers\AmountHelper;
 use Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -51,35 +52,63 @@ class BillController extends Controller
         $bill = MaintenanceBill::with('member.user')->findOrFail($billId);
         $member = $bill->member;
         $society = Societies::where('id', $member->society_id)->firstOrFail();
-
+    
+        // Get the current payment for this bill
+        $currentPayment = Payment::where('maintenance_bills_id', $billId)->first();
+    
+        // Get the most recent previous payment for this member
+        $previousPayment = Payment::where('maintenance_bills_id', '<>', $billId)
+            ->whereHas('maintenanceBill', function ($query) use ($member) {
+                $query->where('member_id', $member->id);
+            })
+            ->orderBy('payment_date', 'desc')
+            ->first();
+    
         $data = [
             'member' => $member,
             'bill' => $bill,
             'society' => $society,
+            'currentPayment' => $currentPayment,
+            'previousPayment' => $previousPayment,
         ];
-
+    
         $pdf = Pdf::loadView('pdfs.invoice', $data);
         return $pdf->download('invoice.pdf');
     }
-
     public function downloadReceipt($paymentId)
     {
-        $payment = Payment::with(['maintenanceBill.member.society', 'maintenanceBill.member.user'])
+        $currentPayment = Payment::with(['maintenanceBill.member.society', 'maintenanceBill.member.user'])
             ->findOrFail($paymentId);
-
-        $bill = $payment->maintenanceBill;
+    
+        $bill = $currentPayment->maintenanceBill;
         $member = $bill->member;
         $society = $member->society;
-
+        $amountInWords = AmountHelper::amountToWords($currentPayment->amount_paid);
+    
+        // Get the most recent previous payment for this member
+        // $previousPayment = Payment::whereHas('maintenanceBill', function ($query) use ($member) {
+        //         $query->where('member_id', $member->id);
+        //     })
+        //     ->where('id', '<', $paymentId)
+        //     ->orderBy('payment_date', 'desc')
+        //     ->first();
+    
+        // // If the previous payment is the same as the current one, set it to null
+        // if ($previousPayment && $previousPayment->id === $currentPayment->id) {
+        //     $previousPayment = null;
+        // }
+    
         $data = [
-            'payment' => $payment,
+            'currentPayment' => $currentPayment,
             'bill' => $bill,
             'member' => $member,
             'society' => $society,
+            'amountInWords' => $amountInWords,
+            // 'previousPayment' => $previousPayment,
         ];
-
-        $pdf = PDF::loadView('pdfs.receipt', $data);
-
+    
+        $pdf = Pdf::loadView('pdfs.receipt', $data);
+    
         return $pdf->download('receipt_' . $paymentId . '.pdf');
     }
 

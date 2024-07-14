@@ -70,6 +70,7 @@ class MaintenanceBillIndex extends Component
         $this->editPaymentMode = $bill->payment_mode;
         $this->editAdvance = $bill->advance;
         $this->isEditModalOpen = true;
+        // console.log('isEditModalOpen set to:', $this->isEditModalOpen);
     }
 
     public function closeEditModal()
