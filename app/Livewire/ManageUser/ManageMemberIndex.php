@@ -158,8 +158,8 @@ class ManageMemberIndex extends Component
         ]);
 
 
-
-        if (!$this->checkMemberCountForSociety($this->society_id)) {
+        dd($this->checkMemberCountForSociety($this->society_id));
+        if ($this->checkMemberCountForSociety($this->society_id)) {
             return redirect(route('membersIndex'))->with(['error' => 'Society is full']);
         }
 
@@ -213,11 +213,13 @@ class ManageMemberIndex extends Component
 
         $societyMemberCount = $society->member_count;
 
-        if ($currentMemberCount = $societyMemberCount) {
-            return false;
+        if ($currentMemberCount == $societyMemberCount) {
+            return true;
+        }else if($currentMemberCount < $societyMemberCount){
+            return true;
         }
 
-        return $currentMemberCount < $societyMemberCount;
+        return false;
     }
 
     // Checks Member count to update
