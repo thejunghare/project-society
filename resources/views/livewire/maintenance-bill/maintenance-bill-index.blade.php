@@ -12,7 +12,7 @@
 
             <li class="me-2">
                 <button aria-current="page"
-                    class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">Maintenance
+                    class="inline-block p-4 text-mygreen-600 bg-mygreen-100 rounded-t-lg active dark:bg-mygreen-800 dark:text-mygreen-500">Maintenance
                     Bill</button>
             </li>
 
@@ -157,15 +157,15 @@
                                     <input id="checkbox-table-search-1" type="checkbox" wire:model="selectedMembers"
                                         value="{{ $member->id }}
                                         class="w-4
-                                        h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500
-                                        dark:focus:ring-blue-600 dark:ring-offset-gray-800
+                                        h-4 text-mygreen-600 bg-gray-100 border-gray-300 rounded focus:ring-mygreen-500
+                                        dark:focus:ring-mygreen-600 dark:ring-offset-gray-800
                                         dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700
                                         dark:border-gray-600">
                                     <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                1
+                                {{ $loop->iteration }}
                             </td>
                             <th scope="row"
                                 class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -199,8 +199,8 @@
                             </td>
                             <td class="px-6 py-4">
                                 {{-- download invoice button --}}
-                                {{-- //TODO -> show receipt if bill is paid --}}
-                                <button type="button" wire:click="download({{ $member->member_id }})"
+                               
+                                <button type="button" wire:click="download({{ $member->bill_id }})"
                                     class=" text-blue-700  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-center inline-flex items-center  text-sm px-3 py-1.5">
 
                                     <svg class="w-[30px] h-[30px] me-2" aria-hidden="true"
@@ -289,7 +289,7 @@
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Invoice
                                             Number</label>
                                         <input type="text" wire:model="asdid" id="editName"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-mygreen-600 focus:border-mygreen-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-mygreen-500 dark:focus:border-mygreen-500"
                                             placeholder="Invoice number" required readonly>
                                     </div>
 
@@ -299,7 +299,7 @@
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payment
                                             Method</label>
                                         <select wire:model="editPaymentMethod" id="editPaymentMethod"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-mygreen-500 focus:border-mygreen-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-mygreen-500">
                                             <option value="">Select Payment</option>
                                             <option value="1">Online</option>
                                             <option value="2">Cheque</option>
@@ -313,7 +313,7 @@
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Advance
                                             Payment</label>
                                         <select wire:model="editAdvancePayment" id="editAdvancePayment"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-mygreen-500 focus:border-mygreen-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-mygreen-500 dark:focus:border-mygreen-500">
                                             <option value="">Select</option>
                                             <option value="1">Yes</option>
                                             <option value="0">No</option>
@@ -325,7 +325,7 @@
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reference
                                             Number</label>
                                         <input type="text" wire:model="editChequeNo" id="editChequeNo"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-mygreen-600 focus:border-mygreen-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-mygreen-500 dark:focus:border-mygreen-500"
                                             placeholder="Cheque Number">
                                     </div>
 
@@ -334,13 +334,13 @@
                                         <label for="editRemarks"
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remarks <span class="text-red-500 text-lg">*</span></label>
                                         <input type="text" wire:model="editRemark" id="editChequeNo"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-mygreen-600 focus:border-mygreen-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-mygreen-500 dark:focus:border-mygreen-500"
                                             placeholder="Remarks" required>
                                     </div>
                                 </div>
 
                                 <button type="submit"
-                                    class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    class="text-white inline-flex items-center bg-mygreen-700 hover:bg-mygreen-800 focus:ring-4 focus:outline-none focus:ring-mygreen-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-mygreen-600 dark:hover:bg-mygreen-700 dark:focus:ring-mygreen-800">
                                     Save
                                 </button>
                             </form>
@@ -446,13 +446,12 @@
             </div>
         @endif
     </div>
+    <script src="https://unpkg.com/flowbite@1.5.0/dist/flowbite.min.js"></script>
 
 
 
 
 </div>
-
-<script src="https://unpkg.com/flowbite@1.5.0/dist/flowbite.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const flashMessage = document.getElementById('toast-success');

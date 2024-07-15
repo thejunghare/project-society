@@ -236,7 +236,7 @@ class MaintenanceBillIndex extends Component
         $this->fetchMembers();
     }
 
-    // TODO -> implement pagination here
+
     public function fetchMembers()
     {
         if ($this->selected_society && $this->selected_year && $this->selected_month) {
@@ -271,48 +271,57 @@ class MaintenanceBillIndex extends Component
         }
     }
 
-    public function download($memberId)
+    public function download($billId)
     {
-        $member = Member::with('user')->findOrFail($memberId);
-        $bill = MaintenanceBill::where('member_id', $memberId)->firstOrFail();
-        $society = Societies::where('id', $member->society_id)->firstOrFail();
-
-        // Get the current payment for this bill
-        $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
-
-        // Get the most recent previous payment for this member
-        $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
-            ->whereHas('maintenanceBill', function ($query) use ($member) {
-                $query->where('member_id', $member->id);
-            })
-            ->orderBy('payment_date', 'desc')
-            ->first();
-
-        $data = [
-            'member' => $member,
-            'bill' => $bill,
-            'society' => $society,
-            'currentPayment' => $currentPayment,
-            'previousPayment' => $previousPayment,
-            'amountInWords' => $this->amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount),
-        ];
-
-        if ($bill->status == 1) {
-            // Payment is completed, generate receipt
-            $pdf = Pdf::loadView('pdfs.receipt', $data);
-            $filename = 'receipt_' . $bill->id . '.pdf';
-        } elseif ($bill->status == 0) {
-            // Payment is pending, generate invoice
-            $pdf = Pdf::loadView('pdfs.invoice', $data);
-            $filename = 'invoice_' . $bill->id . '.pdf';
-        } else {
-            // Handle unexpected status values
-            return response()->json(['error' => 'Invalid bill status'], 400);
+        try {
+            // Find the specific bill
+            $bill = MaintenanceBill::findOrFail($billId);
+    
+            // Find the associated member
+            $member = Member::with(['user', 'society'])->findOrFail($bill->member_id);
+    
+            // Get the current payment for this bill
+            $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
+    
+            // Get the most recent previous payment for this member
+            $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
+                ->whereHas('maintenanceBill', function ($query) use ($bill) {
+                    $query->where('member_id', $bill->member_id);
+                })
+                ->latest('payment_date')
+                ->first();
+    
+            $data = [
+                'member' => $member,
+                'bill' => $bill,
+                'society' => $member->society,
+                'currentPayment' => $currentPayment,
+                'previousPayment' => $previousPayment,
+                'amountInWords' => $this->amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount),
+                'payment_mode_id' => $bill->payment_mode_id,
+                'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
+                'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
+            ];
+    
+            if ($bill->status == 1) {
+                $pdf = Pdf::loadView('pdfs.receipt', $data);
+                $filename = "receipt_{$bill->id}.pdf";
+            } elseif ($bill->status == 0) {
+                $pdf = Pdf::loadView('pdfs.invoice', $data);
+                $filename = "invoice_{$bill->id}.pdf";
+            } else {
+                return response()->json(['error' => 'Invalid bill status'], 400);
+            }
+    
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->stream();
+            }, $filename);
+    
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Bill or Member not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred while processing your request'], 500);
         }
-
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->stream();
-        }, $filename);
     }
 
 
