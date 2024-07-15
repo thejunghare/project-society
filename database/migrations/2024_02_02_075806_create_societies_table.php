@@ -34,6 +34,7 @@ return new class extends Migration {
             // $table->date('maintenance_due_date')->nullable();
             $table->decimal('registered_balance', 10, 2)->default(0);
             $table->decimal('updated_balance', 10, 2)->default(0);
+            $table->decimal('late_fee', 8, 2)->nullable(); // Adding the late_fee field
 
             $table->unsignedBigInteger('accountant_id');
 

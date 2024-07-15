@@ -59,7 +59,7 @@
             <span class="font-bold text-lg">Sum of Rs:</span> {{ ucwords($amountInWords) }}
         </div>
         <div class="mb-6">
-            <span class="font-bold text-lg">By Online Transaction with reference No:</span> {{ $currentPayment->transaction_id ?? 'N/A' }}
+            <span class="font-bold text-lg">By  Transaction with reference No:</span> {{ $currentPayment->transaction_id ?? 'N/A' }}
         </div>
         <div class="mb-6">
             <span class="font-bold text-lg">Towards Bills/Invoice no:</span> {{ $bill->id }}
