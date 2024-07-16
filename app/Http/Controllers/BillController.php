@@ -52,10 +52,10 @@ class BillController extends Controller
         $bill = MaintenanceBill::with('member.user')->findOrFail($billId);
         $member = $bill->member;
         $society = Societies::where('id', $member->society_id)->firstOrFail();
-    
+
         // Get the current payment for this bill
         $currentPayment = Payment::where('maintenance_bills_id', $billId)->first();
-    
+
         // Get the most recent previous payment for this member
         $previousPayment = Payment::where('maintenance_bills_id', '<>', $billId)
             ->whereHas('maintenanceBill', function ($query) use ($member) {
@@ -63,7 +63,7 @@ class BillController extends Controller
             })
             ->orderBy('payment_date', 'desc')
             ->first();
-    
+
         $data = [
             'member' => $member,
             'bill' => $bill,
@@ -71,7 +71,7 @@ class BillController extends Controller
             'currentPayment' => $currentPayment,
             'previousPayment' => $previousPayment,
         ];
-    
+
         $pdf = Pdf::loadView('pdfs.invoice', $data);
         return $pdf->download('invoice.pdf');
     }
@@ -79,36 +79,25 @@ class BillController extends Controller
     {
         $currentPayment = Payment::with(['maintenanceBill.member.society', 'maintenanceBill.member.user'])
             ->findOrFail($paymentId);
-    
+
         $bill = $currentPayment->maintenanceBill;
         $member = $bill->member;
         $society = $member->society;
         $amountInWords = AmountHelper::amountToWords($currentPayment->amount_paid);
-    
-        // Get the most recent previous payment for this member
-        // $previousPayment = Payment::whereHas('maintenanceBill', function ($query) use ($member) {
-        //         $query->where('member_id', $member->id);
-        //     })
-        //     ->where('id', '<', $paymentId)
-        //     ->orderBy('payment_date', 'desc')
-        //     ->first();
-    
-        // // If the previous payment is the same as the current one, set it to null
-        // if ($previousPayment && $previousPayment->id === $currentPayment->id) {
-        //     $previousPayment = null;
-        // }
-    
+
         $data = [
             'currentPayment' => $currentPayment,
             'bill' => $bill,
             'member' => $member,
             'society' => $society,
             'amountInWords' => $amountInWords,
-            // 'previousPayment' => $previousPayment,
+            'payment_mode_id' => $bill->payment_mode_id,
+            'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
+            'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
         ];
-    
+
         $pdf = Pdf::loadView('pdfs.receipt', $data);
-    
+
         return $pdf->download('receipt_' . $paymentId . '.pdf');
     }
 
@@ -219,8 +208,8 @@ class BillController extends Controller
 
             // Update bill status
             $bill->status = 1; // Paid
+            $bill->payment_mode_id = 1;
             $bill->save();
-
             // Create payment record
             $payment = new Payment();
             $payment->maintenance_bills_id = $bill->id;
@@ -241,7 +230,6 @@ class BillController extends Controller
         } elseif ($paymentStatus['code'] === 'PAYMENT_PENDING') {
             // Retry logic for pending transactions
             return redirect()->route('pay.bill')->with('success', 'Payment successful and bill updated.');
-
         } else {
             return redirect()->route('pay.bill')->with('error', 'Payment failed or was unsuccessful.');
         }

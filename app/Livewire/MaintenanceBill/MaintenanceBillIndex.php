@@ -276,13 +276,13 @@ class MaintenanceBillIndex extends Component
         try {
             // Find the specific bill
             $bill = MaintenanceBill::findOrFail($billId);
-    
+
             // Find the associated member
             $member = Member::with(['user', 'society'])->findOrFail($bill->member_id);
-    
+
             // Get the current payment for this bill
             $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
-    
+
             // Get the most recent previous payment for this member
             $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
                 ->whereHas('maintenanceBill', function ($query) use ($bill) {
@@ -290,19 +290,20 @@ class MaintenanceBillIndex extends Component
                 })
                 ->latest('payment_date')
                 ->first();
-    
+            $amountInWords = AmountHelper::amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount);
+
             $data = [
                 'member' => $member,
                 'bill' => $bill,
                 'society' => $member->society,
                 'currentPayment' => $currentPayment,
                 'previousPayment' => $previousPayment,
-                'amountInWords' => $this->amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount),
+                'amountInWords' => $amountInWords,
                 'payment_mode_id' => $bill->payment_mode_id,
                 'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
                 'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
             ];
-    
+
             if ($bill->status == 1) {
                 $pdf = Pdf::loadView('pdfs.receipt', $data);
                 $filename = "receipt_{$bill->id}.pdf";
@@ -312,16 +313,34 @@ class MaintenanceBillIndex extends Component
             } else {
                 return response()->json(['error' => 'Invalid bill status'], 400);
             }
-    
+
             return response()->streamDownload(function () use ($pdf) {
                 echo $pdf->stream();
             }, $filename);
-    
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['error' => 'Bill or Member not found'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred while processing your request'], 500);
         }
+    }
+
+    public function applyLateFees()
+    {
+        $today = now();
+        $overdueBills = MaintenanceBill::where('status', 0)
+            ->where('due_date', '<', $today->subDays(15))
+            ->get();
+
+        foreach ($overdueBills as $bill) {
+            $society = Societies::find($bill->member->society_id);
+            $lateFee = $society->late_fee;
+
+            $bill->amount += $lateFee;
+            $bill->late_fee_applied = true;
+            $bill->save();
+        }
+
+        session()->flash('success', 'Late fees applied successfully!');
     }
 
 

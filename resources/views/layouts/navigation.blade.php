@@ -118,11 +118,11 @@
                     @if (Auth::user()->role_id == 3)
                         @if (Auth::user()->member)
                             <p class="text-base italic tracking-wide font-extrabold text-teal-500">
-                                <a href="#" class="cursor-not-allowed">my{{ Auth::user()->member->society->name }}ERP</a>
+                                <a href="#" class="">my{{ Auth::user()->member->society->name }}ERP</a>
                             </p>
                         @else
                             <p class="text-base italic tracking-wide font-extrabold text-teal-500">
-                                <a href="#" class="cursor-not-allowed">mySocietyERP</a>
+                                <a href="#" class="">mySocietyERP</a>
                             </p>
                         @endif
                     @elseif (Auth::user()->role_id == 2)
@@ -130,16 +130,16 @@
                                 request()->routeIs('maintenance-bill') ||
                                 (request()->routeIs('members') && isset($society)))
                             <p class="text-base italic tracking-wide font-extrabold text-teal-500">
-                                <a href="#" class="cursor-not-allowed">my{{ $society->name }}ERP</a>
+                                <a href="#" class="">my{{ $society->name }}ERP</a>
                             </p>
                         @else
                             <p class="text-base italic tracking-wide font-extrabold text-teal-500">
-                                <a href="#" class="cursor-not-allowed">mySocietyERP</a>
+                                <a href="#" class="">mySocietyERP</a>
                             </p>
                         @endif
                     @else
                         <p class="text-base italic tracking-wide font-extrabold text-teal-500">
-                            <a href="#" class="cursor-not-allowed">mySocietyERP</a>
+                            <a href="#" class="">mySocietyERP</a>
                         </p>
                     @endif
                 </div>
