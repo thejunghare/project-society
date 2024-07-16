@@ -5,7 +5,7 @@
 @include('layouts.header')
 
 <body class="font-sans antialiased">
-    @include('layouts.navigation')
+    @include('layouts.navigation', ['society' => $society ?? null])
     @include('layouts.sidebar')
     {{-- <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
 
