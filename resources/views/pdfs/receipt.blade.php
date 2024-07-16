@@ -1,123 +1,119 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Receipt</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: #f4f4f4;
-            color: #333;
-        }
+<html lang="en">
 
-        .container {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .receipt {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            margin: 0;
-            color: #d9534f;
-        }
-
-        .header h2 {
-            margin: 10px 0 0;
-            color: #555;
-        }
-
-        .details {
-            margin-bottom: 20px;
-        }
-
-        .details p {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-
-        .table-container {
-            margin-bottom: 20px;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th,
-        .table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-            font-size: 16px;
-        }
-
-        .table th {
-            background: #f2f2f2;
+        .header-title {
+            color: red;
             font-weight: bold;
+            font-size: 2.5rem;
         }
 
-        .total {
-            text-align: right;
-            font-weight: bold;
+        .header-subtitle {
+            color: gray;
+            font-size: 1.5rem;
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 14px;
-            color: #777;
+        .table-header {
+            background-color: #f8f9fa;
+        }
+
+        .table-cell {
+            border: 1px solid #e9ecef;
+            padding: 1rem;
+            font-size: 1.125rem;
+        }
+
+        .note {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .footer-note {
+            font-size: 0.875rem;
+            color: #6c757d;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>{{ $society->name ?? 'Society Name Not Available' }}</h1>
-            <h2>Payment Receipt</h2>
-        </div>
 
-        <div class="details">
-            <p><strong>Receipt for:</strong> {{ $member->user->name ?? 'Member Name Not Available' }}</p>
-            <p><strong>Payment Date:</strong> {{ $payment->payment_date ? $payment->payment_date->format('d/m/Y') : 'N/A' }}</p>
-            <p><strong>Amount Paid:</strong> Rs {{ number_format($payment->amount_paid ?? 0, 2) }}</p>
+<body class="bg-gray-100 p-6">
+    <div class="receipt my-8">
+        <div class="text-center mb-8">
+            <h1 class="header-title">{{ $society->name ?? 'Society Name Not Available' }}</h1>
+            <p class="header-subtitle">{{ $society->address }}</p>
         </div>
-
-        <div class="table-container">
-            <table class="table">
-                <thead>
+        <hr class="my-8">
+        <div class="flex justify-between mb-6">
+            <div class="text-xl font-bold">Receipt No: {{ $currentPayment->id }}</div>
+            <div class="text-xl">Date:
+                {{ $currentPayment->payment_date ? $currentPayment->payment_date->format('d/m/Y') : 'N/A' }}</div>
+        </div>
+        <div class="mb-6">
+            <span class="font-bold text-lg">Received from:</span>
+            {{ $member->user->name ?? 'Member Name Not Available' }}
+        </div>
+        <div class="mb-6">
+            <span class="font-bold text-lg">Sum of Rs:</span> {{ ucwords($amountInWords) }}
+        </div>
+        <div class="mb-6">
+            @if ($payment_mode_id)
+                @if ($payment_mode_id == 1)
+                    <span class="font-bold text-lg">By Online Transaction with reference No:</span>
+                    {{ $transaction_id ?? 'N/A' }}
+                @elseif($payment_mode_id == 2 || $payment_mode_id == 3)
+                    <span class="font-bold text-lg">By
+                        @if ($payment_mode_id == 2)
+                            Cheque
+                        @elseif($payment_mode_id == 3)
+                            Cash    
+                        @endif
+                        Transaction with reference No:
+                    </span>
+                    {{ $reference_no ?? 'N/A' }}
+                @endif
+            @else
+                <span class="font-bold text-lg">Payment information not available</span>
+            @endif
+        </div>
+        <div class="mb-6">
+            <span class="font-bold text-lg">Towards Bills/Invoice no:</span> {{ $bill->id }}
+        </div>
+        <div class="mb-6">
+            <span class="font-bold text-lg">Flat No:</span> {{ $member->room_number }}
+        </div>
+        <div class="mb-6">
+            <span class="font-bold text-lg">Note:</span> Maintenance paid for
+            {{ \Carbon\Carbon::createFromDate(null, $bill->billing_month, 1)->format('F Y') }}
+        </div>
+        <div class="mb-6">
+            <table class="w-full border-collapse">
+                <thead class="table-header">
                     <tr>
-                        <th>Bill ID</th>
-                        <th>Bill Date</th>
-                        <th>Due Date</th>
-                        <th>Amount</th>
+                        <th class="table-cell">Amount in RS</th>
+                        <th class="table-cell">{{ number_format($currentPayment->amount_paid ?? 0, 2) }}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ $bill->id ?? 'N/A' }}</td>
-                        <td>{{ $bill->created_at ? $bill->created_at->format('d/m/Y') : 'N/A' }}</td>
-                        <td>{{ $bill->due_date ? $bill->due_date->format('d/m/Y') : 'N/A' }}</td>
-                        <td>Rs {{ number_format($bill->amount ?? 0, 2) }}</td>
-                    </tr>
-                </tbody>
             </table>
         </div>
 
-        <div class="footer">
-            <p>Thank you for your payment!</p>
+        <div class="mt-8 note">
+            <p># This is a computer-generated receipt hence signature is not required.</p>
+            <p># Cheque is subject to realization.</p>
         </div>
     </div>
 </body>
+
 </html>

@@ -11,6 +11,9 @@ use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use App\Models\MaintenanceBill;
+use App\Helpers\AmountHelper;
+use App\Models\Payment;
+use App\Models\Receipts;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -33,6 +36,16 @@ class MaintenanceBillIndex extends Component
     public $amount;
     public $due_date;
 
+    public $editingBillId = null;
+    public $editPaymentStatus;
+    public $editPaymentMode;
+    public $editAdvance;
+    public $isEditModalOpen = false;
+
+    public $isModalOpen = false;
+    public $selectedBillIndex;
+    public $selectedBills = [];
+
     public function updatedSelectAll($value)
     {
         if ($value) {
@@ -54,6 +67,139 @@ class MaintenanceBillIndex extends Component
     public function goBack()
     {
         return redirect('/accountant/manage/societies/' . $this->society->id . '/society-details');
+    }
+
+    public $editingBill;
+    public $editName;
+    public $editPaymentMethod;
+    public $editAdvancePayment;
+    public $editChequeNo;
+    public $asdid;
+    public $editRemark;
+
+    public function openEditModal($billId)
+    {
+        $this->editingBill = MaintenanceBill::with('member.user')->findOrFail($billId);
+        $this->editName = $this->editingBill->member->user->name;
+        $this->editPaymentMethod = $this->editingBill->payment_mode_id;
+        $this->asdid = $this->editingBill->id;
+        $this->editRemark = $this->editingBill->remark;
+        $this->editAdvancePayment = $this->editingBill->advance ? '1' : '0';
+        $this->editChequeNo = $this->editingBill->payment ? $this->editingBill->payment->reference_no : '';
+        $this->isModalOpen = true;
+    }
+
+    public function closeEditModal()
+    {
+        $this->isModalOpen = false;
+        $this->resetEditFields();
+    }
+
+    public function resetEditFields()
+    {
+        $this->editingBill = null;
+        $this->editName = '';
+        $this->editPaymentMethod = '';
+        $this->editRemark = '';
+        $this->editChequeNo = '';
+        $this->editAdvancePayment = '';
+    }
+
+
+
+    public function updateBill()
+    {
+        // Validate form inputs
+        $validatedData = $this->validate([
+            'editName' => 'required|string|max:255',
+            'editPaymentMethod' => 'required',
+            'editAdvancePayment' => 'required',
+        ]);
+
+        // Update member's user name
+        $this->editingBill->member->user->update([
+            'name' => $this->editName,
+        ]);
+
+        $this->editingBill->advance = $this->editAdvancePayment === '1' || $this->editAdvancePayment === 1;
+        $this->editPaymentMethod = $this->editPaymentMethod;
+        $this->editingBill->remark = $this->editRemark;
+
+
+        // Use the amount from the maintenance bills table
+        $amountToPay = $this->editingBill->amount ?? 0;
+
+        // Check if a payment entry exists
+        $payment = Payment::where('maintenance_bills_id', $this->editingBill->id)->first();
+
+        // Check if a payment entry exists
+        if (!$payment) {
+            // Create a new payment entry
+            $payment = new Payment();
+            $payment->maintenance_bills_id = $this->editingBill->id;
+            $payment->amount_paid = $amountToPay;
+            $payment->payment_date = now();
+            $payment->transaction_id = ''; // You may want to generate a unique transaction ID here
+            $payment->save();
+            // Create a new receipt
+            if (in_array($this->editPaymentMethod, [1, 2])) {
+                $payment->reference_no = $this->editChequeNo;
+            } else {
+                $payment->reference_no = ''; // Clear cheque number if payment method is not cheque and online
+            }
+
+            $receipt = new Receipts();
+            $receipt->payment_id = $payment->id;
+            $receipt->save();
+
+            // Set the status to 1 (paid)
+            $this->editingBill->status = 1;
+        }
+        if (in_array($this->editPaymentMethod, [1, 2])) { // Online or Cheque
+            $payment->reference_no = $this->editChequeNo;
+        } else { // Cash or any other method
+            $payment->reference_no = null;
+        }
+        // Update existing payment entry
+        $payment->update([
+            'amount_paid' => $amountToPay,
+            'payment_date' => now(),
+            // 'reference_no' => $this->editPaymentMethod == 2 || $this->editPaymentMethod == 1 ? $this->editChequeNo : null, // Update cheque number
+        ]);
+
+        // Check if a receipt already exists for this payment
+        $receipt = Receipts::where('payment_id', $payment->id)->first();
+        if (!$receipt) {
+            // Create a new receipt if it doesn't exist
+            $receipt = new Receipts();
+            $receipt->payment_id = $payment->id;
+            $receipt->save();
+        }
+
+        // Set the status to 1 (paid) if it's not already
+        $this->editingBill->status = 1;
+
+
+        // Update maintenance bill details
+        $this->editingBill->update([
+            'payment_mode_id' => $this->editPaymentMethod,
+            'advance' => $this->editAdvancePayment == '1',
+            'status' => 1, // Ensure status is set to 1 (paid)
+        ]);
+
+        if (in_array($this->editPaymentMethod, [1, 2])) {
+            $payment->reference_no = $this->editChequeNo;
+        } else {
+            $payment->reference_no = ''; // Clear cheque number if payment method is not cheque and online
+        }
+
+        // Save the changes
+        $this->editingBill->save();
+
+        // Close the edit modal after updating
+        $this->closeEditModal();
+
+        session()->flash('success', 'The bill has been successfully updated!');
     }
 
 
@@ -90,7 +236,7 @@ class MaintenanceBillIndex extends Component
         $this->fetchMembers();
     }
 
-    // TODO -> implement pagination here
+
     public function fetchMembers()
     {
         if ($this->selected_society && $this->selected_year && $this->selected_month) {
@@ -120,31 +266,83 @@ class MaintenanceBillIndex extends Component
                 )
                 ->latest('members.created_at')
                 ->get();
-
         } else {
             $this->members = collect();
         }
     }
 
-    public function download($memberId)
+    public function download($billId)
     {
-        $member = Member::with('user')->findOrFail($memberId);
+        try {
+            // Find the specific bill
+            $bill = MaintenanceBill::findOrFail($billId);
 
-        $bill = MaintenanceBill::where('member_id', $memberId)->firstOrFail();
+            // Find the associated member
+            $member = Member::with(['user', 'society'])->findOrFail($bill->member_id);
 
-        $society = Societies::where('id', $member->society_id)->firstOrFail();
+            // Get the current payment for this bill
+            $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
 
-        $data = [
-            'member' => $member,
-            'bill' => $bill,
-            'society' => $society,
-        ];
+            // Get the most recent previous payment for this member
+            $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
+                ->whereHas('maintenanceBill', function ($query) use ($bill) {
+                    $query->where('member_id', $bill->member_id);
+                })
+                ->latest('payment_date')
+                ->first();
+            $amountInWords = AmountHelper::amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount);
 
-        $pdf = Pdf::loadView('pdfs.invoice', $data);
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->stream();
-        }, 'invoice.pdf');
+            $data = [
+                'member' => $member,
+                'bill' => $bill,
+                'society' => $member->society,
+                'currentPayment' => $currentPayment,
+                'previousPayment' => $previousPayment,
+                'amountInWords' => $amountInWords,
+                'payment_mode_id' => $bill->payment_mode_id,
+                'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
+                'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
+            ];
+
+            if ($bill->status == 1) {
+                $pdf = Pdf::loadView('pdfs.receipt', $data);
+                $filename = "receipt_{$bill->id}.pdf";
+            } elseif ($bill->status == 0) {
+                $pdf = Pdf::loadView('pdfs.invoice', $data);
+                $filename = "invoice_{$bill->id}.pdf";
+            } else {
+                return response()->json(['error' => 'Invalid bill status'], 400);
+            }
+
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->stream();
+            }, $filename);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Bill or Member not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred while processing your request'], 500);
+        }
     }
+
+    public function applyLateFees()
+    {
+        $today = now();
+        $overdueBills = MaintenanceBill::where('status', 0)
+            ->where('due_date', '<', $today->subDays(15))
+            ->get();
+
+        foreach ($overdueBills as $bill) {
+            $society = Societies::find($bill->member->society_id);
+            $lateFee = $society->late_fee;
+
+            $bill->amount += $lateFee;
+            $bill->late_fee_applied = true;
+            $bill->save();
+        }
+
+        session()->flash('success', 'Late fees applied successfully!');
+    }
+
 
     public function downloadSelected()
     {
@@ -176,6 +374,62 @@ class MaintenanceBillIndex extends Component
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
         }, 'invoices.pdf');
+    }
+
+    private function amountToWords($amount)
+    {
+        $ones = [
+            1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five',
+            6 => 'six', 7 => 'seven', 8 => 'eight', 9 => 'nine', 10 => 'ten',
+            11 => 'eleven', 12 => 'twelve', 13 => 'thirteen', 14 => 'fourteen',
+            15 => 'fifteen', 16 => 'sixteen', 17 => 'seventeen', 18 => 'eighteen',
+            19 => 'nineteen'
+        ];
+        $tens = [
+            2 => 'twenty', 3 => 'thirty', 4 => 'forty', 5 => 'fifty',
+            6 => 'sixty', 7 => 'seventy', 8 => 'eighty', 9 => 'ninety'
+        ];
+        $scales = [
+            '', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion'
+        ];
+
+        if ($amount == 0) {
+            return 'zero';
+        }
+
+        $amount = number_format($amount, 2, '.', '');
+        $numberWords = [];
+        $wholeNumber = floor($amount);
+        $decimal = round(($amount - $wholeNumber) * 100);
+
+        $groups = str_split(strrev(strval($wholeNumber)), 3);
+
+        for ($i = 0; $i < count($groups); $i++) {
+            $number = strrev($groups[$i]);
+            if ($number != '000') {
+                $groupWords = [];
+                if ($number > 99) {
+                    $groupWords[] = $ones[substr($number, 0, 1)] . ' hundred';
+                    $number = substr($number, 1);
+                }
+                if ($number > 19) {
+                    $groupWords[] = $tens[substr($number, 0, 1)];
+                    $number = substr($number, 1);
+                }
+                if ($number > 0) {
+                    $groupWords[] = $ones[$number];
+                }
+                $numberWords[] = implode(' ', $groupWords) . ($i > 0 ? ' ' . $scales[$i] : '');
+            }
+        }
+
+        $wholeWords = implode(' ', array_reverse($numberWords));
+
+        if ($decimal > 0) {
+            return $wholeWords . ' and ' . $decimal . '/100';
+        }
+
+        return $wholeWords;
     }
 
     public function sendWhatsAppMessage($memberId)
@@ -291,7 +545,6 @@ class MaintenanceBillIndex extends Component
                 ]);
             }
             session()->flash('success', 'Post Created Successfully!!');
-
         } catch (\Exception $ex) {
             session()->flash('error', 'Something goes wrong!!');
         }
@@ -312,6 +565,6 @@ class MaintenanceBillIndex extends Component
             'months' => $this->months,
             'members' => $this->members,
             'currentSociety' => $this->society,
-        ]);
+        ])->layout('layouts.app', ['society' => $this->society]);
     }
 }

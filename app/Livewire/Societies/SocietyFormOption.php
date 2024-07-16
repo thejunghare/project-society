@@ -14,6 +14,7 @@ class SocietyFormOption extends Component
     public $room_number;
     public $is_rented;
     public $selectedSociety;
+    public $role;
 
     protected $rules = [
         'room_number' => 'required',
@@ -22,25 +23,29 @@ class SocietyFormOption extends Component
     ];
 
     public function save()
-{
-    $this->validate();
-
-    try {
-        $member = new Member();
-        $member->society_id = $this->selectedSociety;
-        $member->user_id = Auth::user()->id;
-        $member->room_number = $this->room_number;
-        $member->is_rented = $this->is_rented;
-        $member->save();
-
-        $this->reset('room_number', 'is_rented', 'selectedSociety');
-
-        session()->flash('success', 'You are now a member.');
-        return redirect('/dashboard');
-    } catch (\Exception $e) {
-        session()->flash('error', 'An error occurred while saving: ' . $e->getMessage());
+    {
+        $this->validate();
+    
+        try {
+            $member = new Member();
+            $member->society_id = $this->selectedSociety;
+            $member->user_id = Auth::user()->id;
+            $member->room_number = $this->room_number;
+            $member->is_rented = $this->is_rented;
+            $member->save();
+    
+            $users = Auth::user();
+            $users->role = 4;
+            // $users->save();
+      
+            $this->reset('room_number', 'is_rented', 'selectedSociety');
+    
+            session()->flash('success', 'You are now a member.');
+            return redirect('/dashboard');
+        } catch (\Exception $e) {
+            session()->flash('error', 'An error occurred while saving: ' . $e->getMessage());
+        }
     }
-}
 
     public function mount()
     {

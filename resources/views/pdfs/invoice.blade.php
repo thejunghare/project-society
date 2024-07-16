@@ -125,6 +125,14 @@
                 </tr>
             </tbody>
         </table>
+        @if ($previousPayment)
+            <div class="previous-payment">
+                <h3>Most Recent Previous Payment</h3>
+                <p>Date: {{ $previousPayment->payment_date->format('d/m/Y') }}</p>
+                <p>Amount: Rs {{ number_format($previousPayment->amount_paid, 2) }}</p>
+                <p>Bill ID: {{ $previousPayment->maintenance_bills_id }}</p>
+            </div>
+        @endif
         <div class="note">
             <ol>
                 <li>This is a computer-generated bill hence no signature is required.</li>
