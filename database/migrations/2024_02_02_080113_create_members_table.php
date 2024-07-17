@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('society_id');
             $table->unsignedBigInteger('user_id');
+            $table->integer('room_number');
+            $table->boolean('is_rented');
             $table->timestamps();
 
             $table->foreign('society_id')->references('id')->on('societies');

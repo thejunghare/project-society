@@ -13,4 +13,15 @@ class Payment extends Model
     {
         return $this->belongsTo(Bill::class);
     }
+
+
+    // Newly added
+    protected $casts = [
+        'payment_date' => 'datetime',
+    ];
+
+    public function maintenanceBill()
+    {
+        return $this->belongsTo(MaintenanceBill::class, 'maintenance_bills_id');
+    }
 }

@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\BillSeeder;
+use Database\Seeders\MaintenanceBillSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(AccountantSeeder::class);
         $this->call(SocietiesSeeder::class);
         $this->call(MembersSeeder::class);
-        $this->call(BillSeeder::class);
+        $this->call(MaintenanceBillSeeder::class);
+        $this->call(PaymentSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

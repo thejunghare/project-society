@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Societies extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'phone', 'address', 'member_count', 'bank_name', 'bank_account_number', 'bank_ifsc_code', 'accountant_id'];
+    protected $fillable = ['name', 'phone', 'address', 'member_count', 'bank_name', 'bank_account_number', 'bank_ifsc_code', 'accountant_id','renews_at', 'upi_id', 'upi_number', 'parking_charges', 'maintenance_amount_owner', 'service_charges', 'maintenance_amount_rented', 'registered_balance', 'updated_balance'];
 
-    public function member(): HasMany
+    public function members(): HasMany
     {
-        return $this->hasMany(Member::class);
+        return $this->hasMany(Member::class, 'society_id');
     }
-
+    
     public function president(): HasOne
     {
         return $this->hasOne(PresidentDetail::class);

@@ -4,19 +4,21 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
-     * Run the migrations.
+     * Run the migrations. 
      */
     public function up(): void
     {
-        Schema::create('bills', function (Blueprint $table) {
+        Schema::create('maintenance_bills', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained();
             $table->decimal('amount', 10, 2);
             $table->integer('status');
-            $table->date('billing_month');
+            $table->dateTime('due_date');
+            $table->integer('billing_month');
+            $table->integer('billing_year');
+            $table->boolean('advance')->default(0);
             $table->timestamps();
         });
     }
@@ -26,7 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bills');
+        Schema::dropIfExists('maintenance_bills');
     }
 };
 

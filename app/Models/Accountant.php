@@ -15,4 +15,9 @@ class Accountant extends Model
     public function society() :BelongsTo {
         return $this->belongsTo(Societies::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
