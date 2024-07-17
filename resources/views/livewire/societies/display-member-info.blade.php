@@ -39,14 +39,17 @@
             <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Welcome, </h3>
             <p class="text-lg text-gray-700 dark:text-gray-400 mb-1">{{ Auth::user()->name }}</p>
             <h5 class="mb-3 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                You are member of {{ $member->society->name }} society
+                {{-- You are member of {{ $member->society->name }} society --}}
             </h5>
-            <div class="text-gray-700 dark:text-gray-400 mb-2">
-                <span class="font-semibold">Room Number:</span> {{ $member->room_number }}
+            <div class="flex flex-row items-center w-full justify-between">
+                <div class="text-gray-700 dark:text-gray-400 mb-2">
+                    <span class="font-semibold">Room Number:</span> {{ $member->room_number }}
+                </div>
+                <div class="text-gray-700 dark:text-gray-400">
+                    <span class="font-semibold">Ownership Status:</span> {{ $member->is_rented ? 'Rented' : 'Owned' }}
+                </div>
             </div>
-            <div class="text-gray-700 dark:text-gray-400">
-                <span class="font-semibold">Ownership Status:</span> {{ $member->is_rented ? 'Rented' : 'Owned' }}
-            </div>
+
         </div>
 
 
@@ -66,7 +69,7 @@
                 <div
                     class="flex flex-col items-center justify-center h-24 w-full rounded bg-gray-100 dark:bg-gray-700 border shadow-md hover:bg-gray-200 dark:hover:bg-gray-600">
                     <div class="text-center p-3">
-                        <p class="text-xl font-medium text-gray-900 dark:text-white">Total Payable</p>
+                        <p class="text-xl font-medium text-gray-900 dark:text-white">Total Received</p>
                     </div>
                     <div class="text-center pb-2">
                         <p class="text-2xl font-bold text-gray-900 dark:text-white">Rs
