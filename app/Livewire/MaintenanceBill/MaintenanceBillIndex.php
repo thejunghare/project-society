@@ -4,6 +4,7 @@ namespace App\Livewire\MaintenanceBill;
 
 use DateTime;
 use App\Models\Member;
+use App\Livewire\DatePicker;
 use App\Models\Societies;
 use Livewire\Component;
 use Twilio\Rest\Client;
@@ -97,12 +98,13 @@ class MaintenanceBillIndex extends Component
 
     public function resetEditFields()
     {
-        $this->editingBill = null;
-        $this->editName = '';
-        $this->editPaymentMethod = '';
-        $this->editRemark = '';
-        $this->editChequeNo = '';
-        $this->editAdvancePayment = '';
+        $this->reset(['editingBill','editName', 'editPaymentMethod', 'editRemark', 'editChequeNo', 'editAdvancePayment']);
+        // $this->editingBill = null;
+        // $this->editName = '';
+        // $this->editPaymentMethod = '';
+        // $this->editRemark = '';
+        // $this->editChequeNo = '';
+        // $this->editAdvancePayment = '';
     }
 
 
@@ -510,60 +512,102 @@ class MaintenanceBillIndex extends Component
 
 
     // ... other properties
+    // public function generateBills()
+    // {
+
+    //     //   dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
+
+    //     $this->validate([
+    //         'amount' => 'required|numeric|min:0',
+    //         'due_date' => 'required|date',
+    //     ]);
+
+    //     // dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
+    //     $members = Member::All();
+    //     try {
+    //         foreach ($members as $member) {
+    //             $society = Societies::find($member->society_id);
+    //             $parkingCharges = $society->parking_charges;
+    //             $servicesCharges = $society->services_charges;
+    //             $maintenance_due_date = $society->maintenance_due_date;
+    //             $maintenanceAmount = $member->isRented
+    //                 ? $society->maintenance_amount_rented
+    //                 : $society->maintenance_amount_owner;
+
+    //             $amount = $parkingCharges + $servicesCharges + $maintenanceAmount;
+    //             //dd('Amount:', $amount, 'Society ID:', $society->id);
+
+    //             MaintenanceBill::create([
+    //                 'member_id' => $member->id,
+    //                 'amount' => $amount,
+    //                 'status' => 0,
+    //                 'due_date' => $maintenance_due_date,
+    //                 'billing_month' => $this->selected_month,
+    //                 'billing_year' => $this->selected_year,
+    //             ]);
+    //         }
+    //         session()->flash('success', 'Post Created Successfully!!');
+    //     } catch (\Exception $ex) {
+    //         session()->flash('error', 'Something goes wrong!!');
+    //     }
+
+
+    //     $this->fetchMembers();
+
+    //     // for temp uses only
+    //     // TODO -> fix redirect
+    //     return redirect()->to('accountant/manage/societies/1/society-details/bills/maintenance-bill');
+    // }
+
     public function generateBills()
     {
-
-        //   dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
-
         $this->validate([
-            'amount' => 'required|numeric|min:0',
             'due_date' => 'required|date',
+    
         ]);
 
-        // dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
-        $members = Member::All();
         try {
+            $members = Member::where('society_id', $this->selected_society)->get();
+            $society = Societies::findOrFail($this->selected_society);
+
             foreach ($members as $member) {
-                $society = Societies::find($member->society_id);
                 $parkingCharges = $society->parking_charges;
                 $servicesCharges = $society->services_charges;
-                $maintenance_due_date = $society->maintenance_due_date;
                 $maintenanceAmount = $member->isRented
                     ? $society->maintenance_amount_rented
                     : $society->maintenance_amount_owner;
 
                 $amount = $parkingCharges + $servicesCharges + $maintenanceAmount;
-                //dd('Amount:', $amount, 'Society ID:', $society->id);
 
                 MaintenanceBill::create([
                     'member_id' => $member->id,
                     'amount' => $amount,
                     'status' => 0,
-                    'due_date' => $maintenance_due_date,
+                    'due_date' => $this->due_date,
                     'billing_month' => $this->selected_month,
                     'billing_year' => $this->selected_year,
                 ]);
             }
-            session()->flash('success', 'Post Created Successfully!!');
+
+            session()->flash('success', 'Bills generated successfully!');
+            $this->fetchMembers(); // Refresh the members list
         } catch (\Exception $ex) {
-            session()->flash('error', 'Something goes wrong!!');
+            session()->flash('error', 'Error generating bills: ' . $ex->getMessage());
         }
-
-
-        $this->fetchMembers();
-
-        // for temp uses only
-        // TODO -> fix redirect
-        return redirect()->to('accountant/manage/societies/1/society-details/bills/maintenance-bill');
     }
 
 
     public function render()
     {
         $this->fetchMembers();
+        $members = Member::paginate(5); // This converts it to a collection
+
+        $bills = MaintenanceBill::with('member.user')->get();
         return view('livewire.maintenance-bill.maintenance-bill-index', [
             'months' => $this->months,
             'members' => $this->members,
+            'members' => $members,
+            'bills' => $bills,
             'currentSociety' => $this->society,
         ])->layout('layouts.app', ['society' => $this->society]);
     }
