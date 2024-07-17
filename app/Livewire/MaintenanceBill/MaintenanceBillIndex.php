@@ -80,6 +80,8 @@ class MaintenanceBillIndex extends Component
 
     public function openEditModal($billId)
     {
+        // $this->editingBillId = $billId;
+        // $this->dispatch('open-modal');
         $this->editingBill = MaintenanceBill::with('member.user')->findOrFail($billId);
         $this->editName = $this->editingBill->member->user->name;
         $this->editPaymentMethod = $this->editingBill->payment_mode_id;
@@ -98,7 +100,7 @@ class MaintenanceBillIndex extends Component
 
     public function resetEditFields()
     {
-        $this->reset(['editingBill','editName', 'editPaymentMethod', 'editRemark', 'editChequeNo', 'editAdvancePayment']);
+        $this->reset(['editingBill', 'editName', 'editPaymentMethod', 'editRemark', 'editChequeNo', 'editAdvancePayment']);
         // $this->editingBill = null;
         // $this->editName = '';
         // $this->editPaymentMethod = '';
@@ -117,6 +119,9 @@ class MaintenanceBillIndex extends Component
             'editPaymentMethod' => 'required',
             'editAdvancePayment' => 'required',
         ]);
+
+        $originalStatus = $this->editingBill->getOriginal('status');
+        $newStatus = 1;
 
         // Update member's user name
         $this->editingBill->member->user->update([
@@ -153,6 +158,8 @@ class MaintenanceBillIndex extends Component
             $receipt = new Receipts();
             $receipt->payment_id = $payment->id;
             $receipt->save();
+
+
 
             // Set the status to 1 (paid)
             $this->editingBill->status = 1;
@@ -197,6 +204,34 @@ class MaintenanceBillIndex extends Component
 
         // Save the changes
         $this->editingBill->save();
+
+        // Update society balance only if status changed from 0 to 1
+        if ($originalStatus == 0 && $newStatus == 1) {
+            $member = $this->editingBill->member;
+            if ($member && $member->society) {
+                $society = $member->society;
+                $paymentAmount = (float) $amountToPay;
+
+                try {
+                    $society->updated_balance = $society->updated_balance + $paymentAmount;
+                    $society->save();
+                    \Log::info('Society balance updated. New balance: ' . $society->updated_balance);
+                } catch (\Exception $e) {
+                    \Log::error('Error updating society balance: ' . $e->getMessage());
+                }
+            } else {
+                if (!$member) {
+                    \Log::error('Member not found for bill ID: ' . $this->editingBill->id);
+                } elseif (!$member->society) {
+                    \Log::error('Society not found for member ID: ' . $member->id);
+                }
+                // Here you might want to add some error handling or notification
+            }
+        } else {
+            \Log::info('Society balance not updated. Status did not change from unpaid to paid.');
+        }
+
+
 
         // Close the edit modal after updating
         $this->closeEditModal();
@@ -563,7 +598,7 @@ class MaintenanceBillIndex extends Component
     {
         $this->validate([
             'due_date' => 'required|date',
-    
+
         ]);
 
         try {

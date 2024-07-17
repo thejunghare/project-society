@@ -223,6 +223,26 @@ class BillController extends Controller
             $receipt->payment_id = $payment->id;
             $receipt->save();
 
+
+
+            // Update the updated_balance field in the Society table
+            $member = $bill->member;
+            if ($member && $member->society) {
+                $society = $member->society;
+                $paymentAmount = (float) $paymentData['amount'];
+                $society->updated_balance = $society->updated_balance + $paymentAmount;
+                $society->save();
+
+                \Log::info('Society balance updated. New balance: ' . $society->updated_balance);
+            } else {
+                if (!$member) {
+                    \Log::error('Member not found for bill ID: ' . $bill->id);
+                } elseif (!$member->society) {
+                    \Log::error('Society not found for member ID: ' . $member->id);
+                }
+                // Here you might want to add some error handling or notification
+            }
+
             // Clear the payment data from session
             session()->forget('payment_data');
 
