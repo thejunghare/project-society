@@ -78,7 +78,7 @@ Route::middleware(['auth', 'check-role:1'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/manage/users', ManageUserIndex::class)->name('users');
 });
-
+ 
 
 /*
 |--------------------------------------------------------------------------

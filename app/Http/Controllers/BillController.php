@@ -309,8 +309,8 @@ class BillController extends Controller
 
     private function verifyPaymentWithPhonePe($transactionId)
     {
-        $merchantId = env('PHONEPE_MERCHANT_ID');
-        $saltKey = env('PHONEPE_SALT_KEY');
+        $merchantId = "PGTESTPAYUAT86";
+        $saltKey = '96434309-7796-489d-8924-ab56988a6076';
         $saltIndex = 1;
 
         $urlPath = "/pg/v1/status/{$merchantId}/{$transactionId}";

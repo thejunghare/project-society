@@ -80,8 +80,8 @@ class MaintenanceBillIndex extends Component
 
     public function openEditModal($billId)
     {
-        // $this->editingBillId = $billId;
-        // $this->dispatch('open-modal');
+        $this->editingBillId = $billId;
+        $this->dispatch('open-modal');
         $this->editingBill = MaintenanceBill::with('member.user')->findOrFail($billId);
         $this->editName = $this->editingBill->member->user->name;
         $this->editPaymentMethod = $this->editingBill->payment_mode_id;
