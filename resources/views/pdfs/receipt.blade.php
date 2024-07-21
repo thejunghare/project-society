@@ -48,7 +48,7 @@
         }
     </style>
 </head>
-
+{{-- TODO -> add payment done date --}}
 <body class="bg-gray-100 p-6">
     <div class="receipt my-8">
         <div class="text-center mb-8">
@@ -58,7 +58,7 @@
         <hr class="my-8">
         <div class="flex justify-between mb-6">
             <div class="text-xl font-bold">Receipt No: {{ $currentPayment->id }}</div>
-            <div class="text-xl">Date:
+            <div class="text-xl">Due Date:
                 {{ $currentPayment->payment_date ? $currentPayment->payment_date->format('d/m/Y') : 'N/A' }}</div>
         </div>
         <div class="mb-6">
@@ -78,7 +78,7 @@
                         @if ($payment_mode_id == 2)
                             Cheque
                         @elseif($payment_mode_id == 3)
-                            Cash    
+                            Cash
                         @endif
                         Transaction with reference No:
                     </span>

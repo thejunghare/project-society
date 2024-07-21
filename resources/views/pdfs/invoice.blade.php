@@ -2,6 +2,9 @@
 <html>
 
 <head>
+    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+
     <title>Maintenance Bill</title>
     <style>
         body {
@@ -37,17 +40,8 @@
             margin: 0;
         }
 
-        .details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 20px;
-        }
-
-        .details p {
-            margin: 2px 0;
-        }
-
         .table {
+            margin-top: 150px;
             width: 100%;
             border-collapse: collapse;
         }
@@ -76,33 +70,51 @@
             margin-top: 20px;
             font-size: 12px;
         }
+
+        .float-container {
+            /* border: 3px solid #000; */
+            margin: 20px;
+        }
+
+        .float-child {
+            width: 50%;
+            float: left;
+            padding: 20px;
+            /* border: 2px solid red; */
+        }
     </style>
 </head>
 
 <body>
     <div class="invoice">
+        {{-- society details --}}
         <div class="header">
             <h1>{{ $society->name }}</h1>
             <p>{{ $society->address }}</p>
         </div>
-        <div class="details">
-            <div>
+
+        {{-- member details --}}
+        <div class="float-container">
+            <div class="float-child">
                 <ul>
                     <li>Name: {{ $member->user->name }}</li>
-                    <li>Phone: {{ $member->user->phone }}</li>
-                    <li>Room Number: {{ $member->room_number }}</li>
+                    <li>Phone: +91{{ $member->user->phone }}</li>
+                    <li>Unit Number: {{ $member->room_number }}</li>
                 </ul>
             </div>
-            <div>
+            <div class="float-child">
                 <ul>
                     <li>Bill Number: {{ $bill->id }}</li>
-                    <li>Bill Date: {{ \Carbon\Carbon::parse($bill->created_at)->format('d/m/Y') }}</li>
-                    <li>Bill Due Date: {{ \Carbon\Carbon::parse($bill->due_date)->format('d/m/Y') }}</li>
-                    <li>Bill Peroid: {{ \Carbon\Carbon::createFromDate(null, $bill->billing_month, 1)->format('F Y') }}
+                    {{-- <li>Bill Date: {{ \Carbon\Carbon::parse($bill->created_at)->format('d/m/Y') }}</li> --}}
+                    <li>Due Date: {{ \Carbon\Carbon::parse($bill->due_date)->format('d/m/Y') }}</li>
+                    <li>Billing Period:
+                        {{ \Carbon\Carbon::createFromDate(null, $bill->billing_month, 1)->format('F Y') }}
                     </li>
                 </ul>
             </div>
         </div>
+
+        {{-- bill detials --}}
         <table class="table">
             <thead>
                 <tr>
@@ -115,16 +127,42 @@
             <tbody>
                 <tr>
                     <td>1</td>
-                    <td>Repair and maintenance fund</td>
+                    <td>Maintenance fund</td>
                     <td></td>
+                    {{-- TODO: Replace with actuall amount from socities --}}
                     <td>{{ number_format($bill->amount, 2) }}</td>
                 </tr>
                 <tr>
+                    <td>2</td>
+                    <td>Service Charge</td>
+                    <td></td>
+                    {{-- TODO: Replace with actuall amount from socities --}}
+                    <td>0.00</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Parking Charge</td>
+                    <td></td>
+                    {{-- TODO: Replace with actuall amount from socities --}}
+                    <td>0.00</td>
+                </tr>
+                {{-- TODO: make it dynamic --}}
+                <tr>
+                    <td>4</td>
+                    <td>Late Fees</td>
+                    <td></td>
+                    {{-- TODO: Replace with actuall amount from socities --}}
+                    <td>0.00</td>
+                </tr>
+                <tr>
                     <td colspan="3" class="total">Total</td>
+                    {{-- TODO: Should be total of all amount --}}
                     <td>{{ number_format($bill->amount, 2) }}</td>
                 </tr>
             </tbody>
         </table>
+
+        {{-- logically showing details of pervious bill --}}
         @if ($previousPayment)
             <div class="previous-payment">
                 <h3>Most Recent Previous Payment</h3>
@@ -133,6 +171,8 @@
                 <p>Bill ID: {{ $previousPayment->maintenance_bills_id }}</p>
             </div>
         @endif
+
+        {{-- notes --}}
         <div class="note">
             <ol>
                 <li>This is a computer-generated bill hence no signature is required.</li>
