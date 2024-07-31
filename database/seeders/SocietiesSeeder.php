@@ -51,7 +51,7 @@ class SocietiesSeeder extends Seeder
                 'president_name' => 'name',
                 'vice_president_name' => 'name',
                 'treasurer_name' => 'name',
-                'secretary_name' => 'name',
+                'secretary_name' => 'name',  
                 'bank_name' => 'citibank',
                 'bank_ifsc_code' => '1',
                 'bank_account_number' => '2',

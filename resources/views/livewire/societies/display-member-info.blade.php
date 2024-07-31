@@ -90,7 +90,7 @@
                 <div
                     class="flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700 border rounded-lg p-4 shadow-md hover:shadow-lg">
                     <div class="w-full bg-mygreen dark:bg-mygreen py-3 rounded-t-lg mt-2">
-                        <p class="text-lg font-bold text-gray-900 dark:text-white text-center">Member Details</p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-white text-center">Charges</p>
                     </div>
                     <div class="relative overflow-x-auto w-full mt-4">
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -127,7 +127,9 @@
                                         class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                         Total Charges
                                     </th>
-                                    <td class="px-6 py-4">Rs {{ number_format($totalPayable, 2) }}</td>
+                                    <td class="px-6 py-4">
+                                        RS {{ number_format($member->society->parking_charges + $member->society->service_charges + $maintenance, 2 ) }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

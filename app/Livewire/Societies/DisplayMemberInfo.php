@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DisplayMemberInfo extends Component
 {
-    public $member;
+    public $member;  
     public $totalPayable;
     public $maintenance;
     public $registeredMembers;

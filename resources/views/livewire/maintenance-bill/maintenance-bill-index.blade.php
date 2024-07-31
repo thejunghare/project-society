@@ -406,8 +406,8 @@
             });
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@1.2.3/dist/flowbite.min.js"></script>
-    <div>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/flowbite@1.2.3/dist/flowbite.min.js"></script> --}}
+    {{-- <div>
         <!-- Display the flash message -->
         @if (session()->has('success'))
             <div id="toast-success"
@@ -437,10 +437,10 @@
                 </button>
             </div>
         @endif
-    </div>
+    </div> --}}
 
 </div>
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         const flashMessage = document.getElementById('toast-success');
         if (flashMessage) {
@@ -449,7 +449,7 @@
             }, 3000); // Adjust the time (in milliseconds) as needed
         }
     });
-</script>
+</script> --}}
 
 {{-- pervious button --}}
 {{-- <div class="mt-3 flex">

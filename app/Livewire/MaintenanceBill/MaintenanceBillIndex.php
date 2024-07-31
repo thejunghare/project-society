@@ -252,7 +252,7 @@ class MaintenanceBillIndex extends Component
             'July',
             'August',
             'September',
-            'October',
+            'October', 
             'November',
             'December'
         ];
