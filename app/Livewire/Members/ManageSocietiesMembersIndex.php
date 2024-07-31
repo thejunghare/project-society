@@ -29,6 +29,7 @@ class ManageSocietiesMembersIndex extends Component
   public function mount($society)
   {
     $this->societyId = $society;
+    
     $this->loadSocietyMembers($this->societyId);
   }
 
@@ -145,6 +146,6 @@ class ManageSocietiesMembersIndex extends Component
       'members' => $this->members,
       'registeredMembers' => $this->RegisteredMembers($this->societyId),
       'totalMembers' => $this->TotalMembers($this->societyId),
-    ]);
+    ])->layout('layouts.app', ['society' => $this->society]);
   }
 }

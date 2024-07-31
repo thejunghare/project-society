@@ -31,7 +31,23 @@ module.exports = {
                   'system-ui',
                   // other fallback fonts
                 ]
-              }
+              },
+              colors: {
+                mygreen: {
+                    DEFAULT: '#3EB489',
+                    light: '#A8E6CF',
+                    dark: '#2A7F5E',
+                    100: '#E6F7F1',
+                    200: '#C1EAD9',
+                    300: '#9BDEC1',
+                    400: '#75D1A9',
+                    500: '#4FC591',
+                    600: '#3EB489',
+                    700: '#2A7F5E',
+                    800: '#1E5A43',
+                    900: '#133628',
+                },
+            },
         },
     },
 

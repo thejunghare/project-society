@@ -1,4 +1,4 @@
-<div class="mt-12">
+<div class="mt-16">
     {{-- Do your work, then step back. --}}
     {{-- Abckj --}}
     <x-success-toaster />
@@ -17,7 +17,7 @@
                     </svg>
                 </div>
                 <input type="text" id="table-search"
-                    class="block w-80 px-10 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="block w-80 px-10 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-mygreen focus:border-mygreen dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-mygreen dark:focus:border-mygreen"
                     placeholder="Search for societies">
             </div>
 
@@ -471,7 +471,7 @@
                         @if ($society->is_subscription_over)
                             <span class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Subscription Over</span>
                         @else
-                            <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{ $society->days_left }} Days Left</span>
+                            <span class="bg-mygreen-100 text-mygreen-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-mygreen-900 dark:text-mygreen-300">{{ $society->days_left }} Days Left</span>
                         @endif
                     </div>
                 </div>
@@ -492,7 +492,7 @@
             </div>
             <div class="px-6 py-4">
                 <button type="button"
-                        class="relative text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        class="relative text-white bg-mygreen hover:bg-mygreen-dark focus:ring-4 focus:ring-mygreen-light font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-mygreen dark:hover:bg-mygreen-dark focus:outline-none dark:focus:ring-mygreen-light"
                         wire:click="seeSociety({{ $society->id }})"
                         @if ($society->is_subscription_over)
                             disabled
@@ -502,17 +502,18 @@
                     <span class="disabled-icon"></span>
                 </button>
             
-                @if ($society->show_renew_button)
+                {{-- @if ($society->show_renew_button)
                     <button type="button"
-                            class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                            class="py-2.5 px-5 me-2 mb-2 text-sm font-semibold text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-mygreen focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                             wire:click="renewSociety({{ $society->id }})">
                         Re-New
                     </button>
-                @endif
+                @endif --}}
             </div>
         </div>
     @endforeach
 </div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

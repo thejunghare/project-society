@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     /**
-     * Run the migrations. 
+     * Run the migrations.
      */
     public function up(): void
     {
@@ -15,11 +15,14 @@ return new class extends Migration {
             $table->foreignId('member_id')->constrained();
             $table->decimal('amount', 10, 2);
             $table->integer('status');
-            $table->dateTime('due_date');
+            $table->date('due_date');
+            $table->unsignedBigInteger('payment_mode_id')->default(1);
             $table->integer('billing_month');
             $table->integer('billing_year');
             $table->boolean('advance')->default(0);
             $table->timestamps();
+
+            $table->foreign('payment_mode_id')->references('id')->on('payment_modes');
         });
     }
 

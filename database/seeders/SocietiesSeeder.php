@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -33,6 +32,8 @@ class SocietiesSeeder extends Seeder
                 'service_charges' => 100.00,
                 'maintenance_amount_owner' => 2000.00,
                 'maintenance_amount_rented' => 1500.00,
+                'late_fee' => 100.00, // Adding late fee
+                // 'maintenance_due_date' => '2024-01-05',
                 'accountant_id' => 2,
                 'registered_balance' => 0,
                 'updated_balance' => 0,
@@ -60,6 +61,8 @@ class SocietiesSeeder extends Seeder
                 'service_charges' => 125.00,
                 'maintenance_amount_owner' => 1800.00,
                 'maintenance_amount_rented' => 1200.00,
+                'late_fee' => 80.00, // Adding late fee
+                // 'maintenance_due_date' => '2024-01-05',
                 'accountant_id' => 3,
                 'registered_balance' => 0,
                 'updated_balance' => 0,
@@ -87,6 +90,7 @@ class SocietiesSeeder extends Seeder
                 'service_charges' => 110.00,
                 'maintenance_amount_owner' => 1900.00,
                 'maintenance_amount_rented' => 1300.00,
+                'late_fee' => 90.00, // Adding late fee
                 'accountant_id' => 2,
                 'registered_balance' => 0,
                 'updated_balance' => 0,

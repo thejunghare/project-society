@@ -119,7 +119,7 @@ class ManageSocietiesIndex extends Component
                ]);
            }); */
 
-    // ...
+    // ... 
 
     public function acceptPayment()
     {

@@ -14,6 +14,10 @@ class Payment extends Model
         return $this->belongsTo(Bill::class);
     }
 
+    protected $fillable = [
+        'cheque_no',
+    ];
+
 
     // Newly added
     protected $casts = [
