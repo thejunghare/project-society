@@ -233,8 +233,7 @@
                                         <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd"/>
                                       </svg>
                                 </button>
-                               
-                                  
+
                                 <!-- Edit modal -->
 
 
@@ -275,7 +274,7 @@
                             <!-- Modal body -->
                             <form wire:submit.prevent="updateBill" class="p-4 md:p-5">
                                 <div class="grid gap-4 mb-4 grid-cols-2">
-                                   
+
                                     {{-- Invoice Number --}}
                                     <div class="col-span-2">
                                         <label for="editid"
