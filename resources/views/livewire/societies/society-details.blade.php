@@ -31,7 +31,7 @@
                             {{ number_format($receivableAmount, 2) }} /-</p>
                     </div>
                 </div>
-
+ 
                 <div
                     class="flex flex-col items-center justify-center h-24 w-full rounded bg-gray-100 dark:bg-gray-700 border shadow-md hover:bg-gray-200 dark:hover:bg-gray-600">
                     <div class="text-center p-3">
@@ -188,7 +188,7 @@
                                         class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                         CashBook
                                     </th>
-                                    <td class="px-6 py-4">00.00</td>
+                                    <td class="px-6 py-4">{{ $payCash}}/-</td>
                                 </tr>
                                 <tr
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
@@ -212,7 +212,7 @@
                                         class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                         Cheque
                                     </th>
-                                    <td class="px-6 py-4">00.00</td>
+                                    <td class="px-6 py-4">{{$payCheque}}/-</td>
                                 </tr>
                             </tbody>
                         </table>

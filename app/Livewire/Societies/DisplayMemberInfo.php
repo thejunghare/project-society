@@ -102,7 +102,7 @@ class DisplayMemberInfo extends Component
     public function updateSelectedMonth($month)
     {
         $this->selectedMonth = $month;
-        $this->calculateTotalPayable();
+        $this->calculateTotalPayable(); 
     }
 
     public function resetSelection()

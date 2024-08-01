@@ -20,6 +20,9 @@ class SocietyDetails extends Component
     public $totalPayable;
     public $balance;
     public $payOnline;
+    public $payCash;
+    public $payCheque;
+    public $updateBalance;
 
     public function mount(Societies $society)
     {
@@ -32,6 +35,8 @@ class SocietyDetails extends Component
         $this->calculateTotalPayable();
         $this->calculateBalance();
         $this->calculatePayOnline();
+        $this->CalculatePayCash();
+        $this->calculatePayCheque();
     }
 
     public function seeMembers()
@@ -75,7 +80,37 @@ class SocietyDetails extends Component
         ->where('payment_mode_id', 1)
         ->sum('amount');  // Summing the 'amount' field
     }
+
+    public function CalculatePayCash()
+    {
+        $today = Carbon::today();
+        $this->payCash = MaintenanceBill::whereHas('member', function ($query) {
+            $query->where('society_id', $this->society->id);
+        })
+        ->whereDate('updated_at', $today)
+        ->where('status', 1)
+        ->where('payment_mode_id', 3)
+        ->sum('amount');  // Summing the 'amount' field
+    }
+
+    public function CalculatePayCheque(){
+        $today = Carbon::today();
+        $this->payCheque = MaintenanceBill::whereHas('member', function ($query) {
+            $query->where('society_id', $this->society->id);
+        })
+        ->whereDate('updated_at', $today)
+        ->where('status', 1)
+        ->where('payment_mode_id', 2)
+        ->sum('amount');  // Summing the 'amount' field
+    }
     
+    public function calculateUpdateBalance(){
+        $this->payCheque = MaintenanceBill::whereHas('member', function ($query) {
+            $query->where('society_id', $this->society->id);
+        })
+        ->where('status', 1)
+        ->sum('amount');
+    }
 
     public function calculateBillDues()
     {
@@ -166,6 +201,8 @@ class SocietyDetails extends Component
             'totalPayable' => $this->totalPayable,
             'balance' => $this->balance,
             'payOnline' => $this->payOnline,
+            'payCash' => $this->payCash,
+            'payCheque' => $this->payCheque
         ])->layout('layouts.app', ['society' => $this->society]);
     }
 }
