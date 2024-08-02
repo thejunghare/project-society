@@ -129,22 +129,19 @@
                     <td>1</td>
                     <td>Maintenance fund</td>
                     <td></td>
-                    {{-- TODO: Replace with actuall amount from socities --}}
-                    <td>{{ number_format($bill->amount, 2) }}</td>
+                    <td>{{ number_format($maintenance_amount) }}</td>
                 </tr>
                 <tr>
                     <td>2</td>
                     <td>Service Charge</td>
                     <td></td>
-                    {{-- TODO: Replace with actuall amount from socities --}}
-                    <td>0.00</td>
+                    <td>{{number_format($society->service_charges,2)}}</td>
                 </tr>
                 <tr>
                     <td>3</td>
                     <td>Parking Charge</td>
                     <td></td>
-                    {{-- TODO: Replace with actuall amount from socities --}}
-                    <td>0.00</td>
+                    <td>{{number_format($society->parking_charges,2)}}</td>
                 </tr>
                 {{-- TODO: make it dynamic --}}
                 <tr>
@@ -152,12 +149,12 @@
                     <td>Late Fees</td>
                     <td></td>
                     {{-- TODO: Replace with actuall amount from socities --}}
-                    <td>0.00</td>
+                    <td>{{number_format($late_fee,2)}}</td>
                 </tr>
                 <tr>
                     <td colspan="3" class="total">Total</td>
                     {{-- TODO: Should be total of all amount --}}
-                    <td>{{ number_format($bill->amount, 2) }}</td>
+                    <td>{{ number_format($maintenance_amount + $society->parking_charges + $society->service_charges + $late_fee, 2) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -170,6 +167,8 @@
                 <p>Amount: Rs {{ number_format($previousPayment->amount_paid, 2) }}</p>
                 <p>Bill ID: {{ $previousPayment->maintenance_bills_id }}</p>
             </div>
+        @else
+            <div style="margin-top: 5px"><span>No previous payment found!!</span></div>
         @endif
 
         {{-- notes --}}

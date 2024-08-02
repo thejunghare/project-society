@@ -4,6 +4,7 @@ namespace App\Livewire\MaintenanceBill;
 
 use DateTime;
 use App\Models\Member;
+use Carbon\Carbon;
 use App\Livewire\DatePicker;
 use App\Models\Societies;
 use Livewire\Component;
@@ -14,6 +15,7 @@ use Livewire\Attributes\Title;
 use App\Models\MaintenanceBill;
 use App\Helpers\AmountHelper;
 use App\Models\Payment;
+use ZipArchive;
 use App\Models\Receipts;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -252,7 +254,7 @@ class MaintenanceBillIndex extends Component
             'July',
             'August',
             'September',
-            'October', 
+            'October',
             'November',
             'December'
         ];
@@ -320,6 +322,21 @@ class MaintenanceBillIndex extends Component
             // Get the current payment for this bill
             $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
 
+            // // Service Charges
+            // $servicesCharges = $member->society->service_charges;
+
+            // // Parking charges
+            // $parkingCharges = $member->society->parking_charges;
+
+            // maintenance amount
+            $maintenanceAmount = $member->is_rented ? $member->society->maintenance_amount_rented : $member->society->maintenance_amount_owner;
+
+            // late fee
+            $lateFee = 0;
+            if ($bill->late_fee_applied) {
+                $lateFee = $member->society->late_fee;
+            }
+
             // Get the most recent previous payment for this member
             $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
                 ->whereHas('maintenanceBill', function ($query) use ($bill) {
@@ -339,6 +356,10 @@ class MaintenanceBillIndex extends Component
                 'payment_mode_id' => $bill->payment_mode_id,
                 'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
                 'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
+                'maintenance_amount' => $maintenanceAmount,
+                'late_fee' => $lateFee,
+                // 'service_charges' => $servicesCharges,
+                // 'parking_charges' => $parkingCharges,
             ];
 
             if ($bill->status == 1) {
@@ -382,36 +403,104 @@ class MaintenanceBillIndex extends Component
 
 
     public function downloadSelected()
-    {
+{
+    try {
         if (empty($this->selectedMembers)) {
-            return;
+            return response()->json(['error' => 'No members selected'], 400);
         }
 
-        $members = Member::with('user')->whereIn('id', $this->selectedMembers)->get();
+        $members = Member::with(['user', 'society'])->whereIn('id', $this->selectedMembers)->get();
 
         if ($members->isEmpty()) {
-            return;
+            return response()->json(['error' => 'No members found'], 404);
         }
 
-        $society = Societies::find($members->first()->society_id);
+        $society = $members->first()->society;
 
         if (!$society) {
-            return;
+            return response()->json(['error' => 'Society not found'], 404);
         }
 
         $bills = MaintenanceBill::whereIn('member_id', $this->selectedMembers)->get();
 
-        $data = [
-            'members' => $members,
-            'bills' => $bills,
-            'society' => $society,
-        ];
+        $invoiceData = [];
+        $receiptData = [];
 
-        $pdf = Pdf::loadView('pdfs.invoices', $data);
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->stream();
-        }, 'invoices.pdf');
+        foreach ($members as $member) {
+            $bill = $bills->where('member_id', $member->id)->first();
+            if (!$bill) {
+                continue;
+            }
+
+            $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
+
+            $maintenanceAmount = $member->is_rented ? $society->maintenance_amount_rented : $society->maintenance_amount_owner;
+
+            $lateFee = 0;
+            if ($bill->late_fee_applied) {
+                $lateFee = $society->late_fee;
+            }
+
+            $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
+                ->whereHas('maintenanceBill', function ($query) use ($member) {
+                    $query->where('member_id', $member->id);
+                })
+                ->latest('payment_date')
+                ->first();
+
+            $amountInWords = AmountHelper::amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount);
+
+            $billData = [
+                'member' => $member,
+                'bill' => $bill,
+                'society' => $society,
+                'currentPayment' => $currentPayment,
+                'previousPayment' => $previousPayment,
+                'amountInWords' => $amountInWords,
+                'payment_mode_id' => $bill->payment_mode_id,
+                'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
+                'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
+                'maintenance_amount' => $maintenanceAmount,
+                'late_fee' => $lateFee,
+            ];
+
+            if ($bill->status == 0) {
+                $invoiceData[] = $billData;
+            } elseif ($bill->status == 1) {
+                $receiptData[] = $billData;
+            }
+        }
+
+        if (empty($invoiceData) && empty($receiptData)) {
+            return response()->json(['error' => 'No valid bills found for selected members'], 404);
+        }
+
+        $zip = new ZipArchive();
+        $zipFileName = storage_path('app/public/temp_downloads/documents_' . time() . '.zip');
+        
+        if ($zip->open($zipFileName, ZipArchive::CREATE) !== TRUE) {
+            return response()->json(['error' => 'Cannot create zip file'], 500);
+        }
+
+        if (!empty($invoiceData)) {
+            $invoicePdf = PDF::loadView('pdfs.invoice', ['data' => $invoiceData]);
+            $zip->addFromString('invoices.pdf', $invoicePdf->output());
+        }
+
+        if (!empty($receiptData)) {
+            $receiptPdf = PDF::loadView('pdfs.receipt', ['data' => $receiptData]);
+            $zip->addFromString('receipts.pdf', $receiptPdf->output());
+        }
+
+        $zip->close();
+
+        return response()->download($zipFileName)->deleteFileAfterSend(true);
+
+    } catch (\Exception $e) {
+        \Log::error('Error in downloadSelected: ' . $e->getMessage());
+        return response()->json(['error' => 'An error occurred while processing your request'], 500);
     }
+}
 
     private function amountToWords($amount)
     {
@@ -593,35 +682,44 @@ class MaintenanceBillIndex extends Component
     //     // TODO -> fix redirect
     //     return redirect()->to('accountant/manage/societies/1/society-details/bills/maintenance-bill');
     // }
-
+    // TODO generate bill
     public function generateBills()
     {
-        $this->validate([
-            'due_date' => 'required|date',
-
-        ]);
-
         try {
-            $members = Member::where('society_id', $this->selected_society)->get();
             $society = Societies::findOrFail($this->selected_society);
 
+            if (!$society->due_date) {
+                throw new \Exception('Due date is not set for this society.');
+            }
+
+            $members = Member::where('society_id', $this->selected_society)->get();
+
             foreach ($members as $member) {
-                $parkingCharges = $society->parking_charges;
-                $servicesCharges = $society->services_charges;
-                $maintenanceAmount = $member->isRented
-                    ? $society->maintenance_amount_rented
-                    : $society->maintenance_amount_owner;
+                $existingBill = MaintenanceBill::where('member_id', $member->id)
+                    ->where('billing_month', $this->selected_month)
+                    ->where('billing_year', $this->selected_year)
+                    ->first();
 
-                $amount = $parkingCharges + $servicesCharges + $maintenanceAmount;
+                if (!$existingBill) {
+                    $parkingCharges = $society->parking_charges;
+                    $servicesCharges = $society->service_charges;
+                    $maintenanceAmount = $member->isRented
+                        ? $society->maintenance_amount_rented
+                        : $society->maintenance_amount_owner;
 
-                MaintenanceBill::create([
-                    'member_id' => $member->id,
-                    'amount' => $amount,
-                    'status' => 0,
-                    'due_date' => $this->due_date,
-                    'billing_month' => $this->selected_month,
-                    'billing_year' => $this->selected_year,
-                ]);
+                    $amount = $parkingCharges + $servicesCharges + $maintenanceAmount;
+
+                    $dueDate = $this->calculateDueDate($society->due_date, $this->selected_month, $this->selected_year);
+
+                    MaintenanceBill::create([
+                        'member_id' => $member->id,
+                        'amount' => $amount,
+                        'status' => 0,
+                        'due_date' => $dueDate,
+                        'billing_month' => $this->selected_month,
+                        'billing_year' => $this->selected_year,
+                    ]);
+                }
             }
 
             session()->flash('success', 'Bills generated successfully!');
@@ -629,6 +727,17 @@ class MaintenanceBillIndex extends Component
         } catch (\Exception $ex) {
             session()->flash('error', 'Error generating bills: ' . $ex->getMessage());
         }
+    }
+
+    private function calculateDueDate($societyDueDate, $billingMonth, $billingYear)
+    {
+        $dueDate = Carbon::createFromDate($billingYear, $billingMonth, $societyDueDate);
+
+        // if ($dueDate->isPast()) {
+        //     $dueDate->addMonth();
+        // }
+
+        return $dueDate;
     }
 
 
