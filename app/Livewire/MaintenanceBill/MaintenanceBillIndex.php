@@ -109,8 +109,6 @@ class MaintenanceBillIndex extends Component
         // $this->editAdvancePayment = '';
     }
 
-
-
     public function updateBill()
     {
         // Validate form inputs
@@ -239,7 +237,6 @@ class MaintenanceBillIndex extends Component
         session()->flash('success', 'The bill has been successfully updated!');
     }
 
-
     public function returnMonths()
     {
         return [
@@ -272,7 +269,6 @@ class MaintenanceBillIndex extends Component
     {
         $this->fetchMembers();
     }
-
 
     public function fetchMembers()
     {
@@ -380,7 +376,6 @@ class MaintenanceBillIndex extends Component
         session()->flash('success', 'Late fees applied successfully!');
     }
 
-
     public function downloadSelected()
     {
         if (empty($this->selectedMembers)) {
@@ -416,18 +411,44 @@ class MaintenanceBillIndex extends Component
     private function amountToWords($amount)
     {
         $ones = [
-            1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five',
-            6 => 'six', 7 => 'seven', 8 => 'eight', 9 => 'nine', 10 => 'ten',
-            11 => 'eleven', 12 => 'twelve', 13 => 'thirteen', 14 => 'fourteen',
-            15 => 'fifteen', 16 => 'sixteen', 17 => 'seventeen', 18 => 'eighteen',
+            1 => 'one',
+            2 => 'two',
+            3 => 'three',
+            4 => 'four',
+            5 => 'five',
+            6 => 'six',
+            7 => 'seven',
+            8 => 'eight',
+            9 => 'nine',
+            10 => 'ten',
+            11 => 'eleven',
+            12 => 'twelve',
+            13 => 'thirteen',
+            14 => 'fourteen',
+            15 => 'fifteen',
+            16 => 'sixteen',
+            17 => 'seventeen',
+            18 => 'eighteen',
             19 => 'nineteen'
         ];
         $tens = [
-            2 => 'twenty', 3 => 'thirty', 4 => 'forty', 5 => 'fifty',
-            6 => 'sixty', 7 => 'seventy', 8 => 'eighty', 9 => 'ninety'
+            2 => 'twenty',
+            3 => 'thirty',
+            4 => 'forty',
+            5 => 'fifty',
+            6 => 'sixty',
+            7 => 'seventy',
+            8 => 'eighty',
+            9 => 'ninety'
         ];
         $scales = [
-            '', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion'
+            '',
+            'thousand',
+            'million',
+            'billion',
+            'trillion',
+            'quadrillion',
+            'quintillion'
         ];
 
         if ($amount == 0) {
@@ -469,74 +490,82 @@ class MaintenanceBillIndex extends Component
         return $wholeWords;
     }
 
-    public function sendWhatsAppMessage($memberId)
+    /*  public function sendWhatsAppMessage($memberId)
+     {
+         // Fetch the latest member information and their latest bill
+         $member = Member::with('user')->find($memberId);
+         if (!$member) {
+             return;
+         }
+
+         // Ensure that the latest bill is fetched
+         $bill = MaintenanceBill::where('member_id', $memberId)
+             ->latest('due_date')
+             ->first();
+         if (!$bill) {
+             return;
+         }
+
+         $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
+             ->whereHas('maintenanceBill', function ($query) use ($bill) {
+                 $query->where('member_id', $bill->member_id);
+             })
+             ->latest('payment_date')
+             ->first();
+
+         $maintenanceAmount = $member->is_rented ? $member->society->maintenance_amount_rented : $member->society->maintenance_amount_owner;
+
+         $lateFee = 0;
+         if ($bill->late_fee_applied) {
+             $lateFee = $member->society->late_fee;
+         }
+
+         // Convert billing month number to month name
+         $billingMonth = DateTime::createFromFormat('!m', $bill->billing_month)->format('F');
+
+         // Adjust the message to use the month name
+         $message = $bill->status
+             ? "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is paid. Your invoice number is {$bill->id}. Thank you!"
+             : "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is pending. Please pay by {$bill->due_date}. Your invoice number is {$bill->id}.";
+
+         // Send the WhatsApp message
+         $this->sendWhatsApp($member->user->phone, $message);
+
+         // Dispatch an event to indicate that the message was sent
+         $this->dispatch('whatsappMessageSent');
+     } */
+
+    public function sendWhatsAppMessage($billId)
     {
-        $member = Member::with('user')->find($memberId);
-        if (!$member) {
-            return;
+        try {
+            $bill = MaintenanceBill::findOrFail($billId);
+            $member = Member::with(['user', 'society'])->findOrFail($bill->member_id);
+            if ($bill->status == 1) {
+                $message = "Dear {$member->user->name}, your bill for {$bill->billing_month} has been successfully paid. Thank you!";
+            } else {
+                $message = "Dear {$member->user->name}, your bill for {$bill->billing_month} is still pending. Please make the payment at your earliest convenience.";
+            }
+            $this->sendWhatsApp($member->user->phone, $message);
+            session()->flash('message', 'WhatsApp message sent successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            session()->flash('error', 'Bill or Member not found.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'An error occurred while sending the message.');
         }
-
-        $bill = MaintenanceBill::where('member_id', $memberId)->first();
-        if (!$bill) {
-            return;
-        }
-
-        // Convert billing month number to month name
-        $billingMonth = DateTime::createFromFormat('!m', $bill->billing_month)->format('F');
-
-        // Adjust the message to use the month name
-        $message = $bill->status
-            ? "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is paid. Your invoice number is {$bill->id}. Thank you!"
-            : "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is pending. Please pay by {$bill->due_date}. Your invoice number is {$bill->id}.";
-
-
-        // Sending the WhatsApp message
-        $this->sendWhatsApp($member->user->phone, $message);
-
-        // Generate and attach the invoice PDF
-        $data = [
-            'member' => $member,
-            'bill' => $bill,
-            'society' => Societies::find($member->society_id),
-        ];
-
-        $pdf = Pdf::loadView('pdfs.invoice', $data);
-        $filePath = storage_path('app/public/invoice-' . $bill->id . '.pdf');
-        $pdf->save($filePath);
-
-        // Send the PDF as an attachment
-        $this->sendWhatsAppWithMedia($member->user->phone, $message, $filePath);
-
-        // Dispatch an event to indicate that the message was sent
-        $this->dispatch('whatsappMessageSent');
     }
 
     protected function sendWhatsApp($phone, $message)
     {
+        // config form env
         $sid = config('services.twilio.sid');
         $token = config('services.twilio.token');
         $from = config('services.twilio.whatsapp_from');
-        $to = 'whatsapp:' . $phone;
+        $to = 'whatsapp:' . $phone; //recevier number
 
         $client = new Client($sid, $token);
         $client->messages->create($to, [
-            'from' => $from,
+            'from' => $from, // from config our virtual number
             'body' => $message,
-        ]);
-    }
-
-    protected function sendWhatsAppWithMedia($phone, $message, $filePath)
-    {
-        $sid = config('services.twilio.sid');
-        $token = config('services.twilio.token');
-        $from = config('services.twilio.whatsapp_from');
-        $to = 'whatsapp:' . $phone;
-
-        $client = new Client($sid, $token);
-        $client->messages->create($to, [
-            'from' => $from,
-            'body' => $message,
-            'mediaUrl' => [url('storage/invoice-' . basename($filePath))],
         ]);
     }
 
@@ -544,55 +573,6 @@ class MaintenanceBillIndex extends Component
     {
         return $this->belongsTo(Member::class);
     }
-
-
-    // ... other properties
-    // public function generateBills()
-    // {
-
-    //     //   dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
-
-    //     $this->validate([
-    //         'amount' => 'required|numeric|min:0',
-    //         'due_date' => 'required|date',
-    //     ]);
-
-    //     // dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
-    //     $members = Member::All();
-    //     try {
-    //         foreach ($members as $member) {
-    //             $society = Societies::find($member->society_id);
-    //             $parkingCharges = $society->parking_charges;
-    //             $servicesCharges = $society->services_charges;
-    //             $maintenance_due_date = $society->maintenance_due_date;
-    //             $maintenanceAmount = $member->isRented
-    //                 ? $society->maintenance_amount_rented
-    //                 : $society->maintenance_amount_owner;
-
-    //             $amount = $parkingCharges + $servicesCharges + $maintenanceAmount;
-    //             //dd('Amount:', $amount, 'Society ID:', $society->id);
-
-    //             MaintenanceBill::create([
-    //                 'member_id' => $member->id,
-    //                 'amount' => $amount,
-    //                 'status' => 0,
-    //                 'due_date' => $maintenance_due_date,
-    //                 'billing_month' => $this->selected_month,
-    //                 'billing_year' => $this->selected_year,
-    //             ]);
-    //         }
-    //         session()->flash('success', 'Post Created Successfully!!');
-    //     } catch (\Exception $ex) {
-    //         session()->flash('error', 'Something goes wrong!!');
-    //     }
-
-
-    //     $this->fetchMembers();
-
-    //     // for temp uses only
-    //     // TODO -> fix redirect
-    //     return redirect()->to('accountant/manage/societies/1/society-details/bills/maintenance-bill');
-    // }
 
     public function generateBills()
     {
@@ -630,7 +610,6 @@ class MaintenanceBillIndex extends Component
             session()->flash('error', 'Error generating bills: ' . $ex->getMessage());
         }
     }
-
 
     public function render()
     {
