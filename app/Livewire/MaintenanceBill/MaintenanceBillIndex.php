@@ -38,6 +38,7 @@ class MaintenanceBillIndex extends Component
     public $selectAll = false;
     public $amount;
     public $due_date;
+    public $memberData;
 
     public $editingBillId = null;
     public $editPaymentStatus;
@@ -49,10 +50,26 @@ class MaintenanceBillIndex extends Component
     public $selectedBillIndex;
     public $selectedBills = [];
 
+    // public function updatedSelectAll($value)
+    // {
+    //     if ($value) {
+    //         $this->selectedMembers = $this->members->pluck('id')->toArray();
+    //     } else {
+    //         $this->selectedMembers = [];
+    //     }
+    // }
+
+    public function updatedSelectedMembers()
+    {
+        $this->selectAll = count($this->selectedMembers) === $this->members->count();
+        \Log::info('Updated Selected Members: ' . json_encode($this->selectedMembers));
+    }
+
+
     public function updatedSelectAll($value)
     {
         if ($value) {
-            $this->selectedMembers = $this->members->pluck('id')->toArray();
+            $this->selectedMembers = $this->members->pluck('id')->map(fn ($id) => (string) $id)->toArray();
         } else {
             $this->selectedMembers = [];
         }
@@ -63,7 +80,7 @@ class MaintenanceBillIndex extends Component
         $this->society = $society;
         $this->societiesList = Societies::where('accountant_id', Auth::user()->id)->pluck('name', 'id');
         $this->months = $this->returnMonths();
-        $this->members = collect();
+        $this->members = Member::all();
         $this->selected_society = $society->id;
     }
 
@@ -83,7 +100,7 @@ class MaintenanceBillIndex extends Component
     public function openEditModal($billId)
     {
         $this->editingBillId = $billId;
-        $this->dispatch('open-modal');
+        // $this->dispatch('open-modal');
         $this->editingBill = MaintenanceBill::with('member.user')->findOrFail($billId);
         $this->editName = $this->editingBill->member->user->name;
         $this->editPaymentMethod = $this->editingBill->payment_mode_id;
@@ -102,13 +119,13 @@ class MaintenanceBillIndex extends Component
 
     public function resetEditFields()
     {
-        $this->reset(['editingBill', 'editName', 'editPaymentMethod', 'editRemark', 'editChequeNo', 'editAdvancePayment']);
-        // $this->editingBill = null;
-        // $this->editName = '';
-        // $this->editPaymentMethod = '';
-        // $this->editRemark = '';
-        // $this->editChequeNo = '';
-        // $this->editAdvancePayment = '';
+        $this->editingBillId = null;
+        $this->editName = '';
+        $this->editPaymentMethod = '';
+        $this->asdid = '';
+        $this->editRemark = '';
+        $this->editAdvancePayment = '';
+        $this->editChequeNo = '';
     }
 
 
@@ -402,105 +419,174 @@ class MaintenanceBillIndex extends Component
     }
 
 
+
+
     public function downloadSelected()
-{
-    try {
-        if (empty($this->selectedMembers)) {
-            return response()->json(['error' => 'No members selected'], 400);
-        }
+    {
+        try {
+            \Log::info('downloadSelected method called');
+            \Log::info('Selected members: ' . json_encode($this->selectedMembers));
 
-        $members = Member::with(['user', 'society'])->whereIn('id', $this->selectedMembers)->get();
-
-        if ($members->isEmpty()) {
-            return response()->json(['error' => 'No members found'], 404);
-        }
-
-        $society = $members->first()->society;
-
-        if (!$society) {
-            return response()->json(['error' => 'Society not found'], 404);
-        }
-
-        $bills = MaintenanceBill::whereIn('member_id', $this->selectedMembers)->get();
-
-        $invoiceData = [];
-        $receiptData = [];
-
-        foreach ($members as $member) {
-            $bill = $bills->where('member_id', $member->id)->first();
-            if (!$bill) {
-                continue;
+            if (empty($this->selectedMembers)) {
+                return response()->json(['error' => 'No members selected'], 400);
             }
 
-            $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
+            $members = Member::with(['user', 'society'])->whereIn('id', $this->selectedMembers)->get();
 
-            $maintenanceAmount = $member->is_rented ? $society->maintenance_amount_rented : $society->maintenance_amount_owner;
-
-            $lateFee = 0;
-            if ($bill->late_fee_applied) {
-                $lateFee = $society->late_fee;
+            // Check if members exist
+            if ($members->isEmpty()) {
+                return response()->json(['error' => 'No members found'], 404);
             }
 
-            $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
-                ->whereHas('maintenanceBill', function ($query) use ($member) {
-                    $query->where('member_id', $member->id);
-                })
-                ->latest('payment_date')
-                ->first();
+            // Get the society from the first member (assuming all selected members belong to the same society)
+            $society = $members->first()->society;
 
-            $amountInWords = AmountHelper::amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount);
-
-            $billData = [
-                'member' => $member,
-                'bill' => $bill,
-                'society' => $society,
-                'currentPayment' => $currentPayment,
-                'previousPayment' => $previousPayment,
-                'amountInWords' => $amountInWords,
-                'payment_mode_id' => $bill->payment_mode_id,
-                'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
-                'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
-                'maintenance_amount' => $maintenanceAmount,
-                'late_fee' => $lateFee,
-            ];
-
-            if ($bill->status == 0) {
-                $invoiceData[] = $billData;
-            } elseif ($bill->status == 1) {
-                $receiptData[] = $billData;
+            if (!$society) {
+                return response()->json(['error' => 'Society not found'], 404);
             }
+
+            // Fetch bills for the selected members
+            $bills = MaintenanceBill::whereIn('member_id', $this->selectedMembers)->get();
+
+            $pdfData = [];
+
+            foreach ($members as $member) {
+                $bill = $bills->where('member_id', $member->id)->first();
+                if (!$bill) {
+                    continue;
+                }
+
+                $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
+
+                $maintenanceAmount = $member->is_rented ? $society->maintenance_amount_rented : $society->maintenance_amount_owner;
+
+                $lateFee = 0;
+                if ($bill->late_fee_applied) {
+                    $lateFee = $society->late_fee;
+                }
+
+                $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
+                    ->whereHas('maintenanceBill', function ($query) use ($member) {
+                        $query->where('member_id', $member->id);
+                    })
+                    ->latest('payment_date')
+                    ->first();
+
+                $amountInWords = AmountHelper::amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount);
+
+                $pdfData[] = [
+                    'member' => $member,
+                    'bill' => $bill,
+                    'society' => $society,
+                    'currentPayment' => $currentPayment,
+                    'previousPayment' => $previousPayment,
+                    'amountInWords' => $amountInWords,
+                    'payment_mode_id' => $bill->payment_mode_id,
+                    'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
+                    'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
+                    'maintenance_amount' => $maintenanceAmount,
+                    'late_fee' => $lateFee,
+                    'type' => $bill->status == 0 ? 'invoice' : 'receipt'
+                ];
+            }
+
+            if (empty($pdfData)) {
+                return response()->json(['error' => 'No valid bills found for selected members'], 404);
+            }
+
+            // Generate PDF
+            $pdf = PDF::loadView('pdfs.combined', ['data' => $pdfData]);
+
+            return $pdf->download('combined_bills.pdf');
+        } catch (\Exception $e) {
+            \Log::error('Error in downloadSelected: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while processing your request'], 500);
         }
-
-        if (empty($invoiceData) && empty($receiptData)) {
-            return response()->json(['error' => 'No valid bills found for selected members'], 404);
-        }
-
-        $zip = new ZipArchive();
-        $zipFileName = storage_path('app/public/temp_downloads/documents_' . time() . '.zip');
-        
-        if ($zip->open($zipFileName, ZipArchive::CREATE) !== TRUE) {
-            return response()->json(['error' => 'Cannot create zip file'], 500);
-        }
-
-        if (!empty($invoiceData)) {
-            $invoicePdf = PDF::loadView('pdfs.invoice', ['data' => $invoiceData]);
-            $zip->addFromString('invoices.pdf', $invoicePdf->output());
-        }
-
-        if (!empty($receiptData)) {
-            $receiptPdf = PDF::loadView('pdfs.receipt', ['data' => $receiptData]);
-            $zip->addFromString('receipts.pdf', $receiptPdf->output());
-        }
-
-        $zip->close();
-
-        return response()->download($zipFileName)->deleteFileAfterSend(true);
-
-    } catch (\Exception $e) {
-        \Log::error('Error in downloadSelected: ' . $e->getMessage());
-        return response()->json(['error' => 'An error occurred while processing your request'], 500);
     }
-}
+
+    // public function downloadSelected()
+    // {
+    //     try {
+    //         \Log::info('downloadSelected method called');
+    //         \Log::info('Selected members: ' . json_encode($this->selectedMembers));
+
+    //         if (empty($this->selectedMembers)) {
+    //             return response()->json(['error' => 'No members selected'], 400);
+    //         }
+
+    //         $members = Member::with(['user', 'society'])->whereIn('id', $this->selectedMembers)->get();
+
+    //         // Check if members exist
+    //         if ($members->isEmpty()) {
+    //             return response()->json(['error' => 'No members found'], 404);
+    //         }
+
+    //         // Get the society from the first member (assuming all selected members belong to the same society)
+    //         $society = $members->first()->society;
+
+    //         if (!$society) {
+    //             return response()->json(['error' => 'Society not found'], 404);
+    //         }
+
+    //         // Fetch bills for the selected members
+    //         $bills = MaintenanceBill::whereIn('member_id', $this->selectedMembers)->get();
+
+    //         $pdfData = [];
+
+    //         foreach ($members as $member) {
+    //             // ... (existing code to generate PDF data for each member) 
+    //             $bill = $bills->where('member_id', $member->id)->first();
+    //             if (!$bill) {
+    //                 continue;
+    //             }
+
+    //             $currentPayment = Payment::where('maintenance_bills_id', $bill->id)->first();
+
+    //             $maintenanceAmount = $member->is_rented ? $society->maintenance_amount_rented : $society->maintenance_amount_owner;
+
+    //             $lateFee = 0;
+    //             if ($bill->late_fee_applied) {
+    //                 $lateFee = $society->late_fee;
+    //             }
+
+    //             $previousPayment = Payment::where('maintenance_bills_id', '<>', $bill->id)
+    //                 ->whereHas('maintenanceBill', function ($query) use ($member) {
+    //                     $query->where('member_id', $member->id);
+    //                 })
+    //                 ->latest('payment_date')
+    //                 ->first();
+
+    //             $amountInWords = AmountHelper::amountToWords($currentPayment ? $currentPayment->amount_paid : $bill->amount);
+
+    //             $memberData = [
+    //                 'member' => $member,
+    //                 'bill' => $bill,
+    //                 'society' => $society,
+    //                 'currentPayment' => $currentPayment,
+    //                 'previousPayment' => $previousPayment,
+    //                 'amountInWords' => $amountInWords,
+    //                 'payment_mode_id' => $bill->payment_mode_id,
+    //                 'reference_no' => $currentPayment ? $currentPayment->reference_no : null,
+    //                 'transaction_id' => $currentPayment ? $currentPayment->transaction_id : null,
+    //                 'maintenance_amount' => $maintenanceAmount,
+    //                 'late_fee' => $lateFee,
+    //                 'type' => $bill->status == 0 ? 'invoice' : 'receipt'
+    //             ];
+    //             $pdfData[] = $memberData; // Append member data to the pdfData array
+    //         }
+
+    //         // Generate PDF using the aggregated pdfData
+    //         $pdf = PDF::loadView('pdfs.combined', ['data' => $pdfData]);
+    //         return $pdf->download('combined_bills.pdf');
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error in downloadSelected: ' . $e->getMessage());
+    //         return response()->json(['error' => 'An error occurred while processing your request'], 500);
+    //     }
+    // }
+
+
+
+
 
     private function amountToWords($amount)
     {
@@ -558,46 +644,23 @@ class MaintenanceBillIndex extends Component
         return $wholeWords;
     }
 
-    public function sendWhatsAppMessage($memberId)
+    public function sendWhatsAppMessage($billId)
     {
-        $member = Member::with('user')->find($memberId);
-        if (!$member) {
-            return;
+        try {
+            $bill = MaintenanceBill::findOrFail($billId);
+            $member = Member::with(['user', 'society'])->findOrFail($bill->member_id);
+            if ($bill->status == 1) {
+                $message = "Dear {$member->user->name}, your bill for {$bill->billing_month} has been successfully paid. Thank you!";
+            } else {
+                $message = "Dear {$member->user->name}, your bill for {$bill->billing_month} is still pending. Please make the payment at your earliest convenience.";
+            }
+            $this->sendWhatsApp($member->user->phone, $message);
+            session()->flash('message', 'WhatsApp message sent successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            session()->flash('error', 'Bill or Member not found.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'An error occurred while sending the message.');
         }
-
-        $bill = MaintenanceBill::where('member_id', $memberId)->first();
-        if (!$bill) {
-            return;
-        }
-
-        // Convert billing month number to month name
-        $billingMonth = DateTime::createFromFormat('!m', $bill->billing_month)->format('F');
-
-        // Adjust the message to use the month name
-        $message = $bill->status
-            ? "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is paid. Your invoice number is {$bill->id}. Thank you!"
-            : "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is pending. Please pay by {$bill->due_date}. Your invoice number is {$bill->id}.";
-
-
-        // Sending the WhatsApp message
-        $this->sendWhatsApp($member->user->phone, $message);
-
-        // Generate and attach the invoice PDF
-        $data = [
-            'member' => $member,
-            'bill' => $bill,
-            'society' => Societies::find($member->society_id),
-        ];
-
-        $pdf = Pdf::loadView('pdfs.invoice', $data);
-        $filePath = storage_path('app/public/invoice-' . $bill->id . '.pdf');
-        $pdf->save($filePath);
-
-        // Send the PDF as an attachment
-        $this->sendWhatsAppWithMedia($member->user->phone, $message, $filePath);
-
-        // Dispatch an event to indicate that the message was sent
-        $this->dispatch('whatsappMessageSent');
     }
 
     protected function sendWhatsApp($phone, $message)
@@ -635,57 +698,15 @@ class MaintenanceBillIndex extends Component
     }
 
 
-    // ... other properties
-    // public function generateBills()
-    // {
-
-    //     //   dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
-
-    //     $this->validate([
-    //         'amount' => 'required|numeric|min:0',
-    //         'due_date' => 'required|date',
-    //     ]);
-
-    //     // dd('generateBills called', $this->members,  $this->due_date, $this->selected_month, $this->selected_year);
-    //     $members = Member::All();
-    //     try {
-    //         foreach ($members as $member) {
-    //             $society = Societies::find($member->society_id);
-    //             $parkingCharges = $society->parking_charges;
-    //             $servicesCharges = $society->services_charges;
-    //             $maintenance_due_date = $society->maintenance_due_date;
-    //             $maintenanceAmount = $member->isRented
-    //                 ? $society->maintenance_amount_rented
-    //                 : $society->maintenance_amount_owner;
-
-    //             $amount = $parkingCharges + $servicesCharges + $maintenanceAmount;
-    //             //dd('Amount:', $amount, 'Society ID:', $society->id);
-
-    //             MaintenanceBill::create([
-    //                 'member_id' => $member->id,
-    //                 'amount' => $amount,
-    //                 'status' => 0,
-    //                 'due_date' => $maintenance_due_date,
-    //                 'billing_month' => $this->selected_month,
-    //                 'billing_year' => $this->selected_year,
-    //             ]);
-    //         }
-    //         session()->flash('success', 'Post Created Successfully!!');
-    //     } catch (\Exception $ex) {
-    //         session()->flash('error', 'Something goes wrong!!');
-    //     }
-
-
-    //     $this->fetchMembers();
-
-    //     // for temp uses only
-    //     // TODO -> fix redirect
-    //     return redirect()->to('accountant/manage/societies/1/society-details/bills/maintenance-bill');
-    // }
     // TODO generate bill
     public function generateBills()
     {
         try {
+            // Check if month and year are selected
+            if (empty($this->selected_month) || empty($this->selected_year)) {
+                throw new \Exception('Please select both month and year.');
+            }
+
             $society = Societies::findOrFail($this->selected_society);
 
             if (!$society->due_date) {
@@ -693,6 +714,7 @@ class MaintenanceBillIndex extends Component
             }
 
             $members = Member::where('society_id', $this->selected_society)->get();
+            $newBillsCount = 0;
 
             foreach ($members as $member) {
                 $existingBill = MaintenanceBill::where('member_id', $member->id)
@@ -703,7 +725,7 @@ class MaintenanceBillIndex extends Component
                 if (!$existingBill) {
                     $parkingCharges = $society->parking_charges;
                     $servicesCharges = $society->service_charges;
-                    $maintenanceAmount = $member->isRented
+                    $maintenanceAmount = $member->is_rented
                         ? $society->maintenance_amount_rented
                         : $society->maintenance_amount_owner;
 
@@ -719,15 +741,24 @@ class MaintenanceBillIndex extends Component
                         'billing_month' => $this->selected_month,
                         'billing_year' => $this->selected_year,
                     ]);
+
+                    $newBillsCount++;
                 }
             }
 
-            session()->flash('success', 'Bills generated successfully!');
+            if ($newBillsCount > 0) {
+                session()->flash('success', "$newBillsCount bills generated successfully!");
+            } else {
+                session()->flash('info', 'No new bills were generated.');
+            }
+
             $this->fetchMembers(); // Refresh the members list
         } catch (\Exception $ex) {
             session()->flash('error', 'Error generating bills: ' . $ex->getMessage());
         }
     }
+
+
 
     private function calculateDueDate($societyDueDate, $billingMonth, $billingYear)
     {
@@ -741,16 +772,19 @@ class MaintenanceBillIndex extends Component
     }
 
 
+
+
     public function render()
     {
         $this->fetchMembers();
-        $members = Member::paginate(5); // This converts it to a collection
+        \Log::info('Rendering. Members count: ' . $this->members->count());
+        \Log::info('Rendering. Selected Members: ' . json_encode($this->selectedMembers));
 
         $bills = MaintenanceBill::with('member.user')->get();
         return view('livewire.maintenance-bill.maintenance-bill-index', [
             'months' => $this->months,
             'members' => $this->members,
-            'members' => $members,
+            'members' => Member::all(),
             'bills' => $bills,
             'currentSociety' => $this->society,
         ])->layout('layouts.app', ['society' => $this->society]);
