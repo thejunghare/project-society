@@ -644,23 +644,46 @@ class MaintenanceBillIndex extends Component
         return $wholeWords;
     }
 
-    public function sendWhatsAppMessage($billId)
+    public function sendWhatsAppMessage($memberId)
     {
-        try {
-            $bill = MaintenanceBill::findOrFail($billId);
-            $member = Member::with(['user', 'society'])->findOrFail($bill->member_id);
-            if ($bill->status == 1) {
-                $message = "Dear {$member->user->name}, your bill for {$bill->billing_month} has been successfully paid. Thank you!";
-            } else {
-                $message = "Dear {$member->user->name}, your bill for {$bill->billing_month} is still pending. Please make the payment at your earliest convenience.";
-            }
-            $this->sendWhatsApp($member->user->phone, $message);
-            session()->flash('message', 'WhatsApp message sent successfully.');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            session()->flash('error', 'Bill or Member not found.');
-        } catch (\Exception $e) {
-            session()->flash('error', 'An error occurred while sending the message.');
+        $member = Member::with('user')->find($memberId);
+        if (!$member) {
+            return;
         }
+
+        $bill = MaintenanceBill::where('member_id', $memberId)->first();
+        if (!$bill) {
+            return;
+        }
+
+        // Convert billing month number to month name
+        $billingMonth = DateTime::createFromFormat('!m', $bill->billing_month)->format('F');
+
+        // Adjust the message to use the month name
+        $message = $bill->status
+            ? "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is paid. Your invoice number is {$bill->id}. Thank you!"
+            : "Dear {$member->user->name}, your maintenance bill for the period {$billingMonth} {$bill->billing_year} is pending. Please pay by {$bill->due_date}. Your invoice number is {$bill->id}.";
+
+
+        // Sending the WhatsApp message
+        $this->sendWhatsApp($member->user->phone, $message);
+
+        // Generate and attach the invoice PDF
+        $data = [
+            'member' => $member,
+            'bill' => $bill,
+            'society' => Societies::find($member->society_id),
+        ];
+
+        $pdf = Pdf::loadView('pdfs.invoice', $data);
+        $filePath = storage_path('app/public/invoice-' . $bill->id . '.pdf');
+        $pdf->save($filePath);
+
+        // Send the PDF as an attachment
+        $this->sendWhatsAppWithMedia($member->user->phone, $message, $filePath);
+
+        // Dispatch an event to indicate that the message was sent
+        $this->dispatch('whatsappMessageSent');
     }
 
     protected function sendWhatsApp($phone, $message)
