@@ -10,6 +10,7 @@ use App\Livewire\Societies\ManageSocietiesIndex;
 use App\Livewire\Members\ManageSocietiesMembersIndex;
 use App\Livewire\MaintenanceBill\MaintenanceBillIndex;
 use App\Livewire\Societies\SocietyDetails;
+use App\Http\Controllers\ZipDownloadController;
 use App\Http\Controllers\BillController;
 
 

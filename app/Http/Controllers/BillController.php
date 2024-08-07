@@ -64,12 +64,21 @@ class BillController extends Controller
             ->orderBy('payment_date', 'desc')
             ->first();
 
+        $maintenanceAmount = $member->is_rented ? $member->society->maintenance_amount_rented : $member->society->maintenance_amount_owner;
+
+        $lateFee = 0;
+            if ($bill->late_fee_applied) {
+                $lateFee = $member->society->late_fee;
+            }
+
         $data = [
             'member' => $member,
             'bill' => $bill,
             'society' => $society,
             'currentPayment' => $currentPayment,
             'previousPayment' => $previousPayment,
+            'maintenance_amount' => $maintenanceAmount,
+            'late_fee' => $lateFee,
         ];
 
         $pdf = Pdf::loadView('pdfs.invoice', $data);
