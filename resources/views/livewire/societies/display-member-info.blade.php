@@ -1,10 +1,10 @@
 <div class="mt-16">
     <div class="">
-        <h3 class="text-lg font-semibold mb-1">Select Year and Month</h3>
+        <h3 class="text-lg font-semibold mb-1">वर्ष आणि महिना निवडा</h3>
 
         <div class="flex space-x-4">
             <div>
-                <label for="year-select" class="block mb-1">Year:</label>
+                <label for="year-select" class="block mb-1">वर्ष:</label>
                 <select id="year-select" wire:model="selectedYear" wire:change="calculateTotalPayable"
                     class="form-select rounded-md shadow-sm bg-gray-100 text-gray-800">
                     @foreach (range(date('Y') - 5, date('Y')) as $year)
@@ -15,7 +15,7 @@
             </div>
 
             <div>
-                <label for="month-select" class="block mb-1">Month:</label>
+                <label for="month-select" class="block mb-1">महिना:</label>
                 <select id="month-select" wire:model="selectedMonth" wire:change="calculateTotalPayable"
                     class="form-select rounded-md shadow-sm bg-gray-100 text-gray-800">
                     @foreach (range(1, 12) as $month)
@@ -36,17 +36,17 @@
     <div class="flex flex-wrap lg:flex-nowrap mt-4">
         <div class="welcome flex flex-col w-full lg:w-1/2 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
             style="border-radius: 9px;">
-            <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Welcome, </h3>
+            <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">स्वागत आहे, </h3>
             <p class="text-lg text-gray-700 dark:text-gray-400 mb-1">{{ Auth::user()->name }}</p>
             <h5 class="mb-3 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                 {{-- You are member of {{ $member->society->name }} society --}}
             </h5>
             <div class="flex flex-row items-center w-full justify-between">
                 <div class="text-gray-700 dark:text-gray-400 mb-2">
-                    <span class="font-semibold">Room Number:</span> {{ $member->room_number }}
+                    <span class="font-semibold">फ्लॅट क्रमांक:</span> {{ $member->room_number }}
                 </div>
                 <div class="text-gray-700 dark:text-gray-400">
-                    <span class="font-semibold">Ownership Status:</span> {{ $member->is_rented ? 'Rented' : 'Owned' }}
+                    <span class="font-semibold">Status:</span> {{ $member->is_rented ? 'भाड्याने' : 'स्वतःचा' }}
                 </div>
             </div>
 
@@ -59,7 +59,7 @@
                 <div
                     class="flex flex-col items-center justify-center h-24 w-full rounded bg-gray-100 dark:bg-gray-700 border shadow-md hover:bg-gray-200 dark:hover:bg-gray-600">
                     <div class="text-center p-3">
-                        <p class="text-xl font-medium text-gray-900 dark:text-white">Total Receivable</p>
+                        <p class="text-xl font-medium text-gray-900 dark:text-white">एकूण प्राप्ती</p>
                     </div>
                     <div class="text-center pb-2">
                         <p class="text-2xl font-bold text-gray-900 dark:text-white">Rs
@@ -69,7 +69,7 @@
                 <div
                     class="flex flex-col items-center justify-center h-24 w-full rounded bg-gray-100 dark:bg-gray-700 border shadow-md hover:bg-gray-200 dark:hover:bg-gray-600">
                     <div class="text-center p-3">
-                        <p class="text-xl font-medium text-gray-900 dark:text-white">Total Received</p>
+                        <p class="text-xl font-medium text-gray-900 dark:text-white">एकूण प्राप्त</p>
                     </div>
                     <div class="text-center pb-2">
                         <p class="text-2xl font-bold text-gray-900 dark:text-white">Rs
@@ -90,7 +90,7 @@
                 <div
                     class="flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-700 border rounded-lg p-4 shadow-md hover:shadow-lg">
                     <div class="w-full bg-mygreen dark:bg-mygreen py-3 rounded-t-lg mt-2">
-                        <p class="text-lg font-bold text-gray-900 dark:text-white text-center">Charges</p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-white text-center">शुल्क</p>
                     </div>
                     <div class="relative overflow-x-auto w-full mt-4">
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -99,16 +99,16 @@
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <th scope="row"
                                         class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                        Parking Charges
+                                        पार्किंग शुल्क
                                     </th>
-                                    <td class="px-6 py-4">Rs {{ number_format($member->society->parking_charges, 2) }}
+                                    <td class="text-base px-6 py-4">Rs {{ number_format($member->society->parking_charges, 2) }}
                                     </td>
                                 </tr>
                                 <tr
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                        Service Charges
+                                        class="text-base px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        सेवा शुल्क
                                     </th>
                                     <td class="px-6 py-4">Rs {{ number_format($member->society->service_charges, 2) }}
                                     </td>
@@ -116,19 +116,19 @@
                                 <tr
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                        Maintenance Charges
+                                        class="text-base px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        मेन्टेनन्स शुल्क
                                     </th>
                                     <td class="px-6 py-4">Rs {{ number_format($maintenance, 2) }}</td>
                                 </tr>
                                 <tr
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <th scope="row"
-                                        class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                        Total Charges
+                                        class="text-base px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        उशीर शुल्क
                                     </th>
                                     <td class="px-6 py-4">
-                                        RS {{ number_format($member->society->parking_charges + $member->society->service_charges + $maintenance, 2 ) }}
+                                        RS {{  number_format($member->society->late_fee, 2) }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -144,11 +144,11 @@
                     <div
                         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 border-b dark:bg-gray-800 dark:border-gray-700">
                         <div class="p-3 flex-row">
-                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Society
+                            <p class="text-lg text-gray-900 dark:text-white"><span class="font-medium">Society
                                     Name:</span> {{ $member->society->name }}</p>
                         </div>
                         <div class="p-3 flex-row">
-                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Phone
+                            <p class="text-lg text-gray-900 dark:text-white"><span class="font-medium">Phone
                                     Number:</span> {{ $member->society->phone }}</p>
                         </div>
                     </div>
@@ -159,18 +159,18 @@
                                 {{ $member->society->address }}</p>
                         </div>
                         <div class="p-3 flex-row">
-                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Bank
+                            <p class="text-lg text-gray-900 dark:text-white"><span class="font-medium">Bank
                                     Name:</span> {{ $member->society->bank_name }}</p>
                         </div>
                     </div>
                     <div
                         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 border-b dark:bg-gray-800 dark:border-gray-700">
                         <div class="p-3 flex-row">
-                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Bank IFSC
+                            <p class="text-lg text-gray-900 dark:text-white"><span class="font-medium">Bank IFSC
                                     Code:</span> {{ $member->society->bank_ifsc_code }}</p>
                         </div>
                         <div class="p-3 flex-row">
-                            <p class="text-base text-gray-900 dark:text-white"><span class="font-medium">Bank
+                            <p class="text-lg text-gray-900 dark:text-white"><span class="font-medium">Bank
                                     Account
                                     Number:</span> {{ $member->society->bank_account_number }}</p>
                         </div>
