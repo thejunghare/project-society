@@ -184,6 +184,19 @@ class SocietyDetails extends Component
         $this->totalPayable = (float) $totalPayable;
     }
 
+    public function getRemainingDaysProgressBarWidth($daysLeft, $totalDays, $maxWidth = 100)
+    {
+        if ($totalDays == 0) {
+            return 0;
+        }
+
+        $progressPercentage = ($daysLeft / $totalDays) * 100;
+        $progressPercentage = min(100, $progressPercentage); // Ensure progress doesn't exceed 100%
+        $progressWidth = $progressPercentage / 100 * $maxWidth;
+
+        return $progressWidth;
+    }
+
     public function calculateBalance()
     {
         $this->balance = (float) ($this->society->registered_balance + $this->society->updated_balance);

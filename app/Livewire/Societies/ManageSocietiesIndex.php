@@ -62,7 +62,7 @@ class ManageSocietiesIndex extends Component
         $this->accountant_id = Auth::user()->id;
     }
 
-   
+
 
     public function import()
     {
@@ -355,7 +355,7 @@ class ManageSocietiesIndex extends Component
     {
         $society = Societies::findOrFail($societyId);
         $daysLeft = Carbon::now()->diffInDays(Carbon::parse($society->renews_at), false);
-    
+
         if ($daysLeft <= 0) {
             $this->dispatch('error', ['message' => 'Subscription is over for this society. Access denied.']);
         } else {
@@ -368,12 +368,27 @@ class ManageSocietiesIndex extends Component
         return $this->hasMany(Member::class);
     }
 
+    public function getRemainingDaysProgressBarWidth($daysLeft, $totalDays, $maxWidth = 100)
+    {
+        if ($totalDays == 0) {
+            return 0;
+        }
+
+        $progressPercentage = ($daysLeft / $totalDays) * 100;
+        $progressPercentage = min(100, $progressPercentage); // Ensure progress doesn't exceed 100%
+        $progressWidth = $progressPercentage / 100 * $maxWidth;
+
+        return $progressWidth;
+    }
+
+    
+
 
 
     public function render()
     {
         $societies = Societies::where('accountant_id', Auth::user()->id)->get();
-    
+
         $societies = $societies->map(function ($society) {
             $daysLeft = Carbon::now()->diffInDays(Carbon::parse($society->renews_at), false);
             $society->days_left = $daysLeft;
@@ -383,10 +398,9 @@ class ManageSocietiesIndex extends Component
             $society->total_members = $society->member_count;
             return $society;
         });
-    
+
         return view('livewire.societies.manage-societies-index', [
             'societies' => $societies,
         ]);
     }
 }
-
