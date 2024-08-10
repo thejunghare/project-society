@@ -40,7 +40,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M13.5 3H13v8h8v-.5A7.5 7.5 0 0 0 13.5 3Z"/>
                     </svg>
-                    <span class="ms-3">Dashboard</span>
+                    <span class="ms-3">डॅशबोर्ड</span>
                 </a>
             </li>
             @endif
@@ -54,7 +54,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M9 8h6m-6 4h6m-6 4h6M6 3v18l2-2 2 2 2-2 2 2 2-2 2 2V3l-2 2-2-2-2 2-2-2-2 2-2-2Z"/>
                     </svg>
-                    <span class="ms-3">Pay Bills</span>
+                    <span class="ms-3">बिलं भरा</span>
                 </a>
             </li>
             @endif
@@ -90,7 +90,7 @@
                     --}}
                 {{-- </a>
             </li>
-            @endif --}} 
+            @endif --}}
 
 
             @if (Auth::user()->role_id == 1)
@@ -119,7 +119,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M10 5 9 4V3m5 2 1-1V3m-3 6v11m0-11a5 5 0 0 1 5 5m-5-5a5 5 0 0 0-5 5m5-5c1 0 2.1.4 3 1h0V8a3 3 0 0 0-6 0v2h0a5 5 0 0 1 3-1Zm-5 5H5m2 0v2a5 5 0 0 0 10 0v-2m2 0h-2M7 18H6a1 1 0 0 0-1 1v2m12-3h1a1 1 0 0 1 1 1v2m-3-10h1a1 1 0 0 0 1-1V8M8 11H7a1 1 0 0 1-1-1V8"/>
                     </svg>
-                    <span class="ms-3">Report Issues</span>
+                    <span class="ms-3">समस्यांची नोंद करा</span>
                 </a>
             </li>
 
@@ -131,7 +131,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M9.5 10a2.5 2.5 0 1 1 5 .2 2.4 2.4 0 0 1-2.5 2.4V14m0 3h0m9-5a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
-                    <span class="flex-1 ms-3 whitespace-nowrap">FAQs</span>
+                    <span class="flex-1 ms-3 whitespace-nowrap">वारंवार विचारले जाणारे प्रश्न</span>
                 </a>
             </li>
 
@@ -143,7 +143,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M10 11h2v5m-2 0h4m-2.6-8.5h0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
-                    <span class="flex-1 ms-3 whitespace-nowrap">About App</span>
+                    <span class="flex-1 ms-3 whitespace-nowrap">अ‍ॅपबद्दल</span>
                     <span
                         class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">1.0.0</span>
                 </a>

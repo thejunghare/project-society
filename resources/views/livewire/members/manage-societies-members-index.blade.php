@@ -1,7 +1,7 @@
 <div class="mt-16">
     @section('title', 'Manage Members')
     <div class="mb-6 mt-13 border-mygreen-200 dark:border-mygreen-700">
-       
+
         <ul
             class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
             <li class="me-2">
@@ -25,8 +25,8 @@
 
     <div class="flex flex-col lg:flex-row items-start justify-between py-4 bg-white dark:bg-gray-900">
         <div class="mb-3 flex flex-col lg:flex-row lg:items-center ">
-            <blockquote class="text-xl italic font-semibold text-gray-900 dark:text-white">
-                <p>Members: {{ $totalMembers }} <br> Registered Members: {{ $registeredMembers }} </p>
+            <blockquote class="text-base font-noraml text-gray-900 dark:text-white">
+                <p>Member count: {{ $registeredMembers }} / {{ $totalMembers }}</p>
             </blockquote>
         </div>
         <div class="relative overflow-x-auto mb-4 lg:mb-0">
@@ -84,7 +84,7 @@
                         <td class="px-6 py-4">{{ $member->room_number }}</td>
                         <td class="px-6 py-4">
                             @if ($member->is_rented)
-                                <span>Yes</span> 
+                                <span>Yes</span>
                             @else
                                 <span>No</span>
                             @endif
@@ -234,7 +234,7 @@
         </button>
     </div>
 @endif
-   
+
 
 </div>
 <script>
