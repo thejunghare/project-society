@@ -57,7 +57,7 @@
                       </svg>
                     </div>
                   <div class="flex flex-col items-start">
-                    <span class="text-xs font-medium text-zinc-600">Room Number</span>
+                    <span class="text-xs font-medium text-zinc-600">फ्लॅट क्रमांक:</span>
                     <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         {{ $member->room_number }}
                     </span>
@@ -73,7 +73,7 @@
                     <div class="flex flex-col items-start">
                       <span class="text-xs font-medium text-zinc-600">Ownership Status</span>
                       <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        {{ $member->is_rented ? 'Rented' : 'Owned' }}
+                        {{ $member->is_rented ? 'भाड्याने' : 'स्वतःचा' }}
                       </span>
                     </div>
                   </div>
@@ -204,7 +204,7 @@
                           </text>
                         </svg>
                         <div class="btn-xs mt-6 mb-6 flex gap-2 items-center ">
-                          <span>Total Receivable</span>
+                          <span>एकूण प्राप्ती</span>
                         </div>
                       </div>
             
@@ -221,7 +221,7 @@
                           </text>
                         </svg>
                         <div class="btn-xs mt-6 mb-6 flex gap-2 items-center ">
-                          <span>Total Payable</span>
+                          <span>एकूण प्राप्त</span>
                         </div>
                       </div>
             
@@ -234,7 +234,7 @@
                 <div class="flex flex-col h-full bg-white dark:bg-dark_50 shadow-lg rounded-md border border-zinc-300 dark:border-zinc-800">
                     <header class="px-5 py-4 border-b border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
                         <div>
-                            <h2 class="font-bold text-gray-800 dark:text-gray-200 text-lg">Bill Details</h2>
+                            <h2 class="font-bold text-gray-800 dark:text-gray-200 text-lg">शुल्क</h2>
                         </div>
                        
                     </header>
@@ -243,19 +243,19 @@
                     <div class="px-6 py-4 ">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                             <div class="bg-gray-100 dark:bg-zinc-800 p-4 rounded-md shadow">
-                                <h3 class="text-gray-700 dark:text-gray-300 font-semibold">Parking Charges</h3>
+                                <h3 class="text-gray-700 dark:text-gray-300 font-semibold">पार्किंग शुल्क</h3>
                                 <p class="text-xl font-bold text-gray-800 dark:text-white">{{ number_format($member->society->parking_charges, 2) }}</p>
                             </div>
                             <div class="bg-gray-100 dark:bg-zinc-800 p-4 rounded-md shadow">
-                                <h3 class="text-gray-700 dark:text-gray-300 font-semibold">Service Charges</h3>
+                                <h3 class="text-gray-700 dark:text-gray-300 font-semibold"> सेवा शुल्क</h3>
                                 <p class="text-xl font-bold text-gray-800 dark:text-white">{{ number_format($member->society->service_charges, 2) }}</p>
                             </div>
                             <div class="bg-gray-100 dark:bg-zinc-800 p-4 rounded-md shadow">
-                                <h3 class="text-gray-700 dark:text-gray-300 font-semibold">Maintenance Amount</h3>
+                                <h3 class="text-gray-700 dark:text-gray-300 font-semibold">मेन्टेनन्स शुल्क</h3>
                                 <p class="text-xl font-bold text-gray-800 dark:text-white">{{ number_format($maintenance, 2) }}</p>
                             </div>
                             <div class="bg-gray-100 dark:bg-zinc-800 p-4 rounded-md shadow">
-                                <h3 class="text-gray-700 dark:text-gray-300 font-semibold">Total</h3>
+                                <h3 class="text-gray-700 dark:text-gray-300 font-semibold">संपूर्ण</h3>
                                 <p class="text-xl font-bold text-gray-800 dark:text-white">{{ number_format($member->society->parking_charges + $member->society->service_charges + $maintenance, 2 ) }}</p>
                             </div>
                         </div>

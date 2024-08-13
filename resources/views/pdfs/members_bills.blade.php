@@ -61,8 +61,8 @@
         </tbody>
     </table>
 
-    <p><strong>Grand Total Receivable This Year:</strong> ₹{{ number_format($grandTotalReceivable, 2) }}</p>
+    {{-- <p><strong>Grand Total Receivable This Year:</strong> ₹{{ number_format($grandTotalReceivable, 2) }}</p>
     <p><strong>Grand Total Received This Year:</strong> ₹{{ number_format($grandTotalThisYear, 2) }}</p>
-    <p><strong>Grand Total Received To Date:</strong> ₹{{ number_format($grandTotalToDate, 2) }}</p>
+    <p><strong>Grand Total Received To Date:</strong> ₹{{ number_format($grandTotalToDate, 2) }}</p> --}}
 </body>
 </html>
