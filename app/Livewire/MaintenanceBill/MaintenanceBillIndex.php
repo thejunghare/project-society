@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Livewire\MaintenanceBill;
+
 use DateTime;
 use App\Models\Member;
 use Carbon\Carbon;
@@ -95,7 +96,7 @@ class MaintenanceBillIndex extends Component
             : "";
         $this->isModalOpen = true;
     }
-
+  
     public function closeEditModal()
     {
         $this->isModalOpen = false;
@@ -283,29 +284,74 @@ class MaintenanceBillIndex extends Component
     public function exportMembersBillsToExcel()
     {
         if ($this->selected_society && $this->selected_year && $this->selected_month) {
+            // Fetch society charges
+            $society = Societies::findOrFail($this->selected_society);
+    
             $membersBills = Member::join('maintenance_bills', 'members.id', '=', 'maintenance_bills.member_id')
                 ->join('users', 'members.user_id', '=', 'users.id')
                 ->where('members.society_id', $this->selected_society)
                 ->where('maintenance_bills.billing_year', $this->selected_year)
                 ->where('maintenance_bills.billing_month', $this->selected_month)
                 ->select(
-                    'members.room_number', // Assuming room_no is in members table
+                    'members.id as member_id',
+                    'members.room_number',
                     'users.name',
                     'maintenance_bills.amount',
-                    'maintenance_bills.status'
+                    'maintenance_bills.status',
+                    'members.is_rented'
                 )
                 ->get();
     
+            // Calculate total received for the current year for each member
+            $yearlyTotalReceived = MaintenanceBill::where('billing_year', $this->selected_year)
+                ->where('status', 1)
+                ->whereIn('member_id', $membersBills->pluck('member_id'))
+                ->groupBy('member_id')
+                ->selectRaw('member_id, SUM(amount) as total_paid')
+                ->pluck('total_paid', 'member_id');
+    
+            // Calculate total received to date for each member
+            $totalReceivedToDate = MaintenanceBill::where('status', 1)
+                ->whereIn('member_id', $membersBills->pluck('member_id'))
+                ->groupBy('member_id')
+                ->selectRaw('member_id, SUM(amount) as total_paid')
+                ->pluck('total_paid', 'member_id');
+    
             // Prepare the data for export
-            $exportData = $membersBills->map(function ($bill, $index) {
-                return [
+            $exportData = [];
+            $grandTotalReceivable = 0;
+    
+            foreach ($membersBills as $index => $bill) {
+                $maintenanceAmount1 = $membersBills[$index]->is_rented ? $society->maintenance_amount_rented : $society->maintenance_amount_owner;
+                $yearlyTotalReceivable = ($society->parking_charges + $society->service_charges + $maintenanceAmount1)*"12";
+    
+                $grandTotalReceivable += $yearlyTotalReceivable;
+    
+                $exportData[] = [
                     'Sr No' => $index + 1,
                     'Room No' => $bill->room_number,
                     'Name' => $bill->name,
                     'Bill Amount' => $bill->amount,
                     'Status' => $bill->status == 1 ? 'Paid' : 'Not Paid',
+                    'Total Received (This Year)' => $yearlyTotalReceived[$bill->member_id] ?? 0,
+                    'Total Received (To Date)' => $totalReceivedToDate[$bill->member_id] ?? 0,
+                    'Total Receivable (This Year)' => $yearlyTotalReceivable,
                 ];
-            });
+            }
+    
+            // Add grand totals as the last row
+            $grandTotalThisYear = array_sum($yearlyTotalReceived->toArray());
+            $grandTotalToDate = array_sum($totalReceivedToDate->toArray());
+            $exportData[] = [
+                'Sr No' => '',
+                'Room No' => '',
+                'Name' => 'Grand Total',
+                'Bill Amount' => '',
+                'Status' => '',
+                'Total Received (This Year)' => $grandTotalThisYear,
+                'Total Received (To Date)' => $grandTotalToDate,
+                'Total Receivable (This Year)' => $grandTotalReceivable,
+            ];
     
             // Export the data to an Excel file using FastExcel
             return (new FastExcel($exportData))->download('members_bills.xlsx');
@@ -314,7 +360,100 @@ class MaintenanceBillIndex extends Component
             return redirect()->back();
         }
     }
+    
 
+
+    public function exportMembersBillsToPDF()
+    {
+        if ($this->selected_society && $this->selected_year && $this->selected_month) {
+            // Define fixed charges
+            $parkingCharge = 100;
+            $serviceCharge = 50;
+            $maintenanceAmountRented = 2000;
+            $maintenanceAmountOwner = 1600;
+    
+            // Fetch member bills
+            $membersBills = Member::join('maintenance_bills', 'members.id', '=', 'maintenance_bills.member_id')
+                ->join('users', 'members.user_id', '=', 'users.id')
+                ->where('members.society_id', $this->selected_society)
+                ->where('maintenance_bills.billing_year', $this->selected_year)
+                ->where('maintenance_bills.billing_month', $this->selected_month)
+                ->select(
+                    'members.id as member_id',
+                    'members.room_number',
+                    'users.name',
+                    'maintenance_bills.amount',
+                    'maintenance_bills.status',
+                    'members.is_rented'
+                )
+                ->get();
+    
+            // Calculate totals for the current year and to date
+            $yearlyTotalReceived = MaintenanceBill::where('billing_year', $this->selected_year)
+                ->where('status', 1)
+                ->whereIn('member_id', $membersBills->pluck('member_id'))
+                ->groupBy('member_id')
+                ->selectRaw('member_id, SUM(amount) as total_paid')
+                ->pluck('total_paid', 'member_id');
+    
+            $totalReceivedToDate = MaintenanceBill::where('status', 1)
+                ->whereIn('member_id', $membersBills->pluck('member_id'))
+                ->groupBy('member_id')
+                ->selectRaw('member_id, SUM(amount) as total_paid')
+                ->pluck('total_paid', 'member_id');
+    
+            // Prepare data for PDF
+            $data = [];
+            $grandTotalReceivable = $grandTotalThisYear = $grandTotalToDate = 0;
+    
+            foreach ($membersBills as $index => $bill) {
+                $maintenanceAmount = $bill->is_rented ? $maintenanceAmountRented : $maintenanceAmountOwner;
+                $monthlyTotalReceivable = $parkingCharge + $serviceCharge + $maintenanceAmount;
+                $yearlyTotalReceivable = $monthlyTotalReceivable * 12;
+    
+                $grandTotalReceivable += $yearlyTotalReceivable;
+                $grandTotalThisYear += $yearlyTotalReceived[$bill->member_id] ?? 0;
+                $grandTotalToDate += $totalReceivedToDate[$bill->member_id] ?? 0;
+    
+                $data[] = [
+                    'sr_no' => $index + 1,
+                    'room_no' => $bill->room_number,
+                    'name' => $bill->name,
+                    'bill_amount' => number_format($bill->amount, 2),
+                    'status' => $bill->status == 1 ? 'Paid' : 'Not Paid',
+                    'total_received_this_year' => number_format($yearlyTotalReceived[$bill->member_id] ?? 0, 2),
+                    'total_received_to_date' => number_format($totalReceivedToDate[$bill->member_id] ?? 0, 2),
+                    'total_receivable_this_year' => number_format($yearlyTotalReceivable, 2),
+                ];
+            }
+    
+            // Add grand total row
+            $data[] = [
+                'sr_no' => $index + 1,
+                'room_no' => mb_convert_encoding($bill->room_number, 'UTF-8', 'UTF-8'),
+                'name' => mb_convert_encoding($bill->name, 'UTF-8', 'UTF-8'),
+                'bill_amount' => number_format($bill->amount, 2),
+                'status' => $bill->status == 1 ? 'Paid' : 'Not Paid',
+                'total_received_this_year' => number_format($yearlyTotalReceived[$bill->member_id] ?? 0, 2),
+                'total_received_to_date' => number_format($totalReceivedToDate[$bill->member_id] ?? 0, 2),
+                'total_receivable_this_year' => number_format($yearlyTotalReceivable, 2),
+            ];
+            
+    
+            // Generate PDF
+            $pdf = Pdf::loadView('pdfs.members_bills', [
+                'data' => $data,
+                'year' => $this->selected_year,
+                'month' => $this->selected_month,
+            ]);
+    
+            return $pdf->download('members_bills.pdf');
+        } else {
+            session()->flash('error', 'Please select society, year, and month before exporting.');
+            return redirect()->back();
+        }
+    }
+    
     public function updatedSelectedSociety()
     {
         $this->fetchMembers();
@@ -785,7 +924,7 @@ class MaintenanceBillIndex extends Component
         return $this->belongsTo(Member::class);
     }
 
-    private function calculateDueDate($societyDueDate, $billingMonth, $billingYear)
+    public function calculateDueDate($societyDueDate, $billingMonth, $billingYear)
     {
         $dueDate = Carbon::createFromDate($billingYear, $billingMonth, $societyDueDate);
 

@@ -14,6 +14,9 @@
             <li class="me-2">
                 <button aria-current="page" class="inline-block p-4 rounded-t-lg hover:text-mygreen-600 hover:bg-mygreen-50 dark:hover:bg-mygreen-800 dark:hover:text-mygreen-300" wire:click="seeMaintenanceBills({{ $society->id }})">Maintenance Bill</button>
             </li>
+            <li class="me-2">
+              <button aria-current="page" class="inline-block p-4 rounded-t-lg hover:text-mygreen-600 hover:bg-mygreen-50 dark:hover:bg-mygreen-800 dark:hover:text-mygreen-300" wire:click="expenseManagement({{ $society->id }})">Expense Management</button>
+          </li>
         </ul>
     </div>
 

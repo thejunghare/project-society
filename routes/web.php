@@ -9,10 +9,12 @@ use App\Http\Controllers\AccountantController;
 use App\Livewire\Societies\ManageSocietiesIndex;
 use App\Livewire\Members\ManageSocietiesMembersIndex;
 use App\Livewire\MaintenanceBill\MaintenanceBillIndex;
+use App\Livewire\MaintenanceBill\Expenses;
 use App\Livewire\Societies\SocietyDetails;
 use App\Http\Controllers\ZipDownloadController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\PayUMoneyController;
+use App\Http\Controllers\MembersBillsController;
 
 
 /*
@@ -57,13 +59,12 @@ Route::middleware(['auth'])->group(function () {
     // Route::post('payment/callback', [BillController::class, 'handlePaymentCallback'])->name('payment.callback');
 });
 
+
+
 Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('pay.bill');
 Route::any('/process-payment', [BillController::class, 'processPayment'])->name('process.payment');
 Route::match(['get', 'post'], 'payment/callback', [BillController::class, 'handlePaymentCallback'])->name('payment.callback');
 
-Route::get('pay-u-money-view',[PayUMoneyController::class,'payUMoneyView']);
-Route::get('pay-u-response',[PayUMoneyController::class,'payUResponse'])->name('pay.u.response');
-Route::get('pay-u-cancel',[PayUMoneyController::class,'payUCancel'])->name('pay.u.cancel');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -106,6 +107,7 @@ Route::middleware(['auth', 'check-role:2'])->group(function () {
         ->middleware(['auth', 'check-role:2', 'check.subscription']);;
     Route::get('/accountant/manage/societies/{society}/society-details/bills/maintenance-bill', MaintenanceBillIndex::class)->name('maintenance-bill')
         ->middleware(['auth', 'check-role:2', 'check.subscription']);;
+    Route::get('/accountant/manage/societies/{society}/society-details/bills/expense', Expenses::class)->name('expense_handle')->middleware(['auth', 'check-role:2', 'check.subscription']);;  
 });
 
 

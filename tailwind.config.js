@@ -48,6 +48,15 @@ module.exports = {
                     900: '#133628',
                 },
             },
+            animation: {
+              fadeInUp: 'fadeInUp 2s ease-out', // Add custom animation here
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: 0, transform: 'translateY(20px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' },
+              },
+            },
         },
     },
 

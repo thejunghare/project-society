@@ -838,88 +838,145 @@
     </style>
 </head>
 
-<body class="h-screen flex flex-col">
+<body class="flex flex-col">
     {{-- header --}}
-    <nav class="h-16 flex justify-center items-center">
-        <div class="w-1/2 flex items-center p-3">
+    <nav class="h-16 flex justify-between items-center shadow-sm">
+        <div class="w-1/2 flex items-center m-4">
             <img src="{{ asset('images/logo.png') }}" class="h-12 w-auto" alt="Logo">
             <p class="ml-2 text-2xl italic tracking-wide font-extrabold">
-                <a href="#" class="cursor-not-allowed text-teal-500">mySocietyERP</a>
+                <a href="#" class="cursor-not-allowed text-mygreen-500 text-bold">mySocietyERP</a>
             </p>
         </div>
-        <div class="w-1/2 text-right">
+        <div class="w-1/2 flex justify-end items-center">
             <p class="px-6 text-lg tracking-wide subpixel-antialiased font-bold">
-                <a href="#" class="underline cursor-not-allowed text-dark-500">Home</a>
+                <a href="#" class=" text-dark-500">Home</a>
+            </p>
+            <p class="px-6 text-lg tracking-wide subpixel-antialiased font-bold">
+                <a href="#about" class=" text-dark-500">About Us</a>
+            </p>
+            <p class="px-6 text-lg tracking-wide subpixel-antialiased font-bold">
+                <a href="#contact" class=" text-dark-500">Contact Us</a>
             </p>
         </div>
     </nav>
+    
 
     {{-- main section --}}
-    <section class="bg-white dark:bg-gray-900 flex items-center justify-center flex-1">
-        <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
-            <h1
-                class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-                We invest in the <span class="text-teal-500"> world’s potential</span></h1>
-            <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">Here at
-                Project Society we focus on markets where technology, innovation, and capital can unlock long-term value
-                and
-                drive economic growth.</p>
+    <section class="bg-mygreen-100 flex items-center justify-center h-screen align-middle">
+        <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 animate-fadeInUp">
+            <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl">
+                Simplifying Society Management with <span class="text-mygreen-500">mySocietyERP</span>
+            </h1>
+            <p class="mb-8 text-lg font-normal text-black lg:text-xl sm:px-16 lg:px-48">
+                MySociety ERP streamlines society operations, from member registration to maintenance bill management and payments, making community management effortless and transparent.
+            </p>
+            
+            
             <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
                 @auth
                     @if (auth()->user()->role_id == 2)
                         <a href="{{ url('/accountant/dashboard') }}"
-                            class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                            class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-full bg-mygreen-700 hover:bg-mygreen-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-mygreen-900">
                             Dashboard
-                            <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M1 5h12m0 0L9 1m4 4L9 9" />
+                            <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
                             </svg>
                         </a>
                     @elseif(auth()->user()->role_id == 1)
                         <a href="{{ url('/admin/dashboard') }}"
-                            class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                            class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-full bg-mygreen-700 hover:bg-mygreen-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-mygreen-900">
                             Dashboard
-                            <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M1 5h12m0 0L9 1m4 4L9 9" />
+                            <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
                             </svg>
                         </a>
                     @else
                         <a href="{{ url('/dashboard') }}"
-                            class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                            class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-full bg-mygreen-700 hover:bg-mygreen-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-mygreen-900">
                             Dashboard
-                            <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M1 5h12m0 0L9 1m4 4L9 9" />
+                            <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
                             </svg>
                         </a>
                     @endif
                 @else
                     <a href="{{ route('login') }}"
-                        class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                        class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-full bg-mygreen-700 hover:bg-mygreen-800 focus:ring-4 focus:ring-mygreen-300 dark:focus:ring-mygreen-900">
                         Login
-                        <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 14 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9" />
+                        <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
                         </svg>
                     </a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                            class="inline-flex justify-center items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-gray-900 rounded-full border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
-                            Register
-                        </a>
-                    @endif
+                    <a href="#contact"
+                        class="inline-flex justify-center items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-gray-900 rounded-full border border-gray-500 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                         <!-- Icon -->
+                         <svg class="w-6 h-6 text-gray-800 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.427 14.768 17.2 13.542a1.733 1.733 0 0 0-2.45 0l-.613.613a1.732 1.732 0 0 1-2.45 0l-1.838-1.84a1.735 1.735 0 0 1 0-2.452l.612-.613a1.735 1.735 0 0 0 0-2.452L9.237 5.572a1.6 1.6 0 0 0-2.45 0c-3.223 3.2-1.702 6.896 1.519 10.117 3.22 3.221 6.914 4.745 10.12 1.535a1.601 1.601 0 0 0 0-2.456Z"/>
+                          </svg>
+                          
+                          
+                         <!-- Button Text -->
+                         Request Demo
+                    </a>
+
                 @endauth
             </div>
         </div>
     </section>
+    
+
+    <section class="bg-gray-100 flex items-center justify-center flex-1 animate-fadeInUp" id="about">
+        <div class="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
+            <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-4xl align-middle">About Us</h1>
+            <p class="text-lg text-gray-700 mb-6">
+                Welcome to <span class="font-bold text-mygreen-500">mySocietyERP</span> – your comprehensive solution for society management. 
+                Our platform is designed to simplify and streamline the management of housing societies and residential communities. 
+                With <span class="font-bold text-mygreen-500">mySocietyERP</span>, societies can easily register on our website, and members can register under their respective societies.
+            </p>
+            <p class="text-lg text-gray-700 mb-6">
+                We understand the complexities involved in managing a society's financials, particularly when it comes to maintenance bills. 
+                Our platform offers a robust system that allows for the efficient management and tracking of maintenance bills, ensuring transparency and ease of access for all society members. 
+                Members can view their maintenance dues, make payments, and track their payment history, all within a user-friendly interface.
+            </p>
+            <p class="text-lg text-gray-700">
+                At <span class="font-bold text-mygreen-500">mySocietyERP</span>, we are committed to enhancing the living experience in residential communities by providing a seamless and efficient management tool. 
+                Join us and experience a smarter way to manage your society.
+            </p>
+        </div>
+    </section>
+
+
+    <section class="bg-white py-16 flex items-center justify-center animate-fadeInUp" id="contact">
+        <div class="max-w-screen-md px-4 mx-auto text-center">
+            <h2 class="text-3xl font-bold tracking-tight text-gray-900 mb-6">Contact Us</h2>
+            <p class="mb-8 text-lg font-normal text-gray-500">
+                Have questions or need support? Reach out to us and we’ll get back to you as soon as possible.
+            </p>
+            <form action="#" method="post" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-left text-gray-700 font-medium mb-1">Name</label>
+                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-mygreen-500" />
+                </div>
+                <div>
+                    <label for="email" class="block text-left text-gray-700 font-medium mb-1">Email</label>
+                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-mygreen-500" />
+                </div>
+                <div>
+                    <label for="message" class="block text-left text-gray-700 font-medium mb-1">Message</label>
+                    <textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-mygreen-500"></textarea>
+                </div>
+                <button type="submit" class="inline-flex items-center py-3 px-6 text-base font-medium text-center text-white rounded-full bg-mygreen-700 hover:bg-mygreen-800 focus:ring-4 focus:ring-mygreen-300 dark:focus:ring-mygreen-900">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+    
+    
+    
 
     {{-- footer --}}
-    <footer class="h-12 flex justify-center items-center">
+    <footer class="h-12 flex justify-center items-center bg-gray-700">
         <p class="font-medium">Designed, Developed by
             <span class="underline text-teal-500">
                 <a class="" target=”_blank” href="https://junghare.tech">junghare.tech</a>
