@@ -31,7 +31,7 @@ class DisplayMemberInfo extends Component
     public function maintenancePayable()
     {
         if ($this->society) {
-            if ($this->member->is_rented) {
+            if ($this->member->is_rented == 1) {
                 return $this->society->maintenance_amount_rented;
             } else {
                 return $this->society->maintenance_amount_owner;

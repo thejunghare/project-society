@@ -54,6 +54,10 @@ class SocietyDetails extends Component
         return redirect()->route('maintenance-bill', ['society' => $this->society->id]);
     }
 
+    public function expenseManagement(){
+        return redirect()->route('expense_handle', ['society' => $this->society->id]);
+    }
+
     public function calculateReceivableAmount()
     {
         $this->registeredMembers = $this->society->members()->count();

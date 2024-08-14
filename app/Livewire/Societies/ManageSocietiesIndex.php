@@ -300,6 +300,19 @@ class ManageSocietiesIndex extends Component
     //     return view('societies.index', compact('societies'));
     // }
 
+    public function getRemainingDaysProgressBarWidth($daysLeft, $totalDays, $maxWidth = 100)
+    {
+        if ($totalDays == 0) {
+            return 0;
+        }
+
+        $progressPercentage = ($daysLeft / $totalDays) * 100;
+        $progressPercentage = min(100, $progressPercentage); // Ensure progress doesn't exceed 100%
+        $progressWidth = $progressPercentage / 100 * $maxWidth;
+
+        return $progressWidth;
+    }
+
 
 
 
