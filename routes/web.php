@@ -10,6 +10,7 @@ use App\Livewire\Societies\ManageSocietiesIndex;
 use App\Livewire\Members\ManageSocietiesMembersIndex;
 use App\Livewire\MaintenanceBill\MaintenanceBillIndex;
 use App\Livewire\MaintenanceBill\Expenses;
+
 use App\Livewire\Societies\SocietyDetails;
 use App\Http\Controllers\ZipDownloadController;
 use App\Http\Controllers\BillController;
@@ -98,7 +99,6 @@ Route::middleware(['auth', 'check-role:2'])->group(function () {
     Route::get('/accountant/manage/societies', ManageSocietiesIndex::class)->name('societies');
     // Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)->name('societyDetails')
     // ;
-
     Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)
         ->name('societyDetails')
         ->middleware(['auth', 'check-role:2', 'check.subscription']);
