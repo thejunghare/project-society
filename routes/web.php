@@ -1,17 +1,20 @@
 <?php
 
-use App\Livewire\Faq\FaqIndex;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ProfileController;
-use App\Livewire\ManageUser\ManageUserIndex;
 use App\Http\Controllers\AccountantController;
-use App\Livewire\Societies\ManageSocietiesIndex;
-use App\Livewire\Members\ManageSocietiesMembersIndex;
-use App\Livewire\MaintenanceBill\MaintenanceBillIndex;
-use App\Livewire\Societies\SocietyDetails;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\ProfileController;
+use App\Livewire\Faq\FaqIndex;
+use App\Livewire\MaintenanceBill\Expenses;
+use App\Livewire\MaintenanceBill\MaintenanceBillIndex;
+use App\Livewire\ManageUser\ManageUserIndex;
+use App\Livewire\Members\ManageSocietiesMembersIndex;
 
+use App\Livewire\ReportIssue\ReportIssueIndex;
+use App\Livewire\Societies\ManageSocietiesIndex;
+
+use App\Livewire\Societies\SocietyDetails;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,13 +27,11 @@ use App\Http\Controllers\BillController;
 |
 */
 
-
 /*
 |--------------------------------------------------------------------------
 | Default Routes
 |--------------------------------------------------------------------------
 */
-
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,7 +44,6 @@ Route::get('/dashboard', function () {
 // Route::get('/download-invoice/{billId}', [BillController::class, 'downloadInvoice'])->name('download.invoice');
 
 // Route::get('/download-receipt/{paymentId}', [BillController::class, 'downloadReceipt'])->name('download.receipt');
-
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('show.pay.bill');
@@ -59,13 +59,11 @@ Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('pay.b
 Route::any('/process-payment', [BillController::class, 'processPayment'])->name('process.payment');
 Route::match(['get', 'post'], 'payment/callback', [BillController::class, 'handlePaymentCallback'])->name('payment.callback');
 
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -73,12 +71,10 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-
 Route::middleware(['auth', 'check-role:1'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/manage/users', ManageUserIndex::class)->name('users');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -86,25 +82,23 @@ Route::middleware(['auth', 'check-role:1'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-
 Route::middleware(['auth', 'check-role:2'])->group(function () {
     Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
     Route::get('/accountant/manage/societies', ManageSocietiesIndex::class)->name('societies');
     // Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)->name('societyDetails')
     // ;
-
     Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)
         ->name('societyDetails')
         ->middleware(['auth', 'check-role:2', 'check.subscription']);
 
     Route::get('/accountant/manage/societies/{society}/society-details/members', ManageSocietiesMembersIndex::class)->name('members')
-        ->middleware(['auth', 'check-role:2', 'check.subscription']);;
+        ->middleware(['auth', 'check-role:2', 'check.subscription']);
     Route::get('/accountant/manage/societies/{society}/society-details/bills/maintenance-bill', MaintenanceBillIndex::class)->name('maintenance-bill')
-        ->middleware(['auth', 'check-role:2', 'check.subscription']);;
+        ->middleware(['auth', 'check-role:2', 'check.subscription']);
+    Route::get('/accountant/manage/societies/{society}/society-details/bills/expense', Expenses::class)->name('expense_handle')->middleware(['auth', 'check-role:2', 'check.subscription']);
 });
 
-
-/*  
+/*
 |--------------------------------------------------------------------------
 | Normal User Routes
 |--------------------------------------------------------------------------
@@ -116,7 +110,7 @@ Route::middleware(['auth', 'check-role:3'])->group(function () {
     });
 });
 
-
 Route::get('/faq', FaqIndex::class);
+Route::get('/report-issue', ReportIssueIndex::class)->name('report');
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

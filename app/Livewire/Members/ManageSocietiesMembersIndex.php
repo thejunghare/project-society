@@ -122,7 +122,7 @@ class ManageSocietiesMembersIndex extends Component
   public function goBack()
   {
     return redirect('/accountant/manage/societies/' . $this->societyId . '/society-details');
-  }
+  }  
 
 
 

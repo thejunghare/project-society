@@ -64,12 +64,21 @@ class BillController extends Controller
             ->orderBy('payment_date', 'desc')
             ->first();
 
+        $maintenanceAmount = $member->is_rented ? $member->society->maintenance_amount_rented : $member->society->maintenance_amount_owner;
+
+        $lateFee = 0;
+            if ($bill->late_fee_applied) {
+                $lateFee = $member->society->late_fee;
+            }
+
         $data = [
             'member' => $member,
             'bill' => $bill,
             'society' => $society,
             'currentPayment' => $currentPayment,
             'previousPayment' => $previousPayment,
+            'maintenance_amount' => $maintenanceAmount,
+            'late_fee' => $lateFee,
         ];
 
         $pdf = Pdf::loadView('pdfs.invoice', $data);
@@ -223,6 +232,26 @@ class BillController extends Controller
             $receipt->payment_id = $payment->id;
             $receipt->save();
 
+
+
+            // Update the updated_balance field in the Society table
+            $member = $bill->member;
+            if ($member && $member->society) {
+                $society = $member->society;
+                $paymentAmount = (float) $paymentData['amount'];
+                $society->updated_balance = $society->updated_balance + $paymentAmount;
+                $society->save();
+
+                \Log::info('Society balance updated. New balance: ' . $society->updated_balance);
+            } else {
+                if (!$member) {
+                    \Log::error('Member not found for bill ID: ' . $bill->id);
+                } elseif (!$member->society) {
+                    \Log::error('Society not found for member ID: ' . $member->id);
+                }
+                // Here you might want to add some error handling or notification
+            }
+
             // Clear the payment data from session
             session()->forget('payment_data');
 
@@ -289,8 +318,8 @@ class BillController extends Controller
 
     private function verifyPaymentWithPhonePe($transactionId)
     {
-        $merchantId = env('PHONEPE_MERCHANT_ID');
-        $saltKey = env('PHONEPE_SALT_KEY');
+        $merchantId = "PGTESTPAYUAT86";
+        $saltKey = '96434309-7796-489d-8924-ab56988a6076';
         $saltIndex = 1;
 
         $urlPath = "/pg/v1/status/{$merchantId}/{$transactionId}";

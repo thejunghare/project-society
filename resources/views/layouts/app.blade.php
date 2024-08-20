@@ -27,9 +27,9 @@
     </div> --}}
     @include('layouts.main')
   
-
     @include('layouts.script')
-    {{-- @livewireScripts --}}
+    <script src="//unpkg.com/alpinejs" defer></script>
+
 </body>
 
 </html>

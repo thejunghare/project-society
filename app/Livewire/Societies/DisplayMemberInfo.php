@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DisplayMemberInfo extends Component
 {
-    public $member;
+    public $member;  
     public $totalPayable;
     public $maintenance;
     public $registeredMembers;
@@ -31,7 +31,7 @@ class DisplayMemberInfo extends Component
     public function maintenancePayable()
     {
         if ($this->society) {
-            if ($this->member->is_rented) {
+            if ($this->member->is_rented == 1) {
                 return $this->society->maintenance_amount_rented;
             } else {
                 return $this->society->maintenance_amount_owner;
@@ -102,7 +102,7 @@ class DisplayMemberInfo extends Component
     public function updateSelectedMonth($month)
     {
         $this->selectedMonth = $month;
-        $this->calculateTotalPayable();
+        $this->calculateTotalPayable(); 
     }
 
     public function resetSelection()

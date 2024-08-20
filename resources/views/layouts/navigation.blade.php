@@ -117,11 +117,11 @@
                 <div class="ml-2">
                     @if (Auth::user()->role_id == 3)
                         @if (Auth::user()->member)
-                            <p class="text-base italic tracking-wide font-extrabold text-teal-500">
+                            <p class="text-base tracking-wide font-extrabold text-teal-500">
                                 <a href="#" class="">my{{ Auth::user()->member->society->name }}ERP</a>
                             </p>
                         @else
-                            <p class="text-base italic tracking-wide font-extrabold text-teal-500">
+                            <p class="text-base tracking-wide font-extrabold text-teal-500">
                                 <a href="#" class="">mySocietyERP</a>
                             </p>
                         @endif
@@ -197,5 +197,3 @@
         </div>
     </div>
 </nav>
-
-

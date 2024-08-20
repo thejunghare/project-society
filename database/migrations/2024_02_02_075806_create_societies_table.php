@@ -13,11 +13,11 @@ return new class extends Migration {
         Schema::create('societies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('phone')->unique();
-            $table->text('address')->unique();
+            $table->string('phone')->unique();
+            $table->string('address')->unique();
             $table->text('bank_name');
             $table->text('bank_ifsc_code');
-            $table->text('bank_account_number')->unique();
+            $table->string('bank_account_number')->unique();
             $table->integer('member_count');
             $table->text('president_name')->nullable();
             $table->text('vice_president_name')->nullable();
