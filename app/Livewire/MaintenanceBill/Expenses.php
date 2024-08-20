@@ -6,8 +6,8 @@ use Livewire\Component;
 use App\Models\Societies;
 use App\Models\Member;
 use App\Models\MaintenanceBill;
-use App\Models\expense;
 use App\Models\ExpenseType;
+use App\Models\Expense;
 use App\Models\User;
 use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Redirect;
@@ -163,6 +163,7 @@ class Expenses extends Component
             'remark' => 'nullable|string',
             'reference_number' => 'nullable|string',
         ]);
+
     
         // Retrieve the society record
         $society = Societies::find($this->selected_society);
@@ -198,12 +199,27 @@ class Expenses extends Component
         $society->save(); // Save the updated society record
     
         // Flash success message
+
+
+        // Create a new expense record
+        $expense = new Expense();
+        $expense->society_id = $this->selected_society;
+        $expense->price = $this->amount;
+        $expense->expense_type_id = $this->selectedExpenseType;
+        $expense->remark = $this->remark;
+        $expense->save();
+
+        // Reset form fields
+        $this->reset(['price', 'selectedExpenseType', 'remark']);
+
+        // Show a success message
+
         session()->flash('message', 'Expense added successfully.');
     
         // Reset the form fields
         $this->reset(['selectedExpenseType', 'price', 'remark', 'reference_number', 'selected_month', 'selected_year']);
     }
-    
+
 
 
 
