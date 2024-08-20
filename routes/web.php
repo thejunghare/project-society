@@ -9,8 +9,10 @@ use App\Livewire\MaintenanceBill\Expenses;
 use App\Livewire\MaintenanceBill\MaintenanceBillIndex;
 use App\Livewire\ManageUser\ManageUserIndex;
 use App\Livewire\Members\ManageSocietiesMembersIndex;
+
 use App\Livewire\ReportIssue\ReportIssueIndex;
 use App\Livewire\Societies\ManageSocietiesIndex;
+
 use App\Livewire\Societies\SocietyDetails;
 use Illuminate\Support\Facades\Route;
 
@@ -85,7 +87,6 @@ Route::middleware(['auth', 'check-role:2'])->group(function () {
     Route::get('/accountant/manage/societies', ManageSocietiesIndex::class)->name('societies');
     // Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)->name('societyDetails')
     // ;
-
     Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)
         ->name('societyDetails')
         ->middleware(['auth', 'check-role:2', 'check.subscription']);

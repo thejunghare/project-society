@@ -15,9 +15,12 @@ class Expense extends Model
     // Specify the fields that are mass assignable
     protected $fillable = [
         'society_id',
-        'price',
+        'amount',
         'expense_type_id',
         'remark',
+        'reference_number',
+        'bill_month',
+        'bill_year',
     ];
 
     // Define the relationship to the Society model
@@ -26,9 +29,16 @@ class Expense extends Model
         return $this->belongsTo(Societies::class);
     }
 
+    public function loadExpenseTypes()
+    {
+        $this->expenseTypes = ExpenseType::all();
+    }
+
     // Define the relationship to the ExpenseType model
     public function expenseType()
     {
-        return $this->belongsTo(expense::class, 'expense_type_id');
+        return $this->belongsTo(ExpenseType::class, 'expense_type_id');
     }
+
+    
 }
