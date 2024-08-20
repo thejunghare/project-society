@@ -33,36 +33,59 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get("/", function () {
+    return view("welcome");
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get("/dashboard", function () {
+    return view("dashboard");
+})
+    ->middleware(["auth", "verified"])
+    ->name("dashboard");
 
 // Route::get('/download-invoice/{billId}', [BillController::class, 'downloadInvoice'])->name('download.invoice');
 
 // Route::get('/download-receipt/{paymentId}', [BillController::class, 'downloadReceipt'])->name('download.receipt');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('show.pay.bill');
-    Route::get('/download-invoice/{billId}', [BillController::class, 'downloadInvoice'])->name('download.invoice');
+Route::middleware(["auth"])->group(function () {
+    Route::get("/pay-bill", [BillController::class, "showPayBillPage"])->name(
+        "show.pay.bill"
+    );
+    Route::get("/download-invoice/{billId}", [
+        BillController::class,
+        "downloadInvoice",
+    ])->name("download.invoice");
     // Route::post('/process-payment', [BillController::class, 'processPayment'])->name('process.payment');
 
-    Route::get('/download-receipt/{paymentId}', [BillController::class, 'downloadReceipt'])->name('download.receipt');
+    Route::get("/download-receipt/{paymentId}", [
+        BillController::class,
+        "downloadReceipt",
+    ])->name("download.receipt");
     // Route::post('/accept-payment', [BillController::class, 'acceptPayment'])->name('accept.payment');
     // Route::post('payment/callback', [BillController::class, 'handlePaymentCallback'])->name('payment.callback');
 });
 
-Route::get('/pay-bill', [BillController::class, 'showPayBillPage'])->name('pay.bill');
-Route::any('/process-payment', [BillController::class, 'processPayment'])->name('process.payment');
-Route::match(['get', 'post'], 'payment/callback', [BillController::class, 'handlePaymentCallback'])->name('payment.callback');
+Route::get("/pay-bill", [BillController::class, "showPayBillPage"])->name(
+    "pay.bill"
+);
+Route::any("/process-payment", [BillController::class, "processPayment"])->name(
+    "process.payment"
+);
+Route::match(["get", "post"], "payment/callback", [
+    BillController::class,
+    "handlePaymentCallback",
+])->name("payment.callback");
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware("auth")->group(function () {
+    Route::get("/profile", [ProfileController::class, "edit"])->name(
+        "profile.edit"
+    );
+    Route::patch("/profile", [ProfileController::class, "update"])->name(
+        "profile.update"
+    );
+    Route::delete("/profile", [ProfileController::class, "destroy"])->name(
+        "profile.destroy"
+    );
 });
 
 /*
@@ -71,9 +94,11 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'check-role:1'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/admin/manage/users', ManageUserIndex::class)->name('users');
+Route::middleware(["auth", "check-role:1"])->group(function () {
+    Route::get("/admin/dashboard", [AdminController::class, "dashboard"])->name(
+        "admin.dashboard"
+    );
+    Route::get("/admin/manage/users", ManageUserIndex::class)->name("users");
 });
 
 /*
@@ -82,20 +107,42 @@ Route::middleware(['auth', 'check-role:1'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'check-role:2'])->group(function () {
-    Route::get('/accountant/dashboard', [AccountantController::class, 'dashboard'])->name('accountant.dashboard');
-    Route::get('/accountant/manage/societies', ManageSocietiesIndex::class)->name('societies');
+Route::middleware(["auth", "check-role:2"])->group(function () {
+    Route::get("/accountant/dashboard", [
+        AccountantController::class,
+        "dashboard",
+    ])->name("accountant.dashboard");
+    Route::get(
+        "/accountant/manage/societies",
+        ManageSocietiesIndex::class
+    )->name("societies");
     // Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)->name('societyDetails')
     // ;
-    Route::get('/accountant/manage/societies/{society}/society-details', SocietyDetails::class)
-        ->name('societyDetails')
-        ->middleware(['auth', 'check-role:2', 'check.subscription']);
+    Route::get(
+        "/accountant/manage/societies/{society}/society-details",
+        SocietyDetails::class
+    )
+        ->name("societyDetails")
+        ->middleware(["auth", "check-role:2", "check.subscription"]);
 
-    Route::get('/accountant/manage/societies/{society}/society-details/members', ManageSocietiesMembersIndex::class)->name('members')
-        ->middleware(['auth', 'check-role:2', 'check.subscription']);
-    Route::get('/accountant/manage/societies/{society}/society-details/bills/maintenance-bill', MaintenanceBillIndex::class)->name('maintenance-bill')
-        ->middleware(['auth', 'check-role:2', 'check.subscription']);
-    Route::get('/accountant/manage/societies/{society}/society-details/bills/expense', Expenses::class)->name('expense_handle')->middleware(['auth', 'check-role:2', 'check.subscription']);
+    Route::get(
+        "/accountant/manage/societies/{society}/society-details/members",
+        ManageSocietiesMembersIndex::class
+    )
+        ->name("members")
+        ->middleware(["auth", "check-role:2", "check.subscription"]);
+    Route::get(
+        "/accountant/manage/societies/{society}/society-details/bills/maintenance-bill",
+        MaintenanceBillIndex::class
+    )
+        ->name("maintenance-bill")
+        ->middleware(["auth", "check-role:2", "check.subscription"]);
+    Route::get(
+        "/accountant/manage/societies/{society}/society-details/bills/expense",
+        Expenses::class
+    )
+        ->name("expense_handle")
+        ->middleware(["auth", "check-role:2", "check.subscription"]);
 });
 
 /*
@@ -104,13 +151,20 @@ Route::middleware(['auth', 'check-role:2'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'check-role:3'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
+Route::middleware(["auth", "check-role:3"])->group(function () {
+    Route::get("/dashboard", function () {
+        return view("dashboard");
     });
 });
 
-Route::get('/faq', FaqIndex::class);
-Route::get('/report-issue', ReportIssueIndex::class)->name('report');
+Route::get("/faq", FaqIndex::class);
 
-require __DIR__.'/auth.php';
+//report issue
+Route::get("/report-issue", ReportIssueIndex::class)->name("report");
+
+// privacy policy
+Route::get("/privacy-policy", function () {
+    return view("docs.privacy-policy");
+})->name("privacy-policy");
+
+require __DIR__ . "/auth.php";
