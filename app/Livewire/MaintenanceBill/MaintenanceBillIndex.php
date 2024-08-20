@@ -2,61 +2,75 @@
 
 namespace App\Livewire\MaintenanceBill;
 
-use DateTime;
+use App\Helpers\AmountHelper;
+use App\Models\MaintenanceBill;
 use App\Models\Member;
-use Carbon\Carbon;
-use App\Livewire\DatePicker;
+use App\Models\Payment;
+use App\Models\Receipts;
 use App\Models\Societies;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use DateTime;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Title;
 use Livewire\Component;
-use Twilio\Rest\Client;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
-use Livewire\Attributes\Title;
-use App\Models\MaintenanceBill;
-use App\Helpers\AmountHelper;
-use App\Models\Payment;
-use ZipArchive;
-use App\Models\Receipts;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Rap2hpoutre\FastExcel\FastExcel;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Twilio\Rest\Client;
 
 class MaintenanceBillIndex extends Component
 {
-    use WithPagination, WithoutUrlPagination;
+    use WithoutUrlPagination, WithPagination;
 
-    #[Title("Maintenance Bill - mySocietyERP")]
+    #[Title('Maintenance Bill - mySocietyERP')]
     public $society;
+
     public $societiesList;
+
     public $months;
+
     public $search;
+
     public $selected_society;
+
     public $selected_year;
+
     public $selected_month;
+
     public $members;
+
     public $selectedMembers = [];
+
     public $selectAll = false;
+
     public $amount;
+
     public $due_date;
 
     public $editingBillId = null;
+
     public $editPaymentStatus;
+
     public $editPaymentMode;
+
     public $editAdvance;
+
     public $isEditModalOpen = false;
 
     public $isModalOpen = false;
+
     public $selectedBillIndex;
+
     public $selectedBills = [];
 
     public function mount(Societies $society)
     {
         $this->society = $society;
         $this->societiesList = Societies::where(
-            "accountant_id",
+            'accountant_id',
             Auth::user()->id
-        )->pluck("name", "id");
+        )->pluck('name', 'id');
         $this->months = $this->returnMonths();
         $this->members = collect();
         $this->selected_society = $society->id;
@@ -65,38 +79,44 @@ class MaintenanceBillIndex extends Component
     public function goBack()
     {
         return redirect(
-            "/accountant/manage/societies/" .
-                $this->society->id .
-                "/society-details"
+            '/accountant/manage/societies/'.
+                $this->society->id.
+                '/society-details'
         );
     }
 
     public $editingBill;
+
     public $editName;
+
     public $editPaymentMethod;
+
     public $editAdvancePayment;
+
     public $editChequeNo;
+
     public $asdid;
+
     public $editRemark;
 
     public function openEditModal($billId)
     {
         $this->editingBillId = $billId;
-        $this->dispatch("open-modal");
-        $this->editingBill = MaintenanceBill::with("member.user")->findOrFail(
+        $this->dispatch('open-modal');
+        $this->editingBill = MaintenanceBill::with('member.user')->findOrFail(
             $billId
         );
         $this->editName = $this->editingBill->member->user->name;
         $this->editPaymentMethod = $this->editingBill->payment_mode_id;
         $this->asdid = $this->editingBill->id;
         $this->editRemark = $this->editingBill->remark;
-        $this->editAdvancePayment = $this->editingBill->advance ? "1" : "0";
+        $this->editAdvancePayment = $this->editingBill->advance ? '1' : '0';
         $this->editChequeNo = $this->editingBill->payment
             ? $this->editingBill->payment->reference_no
-            : "";
+            : '';
         $this->isModalOpen = true;
     }
-  
+
     public function closeEditModal()
     {
         $this->isModalOpen = false;
@@ -106,12 +126,12 @@ class MaintenanceBillIndex extends Component
     public function resetEditFields()
     {
         $this->reset([
-            "editingBill",
-            "editName",
-            "editPaymentMethod",
-            "editRemark",
-            "editChequeNo",
-            "editAdvancePayment",
+            'editingBill',
+            'editName',
+            'editPaymentMethod',
+            'editRemark',
+            'editChequeNo',
+            'editAdvancePayment',
         ]);
         // $this->editingBill = null;
         // $this->editName = '';
@@ -125,21 +145,21 @@ class MaintenanceBillIndex extends Component
     {
         // Validate form inputs
         $validatedData = $this->validate([
-            "editName" => "required|string|max:255",
-            "editPaymentMethod" => "required",
-            "editAdvancePayment" => "required",
+            'editName' => 'required|string|max:255',
+            'editPaymentMethod' => 'required',
+            'editAdvancePayment' => 'required',
         ]);
 
-        $originalStatus = $this->editingBill->getOriginal("status");
+        $originalStatus = $this->editingBill->getOriginal('status');
         $newStatus = 1;
 
         // Update member's user name
         $this->editingBill->member->user->update([
-            "name" => $this->editName,
+            'name' => $this->editName,
         ]);
 
         $this->editingBill->advance =
-            $this->editAdvancePayment === "1" ||
+            $this->editAdvancePayment === '1' ||
             $this->editAdvancePayment === 1;
         $this->editPaymentMethod = $this->editPaymentMethod;
         $this->editingBill->remark = $this->editRemark;
@@ -149,27 +169,27 @@ class MaintenanceBillIndex extends Component
 
         // Check if a payment entry exists
         $payment = Payment::where(
-            "maintenance_bills_id",
+            'maintenance_bills_id',
             $this->editingBill->id
         )->first();
 
         // Check if a payment entry exists
-        if (!$payment) {
+        if (! $payment) {
             // Create a new payment entry
-            $payment = new Payment();
+            $payment = new Payment;
             $payment->maintenance_bills_id = $this->editingBill->id;
             $payment->amount_paid = $amountToPay;
             $payment->payment_date = now();
-            $payment->transaction_id = ""; // You may want to generate a unique transaction ID here
+            $payment->transaction_id = ''; // You may want to generate a unique transaction ID here
             $payment->save();
             // Create a new receipt
             if (in_array($this->editPaymentMethod, [1, 2])) {
                 $payment->reference_no = $this->editChequeNo;
             } else {
-                $payment->reference_no = ""; // Clear cheque number if payment method is not cheque and online
+                $payment->reference_no = ''; // Clear cheque number if payment method is not cheque and online
             }
 
-            $receipt = new Receipts();
+            $receipt = new Receipts;
             $receipt->payment_id = $payment->id;
             $receipt->save();
 
@@ -185,16 +205,16 @@ class MaintenanceBillIndex extends Component
         }
         // Update existing payment entry
         $payment->update([
-            "amount_paid" => $amountToPay,
-            "payment_date" => now(),
+            'amount_paid' => $amountToPay,
+            'payment_date' => now(),
             // 'reference_no' => $this->editPaymentMethod == 2 || $this->editPaymentMethod == 1 ? $this->editChequeNo : null, // Update cheque number
         ]);
 
         // Check if a receipt already exists for this payment
-        $receipt = Receipts::where("payment_id", $payment->id)->first();
-        if (!$receipt) {
+        $receipt = Receipts::where('payment_id', $payment->id)->first();
+        if (! $receipt) {
             // Create a new receipt if it doesn't exist
-            $receipt = new Receipts();
+            $receipt = new Receipts;
             $receipt->payment_id = $payment->id;
             $receipt->save();
         }
@@ -204,15 +224,15 @@ class MaintenanceBillIndex extends Component
 
         // Update maintenance bill details
         $this->editingBill->update([
-            "payment_mode_id" => $this->editPaymentMethod,
-            "advance" => $this->editAdvancePayment == "1",
-            "status" => 1, // Ensure status is set to 1 (paid)
+            'payment_mode_id' => $this->editPaymentMethod,
+            'advance' => $this->editAdvancePayment == '1',
+            'status' => 1, // Ensure status is set to 1 (paid)
         ]);
 
         if (in_array($this->editPaymentMethod, [1, 2])) {
             $payment->reference_no = $this->editChequeNo;
         } else {
-            $payment->reference_no = ""; // Clear cheque number if payment method is not cheque and online
+            $payment->reference_no = ''; // Clear cheque number if payment method is not cheque and online
         }
 
         // Save the changes
@@ -230,54 +250,54 @@ class MaintenanceBillIndex extends Component
                         $society->updated_balance + $paymentAmount;
                     $society->save();
                     \Log::info(
-                        "Society balance updated. New balance: " .
+                        'Society balance updated. New balance: '.
                             $society->updated_balance
                     );
                 } catch (\Exception $e) {
                     \Log::error(
-                        "Error updating society balance: " . $e->getMessage()
+                        'Error updating society balance: '.$e->getMessage()
                     );
                 }
             } else {
-                if (!$member) {
+                if (! $member) {
                     \Log::error(
-                        "Member not found for bill ID: " .
+                        'Member not found for bill ID: '.
                             $this->editingBill->id
                     );
-                } elseif (!$member->society) {
+                } elseif (! $member->society) {
                     \Log::error(
-                        "Society not found for member ID: " . $member->id
+                        'Society not found for member ID: '.$member->id
                     );
                 }
                 // Here you might want to add some error handling or notification
             }
         } else {
             \Log::info(
-                "Society balance not updated. Status did not change from unpaid to paid."
+                'Society balance not updated. Status did not change from unpaid to paid.'
             );
         }
 
         // Close the edit modal after updating
         $this->closeEditModal();
 
-        session()->flash("success", "The bill has been successfully updated!");
+        session()->flash('success', 'The bill has been successfully updated!');
     }
 
     public function returnMonths()
     {
         return [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December',
         ];
     }
 
@@ -286,7 +306,7 @@ class MaintenanceBillIndex extends Component
         if ($this->selected_society && $this->selected_year && $this->selected_month) {
             // Fetch society charges
             $society = Societies::findOrFail($this->selected_society);
-    
+
             $membersBills = Member::join('maintenance_bills', 'members.id', '=', 'maintenance_bills.member_id')
                 ->join('users', 'members.user_id', '=', 'users.id')
                 ->where('members.society_id', $this->selected_society)
@@ -301,7 +321,7 @@ class MaintenanceBillIndex extends Component
                     'members.is_rented'
                 )
                 ->get();
-    
+
             // Calculate total received for the current year for each member
             $yearlyTotalReceived = MaintenanceBill::where('billing_year', $this->selected_year)
                 ->where('status', 1)
@@ -309,24 +329,24 @@ class MaintenanceBillIndex extends Component
                 ->groupBy('member_id')
                 ->selectRaw('member_id, SUM(amount) as total_paid')
                 ->pluck('total_paid', 'member_id');
-    
+
             // Calculate total received to date for each member
             $totalReceivedToDate = MaintenanceBill::where('status', 1)
                 ->whereIn('member_id', $membersBills->pluck('member_id'))
                 ->groupBy('member_id')
                 ->selectRaw('member_id, SUM(amount) as total_paid')
                 ->pluck('total_paid', 'member_id');
-    
+
             // Prepare the data for export
             $exportData = [];
             $grandTotalReceivable = 0;
-    
+
             foreach ($membersBills as $index => $bill) {
                 $maintenanceAmount1 = $membersBills[$index]->is_rented ? $society->maintenance_amount_rented : $society->maintenance_amount_owner;
-                $yearlyTotalReceivable = ($society->parking_charges + $society->service_charges + $maintenanceAmount1)*"12";
-    
+                $yearlyTotalReceivable = ($society->parking_charges + $society->service_charges + $maintenanceAmount1) * '12';
+
                 $grandTotalReceivable += $yearlyTotalReceivable;
-    
+
                 $exportData[] = [
                     'Sr No' => $index + 1,
                     'Room No' => $bill->room_number,
@@ -338,7 +358,7 @@ class MaintenanceBillIndex extends Component
                     'Total Receivable (This Year)' => $yearlyTotalReceivable,
                 ];
             }
-    
+
             // Add grand totals as the last row
             $grandTotalThisYear = array_sum($yearlyTotalReceived->toArray());
             $grandTotalToDate = array_sum($totalReceivedToDate->toArray());
@@ -352,16 +372,15 @@ class MaintenanceBillIndex extends Component
                 'Total Received (To Date)' => $grandTotalToDate,
                 'Total Receivable (This Year)' => $grandTotalReceivable,
             ];
-    
+
             // Export the data to an Excel file using FastExcel
             return (new FastExcel($exportData))->download('members_bills.xlsx');
         } else {
             session()->flash('error', 'Please select society, year, and month before exporting.');
+
             return redirect()->back();
         }
     }
-    
-
 
     public function exportMembersBillsToPDF()
     {
@@ -371,7 +390,7 @@ class MaintenanceBillIndex extends Component
             $serviceCharge = 50;
             $maintenanceAmountRented = 2000;
             $maintenanceAmountOwner = 1600;
-    
+
             // Fetch member bills
             $membersBills = Member::join('maintenance_bills', 'members.id', '=', 'maintenance_bills.member_id')
                 ->join('users', 'members.user_id', '=', 'users.id')
@@ -387,7 +406,7 @@ class MaintenanceBillIndex extends Component
                     'members.is_rented'
                 )
                 ->get();
-    
+
             // Calculate totals for the current year and to date
             $yearlyTotalReceived = MaintenanceBill::where('billing_year', $this->selected_year)
                 ->where('status', 1)
@@ -395,26 +414,26 @@ class MaintenanceBillIndex extends Component
                 ->groupBy('member_id')
                 ->selectRaw('member_id, SUM(amount) as total_paid')
                 ->pluck('total_paid', 'member_id');
-    
+
             $totalReceivedToDate = MaintenanceBill::where('status', 1)
                 ->whereIn('member_id', $membersBills->pluck('member_id'))
                 ->groupBy('member_id')
                 ->selectRaw('member_id, SUM(amount) as total_paid')
                 ->pluck('total_paid', 'member_id');
-    
+
             // Prepare data for PDF
             $data = [];
             $grandTotalReceivable = $grandTotalThisYear = $grandTotalToDate = 0;
-    
+
             foreach ($membersBills as $index => $bill) {
                 $maintenanceAmount = $bill->is_rented ? $maintenanceAmountRented : $maintenanceAmountOwner;
                 $monthlyTotalReceivable = $parkingCharge + $serviceCharge + $maintenanceAmount;
                 $yearlyTotalReceivable = $monthlyTotalReceivable * 12;
-    
+
                 $grandTotalReceivable += $yearlyTotalReceivable;
                 $grandTotalThisYear += $yearlyTotalReceived[$bill->member_id] ?? 0;
                 $grandTotalToDate += $totalReceivedToDate[$bill->member_id] ?? 0;
-    
+
                 $data[] = [
                     'sr_no' => $index + 1,
                     'room_no' => $bill->room_number,
@@ -426,34 +445,34 @@ class MaintenanceBillIndex extends Component
                     'total_receivable_this_year' => number_format($yearlyTotalReceivable, 2),
                 ];
             }
-    
+
             // Add grand total row
             $data[] = [
                 'sr_no' => $index + 1,
-                'room_no' => mb_convert_encoding($bill->room_number, 'UTF-8', 'UTF-8'),
-                'name' => mb_convert_encoding($bill->name, 'UTF-8', 'UTF-8'),
+                'room_no' => $bill->room_number,
+                'name' => $bill->name,
                 'bill_amount' => number_format($bill->amount, 2),
                 'status' => $bill->status == 1 ? 'Paid' : 'Not Paid',
                 'total_received_this_year' => number_format($yearlyTotalReceived[$bill->member_id] ?? 0, 2),
                 'total_received_to_date' => number_format($totalReceivedToDate[$bill->member_id] ?? 0, 2),
                 'total_receivable_this_year' => number_format($yearlyTotalReceivable, 2),
             ];
-            
-    
+
             // Generate PDF
             $pdf = Pdf::loadView('pdfs.members_bills', [
                 'data' => $data,
                 'year' => $this->selected_year,
                 'month' => $this->selected_month,
             ]);
-    
+
             return $pdf->download('members_bills.pdf');
         } else {
             session()->flash('error', 'Please select society, year, and month before exporting.');
+
             return redirect()->back();
         }
     }
-    
+
     public function updatedSelectedSociety()
     {
         $this->fetchMembers();
@@ -477,39 +496,39 @@ class MaintenanceBillIndex extends Component
             $this->selected_month
         ) {
             $this->members = Member::join(
-                "maintenance_bills",
-                "members.id",
-                "=",
-                "maintenance_bills.member_id"
+                'maintenance_bills',
+                'members.id',
+                '=',
+                'maintenance_bills.member_id'
             )
-                ->join("users", "members.user_id", "=", "users.id")
-                ->where("members.society_id", $this->selected_society)
-                ->where("maintenance_bills.billing_year", $this->selected_year)
+                ->join('users', 'members.user_id', '=', 'users.id')
+                ->where('members.society_id', $this->selected_society)
+                ->where('maintenance_bills.billing_year', $this->selected_year)
                 ->where(
-                    "maintenance_bills.billing_month",
+                    'maintenance_bills.billing_month',
                     $this->selected_month
                 )
                 ->where(function ($query) {
                     $query
-                        ->where("users.name", "like", "%{$this->search}%")
-                        ->orWhere("users.phone", "like", "%{$this->search}%")
-                        ->orWhere("users.email", "like", "%{$this->search}%");
+                        ->where('users.name', 'like', "%{$this->search}%")
+                        ->orWhere('users.phone', 'like', "%{$this->search}%")
+                        ->orWhere('users.email', 'like', "%{$this->search}%");
                 })
                 ->select(
-                    "members.id as member_id",
-                    "members.society_id",
-                    "members.user_id",
-                    "users.name",
-                    "users.phone",
-                    "users.email",
-                    "maintenance_bills.id as bill_id",
-                    "maintenance_bills.billing_month",
-                    "maintenance_bills.amount",
-                    "maintenance_bills.advance",
-                    "maintenance_bills.status",
-                    "members.created_at"
+                    'members.id as member_id',
+                    'members.society_id',
+                    'members.user_id',
+                    'users.name',
+                    'users.phone',
+                    'users.email',
+                    'maintenance_bills.id as bill_id',
+                    'maintenance_bills.billing_month',
+                    'maintenance_bills.amount',
+                    'maintenance_bills.advance',
+                    'maintenance_bills.status',
+                    'members.created_at'
                 )
-                ->latest("members.created_at")
+                ->latest('members.created_at')
                 ->get();
         } else {
             $this->members = collect();
@@ -523,13 +542,13 @@ class MaintenanceBillIndex extends Component
             $bill = MaintenanceBill::findOrFail($billId);
 
             // Find the associated member
-            $member = Member::with(["user", "society"])->findOrFail(
+            $member = Member::with(['user', 'society'])->findOrFail(
                 $bill->member_id
             );
 
             // Get the current payment for this bill
             $currentPayment = Payment::where(
-                "maintenance_bills_id",
+                'maintenance_bills_id',
                 $bill->id
             )->first();
 
@@ -552,48 +571,48 @@ class MaintenanceBillIndex extends Component
 
             // Get the most recent previous payment for this member
             $previousPayment = Payment::where(
-                "maintenance_bills_id",
-                "<>",
+                'maintenance_bills_id',
+                '<>',
                 $bill->id
             )
-                ->whereHas("maintenanceBill", function ($query) use ($bill) {
-                    $query->where("member_id", $bill->member_id);
+                ->whereHas('maintenanceBill', function ($query) use ($bill) {
+                    $query->where('member_id', $bill->member_id);
                 })
-                ->latest("payment_date")
+                ->latest('payment_date')
                 ->first();
             $amountInWords = AmountHelper::amountToWords(
                 $currentPayment ? $currentPayment->amount_paid : $bill->amount
             );
 
             $data = [
-                "member" => $member,
-                "bill" => $bill,
-                "society" => $member->society,
-                "currentPayment" => $currentPayment,
-                "previousPayment" => $previousPayment,
-                "amountInWords" => $amountInWords,
-                "payment_mode_id" => $bill->payment_mode_id,
-                "reference_no" => $currentPayment
+                'member' => $member,
+                'bill' => $bill,
+                'society' => $member->society,
+                'currentPayment' => $currentPayment,
+                'previousPayment' => $previousPayment,
+                'amountInWords' => $amountInWords,
+                'payment_mode_id' => $bill->payment_mode_id,
+                'reference_no' => $currentPayment
                     ? $currentPayment->reference_no
                     : null,
-                "transaction_id" => $currentPayment
+                'transaction_id' => $currentPayment
                     ? $currentPayment->transaction_id
                     : null,
-                "maintenance_amount" => $maintenanceAmount,
-                "late_fee" => $lateFee,
+                'maintenance_amount' => $maintenanceAmount,
+                'late_fee' => $lateFee,
                 // 'service_charges' => $servicesCharges,
                 // 'parking_charges' => $parkingCharges,
             ];
 
             if ($bill->status == 1) {
-                $pdf = Pdf::loadView("pdfs.receipt", $data);
+                $pdf = Pdf::loadView('pdfs.receipt', $data);
                 $filename = "receipt_{$bill->id}.pdf";
             } elseif ($bill->status == 0) {
-                $pdf = Pdf::loadView("pdfs.invoice", $data);
+                $pdf = Pdf::loadView('pdfs.invoice', $data);
                 $filename = "invoice_{$bill->id}.pdf";
             } else {
                 return response()->json(
-                    ["error" => "Invalid bill status"],
+                    ['error' => 'Invalid bill status'],
                     400
                 );
             }
@@ -603,12 +622,12 @@ class MaintenanceBillIndex extends Component
             }, $filename);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(
-                ["error" => "Bill or Member not found"],
+                ['error' => 'Bill or Member not found'],
                 404
             );
         } catch (\Exception $e) {
             return response()->json(
-                ["error" => "An error occurred while processing your request"],
+                ['error' => 'An error occurred while processing your request'],
                 500
             );
         }
@@ -617,8 +636,8 @@ class MaintenanceBillIndex extends Component
     public function applyLateFees()
     {
         $today = now();
-        $overdueBills = MaintenanceBill::where("status", 0)
-            ->where("due_date", "<", $today->subDays(15))
+        $overdueBills = MaintenanceBill::where('status', 0)
+            ->where('due_date', '<', $today->subDays(15))
             ->get();
 
         foreach ($overdueBills as $bill) {
@@ -630,56 +649,56 @@ class MaintenanceBillIndex extends Component
             $bill->save();
         }
 
-        session()->flash("success", "Late fees applied successfully!");
+        session()->flash('success', 'Late fees applied successfully!');
     }
 
     public function downloadSelected()
     {
         try {
-            \Log::info("downloadSelected method called");
+            \Log::info('downloadSelected method called');
             \Log::info(
-                "Selected members: " . json_encode($this->selectedMembers)
+                'Selected members: '.json_encode($this->selectedMembers)
             );
 
             if (empty($this->selectedMembers)) {
                 return response()->json(
-                    ["error" => "No members selected"],
+                    ['error' => 'No members selected'],
                     400
                 );
             }
 
-            $members = Member::with(["user", "society"])
-                ->whereIn("id", $this->selectedMembers)
+            $members = Member::with(['user', 'society'])
+                ->whereIn('id', $this->selectedMembers)
                 ->get();
 
             // Check if members exist
             if ($members->isEmpty()) {
-                return response()->json(["error" => "No members found"], 404);
+                return response()->json(['error' => 'No members found'], 404);
             }
 
             // Get the society from the first member (assuming all selected members belong to the same society)
             $society = $members->first()->society;
 
-            if (!$society) {
-                return response()->json(["error" => "Society not found"], 404);
+            if (! $society) {
+                return response()->json(['error' => 'Society not found'], 404);
             }
 
             // Fetch bills for the selected members
             $bills = MaintenanceBill::whereIn(
-                "member_id",
+                'member_id',
                 $this->selectedMembers
             )->get();
 
             $pdfData = [];
 
             foreach ($members as $member) {
-                $bill = $bills->where("member_id", $member->id)->first();
-                if (!$bill) {
+                $bill = $bills->where('member_id', $member->id)->first();
+                if (! $bill) {
                     continue;
                 }
 
                 $currentPayment = Payment::where(
-                    "maintenance_bills_id",
+                    'maintenance_bills_id',
                     $bill->id
                 )->first();
 
@@ -693,16 +712,16 @@ class MaintenanceBillIndex extends Component
                 }
 
                 $previousPayment = Payment::where(
-                    "maintenance_bills_id",
-                    "<>",
+                    'maintenance_bills_id',
+                    '<>',
                     $bill->id
                 )
-                    ->whereHas("maintenanceBill", function ($query) use (
+                    ->whereHas('maintenanceBill', function ($query) use (
                         $member
                     ) {
-                        $query->where("member_id", $member->id);
+                        $query->where('member_id', $member->id);
                     })
-                    ->latest("payment_date")
+                    ->latest('payment_date')
                     ->first();
 
                 $amountInWords = AmountHelper::amountToWords(
@@ -712,40 +731,41 @@ class MaintenanceBillIndex extends Component
                 );
 
                 $pdfData[] = [
-                    "member" => $member,
-                    "bill" => $bill,
-                    "society" => $society,
-                    "currentPayment" => $currentPayment,
-                    "previousPayment" => $previousPayment,
-                    "amountInWords" => $amountInWords,
-                    "payment_mode_id" => $bill->payment_mode_id,
-                    "reference_no" => $currentPayment
+                    'member' => $member,
+                    'bill' => $bill,
+                    'society' => $society,
+                    'currentPayment' => $currentPayment,
+                    'previousPayment' => $previousPayment,
+                    'amountInWords' => $amountInWords,
+                    'payment_mode_id' => $bill->payment_mode_id,
+                    'reference_no' => $currentPayment
                         ? $currentPayment->reference_no
                         : null,
-                    "transaction_id" => $currentPayment
+                    'transaction_id' => $currentPayment
                         ? $currentPayment->transaction_id
                         : null,
-                    "maintenance_amount" => $maintenanceAmount,
-                    "late_fee" => $lateFee,
-                    "type" => $bill->status == 0 ? "invoice" : "receipt",
+                    'maintenance_amount' => $maintenanceAmount,
+                    'late_fee' => $lateFee,
+                    'type' => $bill->status == 0 ? 'invoice' : 'receipt',
                 ];
             }
 
             if (empty($pdfData)) {
                 return response()->json(
-                    ["error" => "No valid bills found for selected members"],
+                    ['error' => 'No valid bills found for selected members'],
                     404
                 );
             }
 
             // Generate PDF
-            $pdf = PDF::loadView("pdfs.combined", ["data" => $pdfData]);
+            $pdf = PDF::loadView('pdfs.combined', ['data' => $pdfData]);
 
-            return $pdf->download("combined_bills.pdf");
+            return $pdf->download('combined_bills.pdf');
         } catch (\Exception $e) {
-            \Log::error("Error in downloadSelected: " . $e->getMessage());
+            \Log::error('Error in downloadSelected: '.$e->getMessage());
+
             return response()->json(
-                ["error" => "An error occurred while processing your request"],
+                ['error' => 'An error occurred while processing your request'],
                 500
             );
         }
@@ -754,51 +774,51 @@ class MaintenanceBillIndex extends Component
     private function amountToWords($amount)
     {
         $ones = [
-            1 => "one",
-            2 => "two",
-            3 => "three",
-            4 => "four",
-            5 => "five",
-            6 => "six",
-            7 => "seven",
-            8 => "eight",
-            9 => "nine",
-            10 => "ten",
-            11 => "eleven",
-            12 => "twelve",
-            13 => "thirteen",
-            14 => "fourteen",
-            15 => "fifteen",
-            16 => "sixteen",
-            17 => "seventeen",
-            18 => "eighteen",
-            19 => "nineteen",
+            1 => 'one',
+            2 => 'two',
+            3 => 'three',
+            4 => 'four',
+            5 => 'five',
+            6 => 'six',
+            7 => 'seven',
+            8 => 'eight',
+            9 => 'nine',
+            10 => 'ten',
+            11 => 'eleven',
+            12 => 'twelve',
+            13 => 'thirteen',
+            14 => 'fourteen',
+            15 => 'fifteen',
+            16 => 'sixteen',
+            17 => 'seventeen',
+            18 => 'eighteen',
+            19 => 'nineteen',
         ];
         $tens = [
-            2 => "twenty",
-            3 => "thirty",
-            4 => "forty",
-            5 => "fifty",
-            6 => "sixty",
-            7 => "seventy",
-            8 => "eighty",
-            9 => "ninety",
+            2 => 'twenty',
+            3 => 'thirty',
+            4 => 'forty',
+            5 => 'fifty',
+            6 => 'sixty',
+            7 => 'seventy',
+            8 => 'eighty',
+            9 => 'ninety',
         ];
         $scales = [
-            "",
-            "thousand",
-            "million",
-            "billion",
-            "trillion",
-            "quadrillion",
-            "quintillion",
+            '',
+            'thousand',
+            'million',
+            'billion',
+            'trillion',
+            'quadrillion',
+            'quintillion',
         ];
 
         if ($amount == 0) {
-            return "zero";
+            return 'zero';
         }
 
-        $amount = number_format($amount, 2, ".", "");
+        $amount = number_format($amount, 2, '.', '');
         $numberWords = [];
         $wholeNumber = floor($amount);
         $decimal = round(($amount - $wholeNumber) * 100);
@@ -807,10 +827,10 @@ class MaintenanceBillIndex extends Component
 
         for ($i = 0; $i < count($groups); $i++) {
             $number = strrev($groups[$i]);
-            if ($number != "000") {
+            if ($number != '000') {
                 $groupWords = [];
                 if ($number > 99) {
-                    $groupWords[] = $ones[substr($number, 0, 1)] . " hundred";
+                    $groupWords[] = $ones[substr($number, 0, 1)].' hundred';
                     $number = substr($number, 1);
                 }
                 if ($number > 19) {
@@ -821,15 +841,15 @@ class MaintenanceBillIndex extends Component
                     $groupWords[] = $ones[$number];
                 }
                 $numberWords[] =
-                    implode(" ", $groupWords) .
-                    ($i > 0 ? " " . $scales[$i] : "");
+                    implode(' ', $groupWords).
+                    ($i > 0 ? ' '.$scales[$i] : '');
             }
         }
 
-        $wholeWords = implode(" ", array_reverse($numberWords));
+        $wholeWords = implode(' ', array_reverse($numberWords));
 
         if ($decimal > 0) {
-            return $wholeWords . " and " . $decimal . "/100";
+            return $wholeWords.' and '.$decimal.'/100';
         }
 
         return $wholeWords;
@@ -884,7 +904,7 @@ class MaintenanceBillIndex extends Component
     {
         try {
             $bill = MaintenanceBill::findOrFail($billId);
-            $member = Member::with(["user", "society"])->findOrFail(
+            $member = Member::with(['user', 'society'])->findOrFail(
                 $bill->member_id
             );
             if ($bill->status == 1) {
@@ -893,13 +913,13 @@ class MaintenanceBillIndex extends Component
                 $message = "Dear {$member->user->name}, your bill for {$bill->billing_month} is still pending. Please make the payment at your earliest convenience.";
             }
             $this->sendWhatsApp($member->user->phone, $message);
-            session()->flash("message", "WhatsApp message sent successfully.");
+            session()->flash('message', 'WhatsApp message sent successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            session()->flash("error", "Bill or Member not found.");
+            session()->flash('error', 'Bill or Member not found.');
         } catch (\Exception $e) {
             session()->flash(
-                "error",
-                "An error occurred while sending the message."
+                'error',
+                'An error occurred while sending the message.'
             );
         }
     }
@@ -907,15 +927,15 @@ class MaintenanceBillIndex extends Component
     protected function sendWhatsApp($phone, $message)
     {
         // config form env
-        $sid = config("services.twilio.sid");
-        $token = config("services.twilio.token");
-        $from = config("services.twilio.whatsapp_from");
-        $to = "whatsapp:" . $phone; //recevier number
+        $sid = config('services.twilio.sid');
+        $token = config('services.twilio.token');
+        $from = config('services.twilio.whatsapp_from');
+        $to = 'whatsapp:'.$phone; //recevier number
 
         $client = new Client($sid, $token);
         $client->messages->create($to, [
-            "from" => $from, // from config our virtual number
-            "body" => $message,
+            'from' => $from, // from config our virtual number
+            'body' => $message,
         ]);
     }
 
@@ -940,28 +960,28 @@ class MaintenanceBillIndex extends Component
         try {
             // Check if month and year are selected
             if (empty($this->selected_month) || empty($this->selected_year)) {
-                throw new \Exception("Please select both month and year.");
+                throw new \Exception('Please select both month and year.');
             }
 
             $society = Societies::findOrFail($this->selected_society);
 
-            if (!$society->due_date) {
-                throw new \Exception("Due date is not set for this society.");
+            if (! $society->due_date) {
+                throw new \Exception('Due date is not set for this society.');
             }
 
             $members = Member::where(
-                "society_id",
+                'society_id',
                 $this->selected_society
             )->get();
             $newBillsCount = 0;
 
             foreach ($members as $member) {
-                $existingBill = MaintenanceBill::where("member_id", $member->id)
-                    ->where("billing_month", $this->selected_month)
-                    ->where("billing_year", $this->selected_year)
+                $existingBill = MaintenanceBill::where('member_id', $member->id)
+                    ->where('billing_month', $this->selected_month)
+                    ->where('billing_year', $this->selected_year)
                     ->first();
 
-                if (!$existingBill) {
+                if (! $existingBill) {
                     $parkingCharges = $society->parking_charges;
                     $servicesCharges = $society->service_charges;
                     $maintenanceAmount = $member->is_rented
@@ -978,12 +998,12 @@ class MaintenanceBillIndex extends Component
                     );
 
                     MaintenanceBill::create([
-                        "member_id" => $member->id,
-                        "amount" => $amount,
-                        "status" => 0,
-                        "due_date" => $dueDate,
-                        "billing_month" => $this->selected_month,
-                        "billing_year" => $this->selected_year,
+                        'member_id' => $member->id,
+                        'amount' => $amount,
+                        'status' => 0,
+                        'due_date' => $dueDate,
+                        'billing_month' => $this->selected_month,
+                        'billing_year' => $this->selected_year,
                     ]);
 
                     $newBillsCount++;
@@ -992,18 +1012,18 @@ class MaintenanceBillIndex extends Component
 
             if ($newBillsCount > 0) {
                 session()->flash(
-                    "success",
+                    'success',
                     "$newBillsCount bills generated successfully!"
                 );
             } else {
-                session()->flash("info", "No new bills were generated.");
+                session()->flash('info', 'No new bills were generated.');
             }
 
             $this->fetchMembers(); // Refresh the members list
         } catch (\Exception $ex) {
             session()->flash(
-                "error",
-                "Error generating bills: " . $ex->getMessage()
+                'error',
+                'Error generating bills: '.$ex->getMessage()
             );
         }
     }
@@ -1013,7 +1033,7 @@ class MaintenanceBillIndex extends Component
         $this->selectAll =
             count($this->selectedMembers) === $this->members->count();
         \Log::info(
-            "Updated Selected Members: " . json_encode($this->selectedMembers)
+            'Updated Selected Members: '.json_encode($this->selectedMembers)
         );
     }
 
@@ -1021,8 +1041,8 @@ class MaintenanceBillIndex extends Component
     {
         if ($value) {
             $this->selectedMembers = $this->members
-                ->pluck("id")
-                ->map(fn($id) => (string) $id)
+                ->pluck('id')
+                ->map(fn ($id) => (string) $id)
                 ->toArray();
         } else {
             $this->selectedMembers = [];
@@ -1032,19 +1052,20 @@ class MaintenanceBillIndex extends Component
     public function render()
     {
         $this->fetchMembers();
-        \Log::info("Rendering. Members count: " . $this->members->count());
+        \Log::info('Rendering. Members count: '.$this->members->count());
         \Log::info(
-            "Rendering. Selected Members: " .
+            'Rendering. Selected Members: '.
                 json_encode($this->selectedMembers)
         );
 
-        $bills = MaintenanceBill::with("member.user")->get();
-        return view("livewire.maintenance-bill.maintenance-bill-index", [
-            "months" => $this->months,
-            "members" => $this->members,
-            "members" => Member::all(),
-            "bills" => $bills,
-            "currentSociety" => $this->society,
-        ])->layout("layouts.app", ["society" => $this->society]);
+        $bills = MaintenanceBill::with('member.user')->get();
+
+        return view('livewire.maintenance-bill.maintenance-bill-index', [
+            'months' => $this->months,
+            'members' => $this->members,
+            'members' => Member::all(),
+            'bills' => $bills,
+            'currentSociety' => $this->society,
+        ])->layout('layouts.app', ['society' => $this->society]);
     }
 }
