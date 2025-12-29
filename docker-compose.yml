@@ -1,0 +1,50 @@
+services:
+    # The Laravel App
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: my-society-app
+        ports:
+            - "8000:80"
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - mysql
+        networks:
+            - society-network
+
+    # The Database (MariaDB is better for Mac)
+    mysql:
+        image: mariadb:10.11
+        container_name: society_mysql
+        environment:
+            MARIADB_ROOT_PASSWORD: root
+            MARIADB_DATABASE: society
+        ports:
+            - "3306:3306"
+        volumes:
+            - dbdata:/var/lib/mysql
+        networks:
+            - society-network
+
+    # Database GUI (Removed strict platform check)
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - "8080:80"
+        environment:
+            PMA_HOST: mysql
+            PMA_USER: root
+            PMA_PASSWORD: root
+        depends_on:
+            - mysql
+        networks:
+            - society-network
+
+networks:
+    society-network:
+        driver: bridge
+
+volumes:
+    dbdata:
